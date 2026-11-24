@@ -1,0 +1,200 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261121T015558Z-2aad",
+  "role": "test",
+  "created_at": "2026-11-21T01:55:58.225Z",
+  "provider": "anthropic",
+  "model": "claude-haiku-5-5",
+  "baseline_id": "BL-002",
+  "baseline_hash": "sha256:30c99ead3af263a044e32308c20cede222ee5a2037aa853b016a33751cce4418",
+  "requirements": [
+    "REQ-CTL-04@v1"
+  ],
+  "signals": [
+    "reset_request@v1",
+    "sensor_fault@v1",
+    "sensor_valid@v1",
+    "stop_cmd@v1",
+    "stop_latch@v1",
+    "temp_c@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:bd1c990a6265255a63c515e7c9828fe71a27b7855df2c0571997ad2bb7f843f7"
+  },
+  "prompt_sha256": "sha256:4cb7a6715e50786860971442b71658bb99e85a3ebe6c278fe2d7dd241969b031",
+  "response_sha256": "sha256:8d39e228e2d689606bcca74d63f48705b12cadc90bd6cc4dd900d57d4750de91",
+  "inputs": [
+    {
+      "path": "src/controller.h",
+      "sha256": "sha256:51b8d699d396d159b480b30a7f13a4b717f9fd7f5172c64136745c672e6b5852"
+    },
+    {
+      "path": "docs/design/controller.md",
+      "part": "interface",
+      "sha256": "sha256:61fb6cfa15d9f438b68829ea1498de6722fa3d810ae570777b16d0d0072a9525"
+    }
+  ],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "tests/test_ctl_04.c",
+      "action": "added",
+      "sha256": "sha256:fa8c1a65ee54a39eb675550bddc5e664811a6c1fe79bfdb58c7bcfd546a89f0f"
+    }
+  ],
+  "report": {
+    "tests": [
+      {
+        "tc": "TC-CTL-04-001",
+        "requirement": "REQ-CTL-04@v1",
+        "purpose": "정지 래치 활성 구간(호출 전 래치 활성, 정지 명령 비활성). 리셋 없는 유효 25 °C 입력으로 래치는 유지되고, 호출 종료 시 정지 명령이 활성이어야 함(수용 기준 1). 래치 값 true 는 REQ-CTL-02-3 에서 옴",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "stop_latch": 1,
+              "stop_cmd": 0,
+              "sensor_fault": 0,
+              "temp_c": 25,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1,
+              "stop_cmd": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-04-002",
+        "requirement": "REQ-CTL-04@v1",
+        "purpose": "정지 래치 비활성 구간이며 호출 전 정지 명령은 활성(상태 순서가 뒤바뀐 경우). 유효 25 °C 입력으로 래치는 비활성 유지, 호출 종료 시 정지 명령이 비활성이어야 함(수용 기준 2). 래치 값 false 는 REQ-CTL-02-4 에서 옴",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "stop_latch": 0,
+              "stop_cmd": 1,
+              "sensor_fault": 0,
+              "temp_c": 25,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 0,
+              "stop_cmd": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-04-003",
+        "requirement": "REQ-CTL-04@v1",
+        "purpose": "초기화 후 과열 입력(80 °C, 유효)을 한 번 호출. 호출 안에서 래치가 활성화되고(REQ-CTL-02-1), 호출 종료 시 정지 명령도 활성이어야 함",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {
+              "stop_cmd": 0,
+              "stop_latch": 0
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1,
+              "stop_cmd": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-04-004",
+        "requirement": "REQ-CTL-04@v1",
+        "purpose": "정지 래치 활성 상태에서 리셋 요청, 유효 60 °C 입력. 해제 조건 충족(REQ-CTL-03-1)으로 래치가 비활성이 되고, 호출 종료 시 정지 명령도 비활성이어야 함",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "stop_latch": 1,
+              "stop_cmd": 1,
+              "sensor_fault": 0,
+              "temp_c": 60,
+              "sensor_valid": 1,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 0,
+              "stop_cmd": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-04-005",
+        "requirement": "REQ-CTL-04@v1",
+        "purpose": "센서 유효성 플래그 False 인 고장 입력(25 °C 라도 무효, REQ-CTL-01-3). 무효 입력은 호출 안에서 래치를 활성화(REQ-CTL-02-2)하므로 호출 종료 시 정지 명령도 활성이어야 함",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {
+              "stop_cmd": 0,
+              "stop_latch": 0
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": 0,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1,
+              "stop_cmd": 1
+            }
+          }
+        ]
+      }
+    ],
+    "not_tested": [],
+    "questions": [],
+    "assumptions": [
+      "REQ-CTL-04 의 기대 결과(정지 명령 = 정지 래치)를 확인하려고 호출 종료 시점의 stop_latch 값을 관찰한다. 그 래치 값 자체는 REQ-CTL-02-1·02-2·02-3·02-4·03-1 의 문장에서 정해 함께 확인한다(이번 요청 밖의 요구사항을 기대값 출처로만 씀).",
+      "TC-CTL-04-001 과 TC-CTL-04-002 의 호출 전 상태는 헤더의 ctl_state_t 멤버를 직접 설정해 만든다(인터페이스에 노출된 멤버).",
+      "boundary 방법은 REQ-CTL-04 에 수치 임계값이 없어 적용하지 않고 @no-method 로 사유를 남긴다."
+    ],
+    "standards": []
+  },
+  "warnings": [],
+  "applied_at": "2026-11-21T02:34:52.913Z"
+}

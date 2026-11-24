@@ -1,0 +1,60 @@
+{
+  "schema": "cia-review/v1",
+  "from": "BL-002",
+  "to": "BL-003",
+  "status": "approved",
+  "checklist": {
+    "safety": {
+      "checked": true,
+      "by": "HJ",
+      "at": "2026-11-22T07:00:10.370Z"
+    },
+    "retest": {
+      "checked": true,
+      "by": "HJ",
+      "at": "2026-11-22T07:00:11.060Z"
+    },
+    "baseline": {
+      "checked": true,
+      "by": "HJ",
+      "at": "2026-11-22T07:00:11.694Z"
+    }
+  },
+  "decisions": [
+    {
+      "decision": "approved",
+      "by": "HJ",
+      "note": "",
+      "at": "2026-11-22T07:00:14.476Z",
+      "snapshot": {
+        "from": "BL-002",
+        "to": "BL-003",
+        "counts": {
+          "direct": 6,
+          "indirect": 38,
+          "potential": 19,
+          "none": 5,
+          "unknown": 0
+        },
+        "priority": {
+          "high": 1,
+          "medium": 0,
+          "low": 0
+        },
+        "level": "ASIL D",
+        "requirements": [
+          {
+            "id": "REQ-CTL-02-4",
+            "change": "modified",
+            "priority": "높음"
+          }
+        ],
+        "retest": {
+          "total": 33,
+          "revalidated": 33,
+          "regression_pass": 0
+        }
+      }
+    }
+  ]
+}

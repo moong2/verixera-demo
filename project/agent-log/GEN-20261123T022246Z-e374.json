@@ -1,0 +1,1193 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261123T022246Z-e374",
+  "role": "test",
+  "created_at": "2026-11-23T02:22:46.443Z",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "baseline_id": "BL-004",
+  "baseline_hash": "sha256:498ff281ae3be9f9adcb34cedf1cd02e76c829b974aa1d1ae3d7dc57e0f22bce",
+  "requirements": [
+    "REQ-CTL-02-1@v2",
+    "REQ-CTL-02-2@v1",
+    "REQ-CTL-02-3@v2",
+    "REQ-CTL-02-4@v2"
+  ],
+  "refined_excluded": [
+    "REQ-CTL-02@v1"
+  ],
+  "signals": [
+    "detect_active@v1",
+    "input_valid@v1",
+    "reset_request@v2",
+    "sensor_fault@v2",
+    "sensor_valid@v2",
+    "stop_cmd@v2",
+    "stop_latch@v2",
+    "temp_c@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:bd1c990a6265255a63c515e7c9828fe71a27b7855df2c0571997ad2bb7f843f7"
+  },
+  "prompt_sha256": "sha256:fd72d38ee890d49dc2d68f7dc5c28de789ba9468b9572ef0eaff540506a9aff7",
+  "response_sha256": "sha256:9d4eccad404cb89bacc3b6da186a8003df0984f91a048acc5da99b388c19ffce",
+  "inputs": [
+    {
+      "path": "src/controller.h",
+      "sha256": "sha256:535cb795595c77c70010edad0d5ad219ee672abc390e29b97d2c5ec6aa76a250"
+    },
+    {
+      "path": "docs/design/controller.md",
+      "part": "interface",
+      "sha256": "sha256:5e09abba2657313e307382ff6a6ee14d9154341745ebad3a3d507d800005e706"
+    },
+    {
+      "path": "tests/test_ctl_02.c",
+      "sha256": "sha256:c13ee88fbd8e1679ca0e7e8404481b7e08308f4fbdaaa509cb30bb33b09d6c5c"
+    }
+  ],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "tests/test_ctl_02.c",
+      "action": "modified",
+      "sha256": "sha256:565a68c0b989759f947a3056944a2593894f29d8b116adee882b7ca34fe9119b"
+    }
+  ],
+  "report": {
+    "tests": [
+      {
+        "tc": "TC-CTL-02-1-001",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 비활성, 유효 75.0 °C 경계에서 같은 호출에 래치 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 75,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-002",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "유효 74.9 °C는 이 요구로 래치를 활성화하지 않음",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 74.9,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 0
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-003",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "75.0 °C 바로 위에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 75.00000000000001,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-004",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "유효 상한 150.0 °C에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-005",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "고온과 센서 무효 중첩 시 안전 쪽 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 0,
+              "reset_request": 0,
+              "detect_active": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-006",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "75.0 °C 바로 아래, 리셋 없음에서 비활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 74.99999999999999,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 0
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-007",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "리셋 요청과 유효 75.0 °C 동시 입력에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 75,
+              "sensor_valid": 1,
+              "reset_request": 1,
+              "detect_active": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-008",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 활성, 유효 75.0 °C에서 같은 호출에 래치 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 75,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-009",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 활성, 유효 150.0 °C에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-010",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 활성이어도 유효 74.9 °C는 활성화하지 않음",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 74.9,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 1
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-011",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 활성, 75.0 °C 바로 위에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 75.00000000000001,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-012",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 활성, 75.0 °C 바로 아래에서 비활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 74.99999999999999,
+              "sensor_valid": 1,
+              "reset_request": 0,
+              "detect_active": 1
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-013",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 활성, 센서 무효일 때 안전 쪽 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 0,
+              "reset_request": 0,
+              "detect_active": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-1-014",
+        "requirement": "REQ-CTL-02-1@v2",
+        "purpose": "감지 센서 활성, 리셋 요청과 유효 75.0 °C 동시 입력에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 75,
+              "sensor_valid": 1,
+              "reset_request": 1,
+              "detect_active": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-001",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "센서 유효성 플래그 false 이면 정상 온도에서도 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": 0,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-002",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "온도 NaN 에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-003",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "온도 150.1 °C(상한 초과)에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150.1,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-004",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "온도 +∞ 에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": "Infinity",
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-005",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "온도 -∞ 에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": "-Infinity",
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-006",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "상한 150.0 °C 바로 위에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150.00000000000003,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-007",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "상한 150.0 °C 바로 아래(유효 과열)에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 149.99999999999997,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-008",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "하한 -40.0 °C 바로 아래에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": -40.00000000000001,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-009",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "double 유한 최댓값에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 1.7976931348623157e+308,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-2-010",
+        "requirement": "REQ-CTL-02-2@v1",
+        "purpose": "double 유한 최솟값과 리셋 요청에서 활성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": -1.7976931348623157e+308,
+              "sensor_valid": 1,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-001",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "리셋 없으면 냉각되어도 래치 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-002",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "리셋 요청, 유효 69.9 °C에서 해제",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": 1,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-003",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "해제 경계 70.0 °C에서 래치 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 70,
+              "sensor_valid": 1,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-004",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "리셋 항만 거짓일 때 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-005",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "입력 유효 항만 거짓일 때 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": 0,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-006",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "70.0 °C 바로 위에서 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 70.00000000000001,
+              "sensor_valid": 1,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-007",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "리셋 없음, 무효, 저온 조합에서 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": 0,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-008",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "리셋 없음, 유효, 70.0 °C 조합에서 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 70,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-009",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "리셋 없음, 무효, 70.0 °C 조합에서 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 70,
+              "sensor_valid": 0,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-010",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "리셋 있음, 무효, 70.0 °C 조합에서 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 70,
+              "sensor_valid": 0,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-3-011",
+        "requirement": "REQ-CTL-02-3@v2",
+        "purpose": "70.0 °C 바로 아래에서 리셋 요청으로 해제",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 1
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 69.99999999999999,
+              "sensor_valid": 1,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-4-001",
+        "requirement": "REQ-CTL-02-4@v2",
+        "purpose": "비활성, 유효 74.9 °C, 리셋 없음에서 비활성 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 74.9,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-4-002",
+        "requirement": "REQ-CTL-02-4@v2",
+        "purpose": "유효 하한 -40.0 °C에서 비활성 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": -40,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-4-003",
+        "requirement": "REQ-CTL-02-4@v2",
+        "purpose": "75.0 °C 바로 아래에서 비활성 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 74.99999999999999,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-4-004",
+        "requirement": "REQ-CTL-02-4@v2",
+        "purpose": "-40.0 °C 바로 위에서 비활성 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": -39.99999999999999,
+              "sensor_valid": 1,
+              "reset_request": 0
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-02-4-005",
+        "requirement": "REQ-CTL-02-4@v2",
+        "purpose": "비활성, 리셋 요청, 유효 74.9 °C에서도 비활성 유지",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 74.9,
+              "sensor_valid": 1,
+              "reset_request": 1
+            },
+            "outputs": {
+              "stop_latch": 0
+            }
+          }
+        ]
+      }
+    ],
+    "not_tested": [
+      {
+        "requirement": "MC/DC·분기 커버리지",
+        "reason": "시험은 요구사항에서 조건 조합을 도출했으나 실행 없이 커버리지 달성을 주장하지 않는다. 측정은 게이트가 한다."
+      }
+    ],
+    "questions": [
+      "REQ-CTL-02-1@v2 의 NULL state 동작은 수용 기준에 없어 시험하지 않았다. 필요하면 수용 기준 추가가 필요하다.",
+      "REQ-CTL-02-2, 02-3, 02-4 는 이미 최신 버전이라 시험 동작은 바꾸지 않았다. 02-4-005 주석에 섞인 비한국어 글자만 한국어로 고쳤다."
+    ],
+    "assumptions": [
+      "REQ-CTL-02-1@v2 의 시험은 설계 문서에 따라 ctl_step_detect 로 실행하며, detect_active 를 false/true 로 나누어 입력한다.",
+      "'이 요구로는 래치가 활성화되지 않음' 은 호출 전 래치 false 에서 유효 74.9 °C 와 리셋 없음일 때 false 로 해석했다.",
+      "JSON 보고에서 NaN·무한대는 문자열로 표기했다.",
+      "REQ-CTL-02-2, 02-3, 02-4 시험은 ctl_step 으로 실행한다(detect_active 와 무관한 요구사항)."
+    ],
+    "standards": []
+  },
+  "warnings": [
+    "REQ-CTL-02 는 하위 요구사항으로 구체화된 상위 요구사항이라 대상에서 뺐습니다(하위 요구사항으로 검증됨)."
+  ],
+  "applied_at": "2026-11-23T02:25:49.151Z"
+}

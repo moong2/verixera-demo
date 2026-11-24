@@ -1,0 +1,1848 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261121T025735Z-fff0",
+  "role": "test",
+  "created_at": "2026-11-21T02:57:35.009Z",
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "baseline_id": "BL-003",
+  "baseline_hash": "sha256:1f23fcb84fcff35641ae81dfca6b52551d1ae8cd538a08fe076fe754d65a88ba",
+  "requirements": [
+    "REQ-CTL-03-1@v2",
+    "REQ-CTL-03-2@v2",
+    "REQ-CTL-03-3@v1",
+    "REQ-CTL-03-4@v1"
+  ],
+  "refined_excluded": [
+    "REQ-CTL-03@v1"
+  ],
+  "signals": [
+    "reset_request@v1",
+    "sensor_fault@v1",
+    "sensor_valid@v1",
+    "stop_cmd@v1",
+    "stop_latch@v1",
+    "temp_c@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:bd1c990a6265255a63c515e7c9828fe71a27b7855df2c0571997ad2bb7f843f7"
+  },
+  "prompt_sha256": "sha256:d5fc8a454d616121a39d1ccbc1768abb9f5f60b436ae68af5b6c7884248d998e",
+  "response_sha256": "sha256:cea48f5f525fa8193f3f470b7957393515ad685417f3346bea952f80e5b47f79",
+  "inputs": [
+    {
+      "path": "src/controller.h",
+      "sha256": "sha256:51b8d699d396d159b480b30a7f13a4b717f9fd7f5172c64136745c672e6b5852"
+    },
+    {
+      "path": "docs/design/controller.md",
+      "part": "interface",
+      "sha256": "sha256:61fb6cfa15d9f438b68829ea1498de6722fa3d810ae570777b16d0d0072a9525"
+    },
+    {
+      "path": "tests/test_controller_reset.c",
+      "sha256": "sha256:480fe90def2a302f183cdf32e2fa195a10f10c425ca179e24b51b7d1903c4dbd"
+    }
+  ],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "tests/test_controller_reset.c",
+      "action": "modified",
+      "sha256": "sha256:25a5441701b921759b98905225c4ea9dff1843fa231656ea13798218c5102a66"
+    }
+  ],
+  "report": {
+    "tests": [
+      {
+        "tc": "TC-CTL-03-1-001",
+        "requirement": "REQ-CTL-03-1@v2",
+        "purpose": "해제 수용 기준 전체, 70.0 °C 경계, 하한 유효성 경계, 리셋·유효성 독립 영향과 double 극값",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": -40,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 70,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": 70.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 5,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 6,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 7,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": false,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 8,
+            "inputs": {
+              "temp_c": -39.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 9,
+            "inputs": {
+              "temp_c": "-DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 10,
+            "inputs": {
+              "temp_c": "DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 11,
+            "inputs": {
+              "temp_c": "DBL_MIN",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 12,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 13,
+            "inputs": {
+              "temp_c": -40.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-03-2-001",
+        "requirement": "REQ-CTL-03-2@v2",
+        "purpose": "維持 수용 기준 전체와 리셋 양쪽 값, 70.0 °C 및 상한 유효성 경계, 무효 입력 대조군",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 70,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 70.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 74.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 5,
+            "inputs": {
+              "temp_c": 72.5,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 6,
+            "inputs": {
+              "temp_c": 100,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 7,
+            "inputs": {
+              "temp_c": 70,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 8,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 9,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": false,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 10,
+            "inputs": {
+              "temp_c": "-DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 11,
+            "inputs": {
+              "temp_c": "DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 12,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 13,
+            "inputs": {
+              "temp_c": 149.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 14,
+            "inputs": {
+              "temp_c": 150.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-03-3-001",
+        "requirement": "REQ-CTL-03-3@v1",
+        "purpose": "센서 무효·NaN 수용 기준、비유한값·범위 이탈 고장 주입, 리셋 양쪽 값, 유효성 경계 대조군",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 20,
+              "sensor_valid": false,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": "+Infinity",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": "-Infinity",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 5,
+            "inputs": {
+              "temp_c": -40.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 6,
+            "inputs": {
+              "temp_c": 150.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 7,
+            "inputs": {
+              "temp_c": 20,
+              "sensor_valid": false,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 8,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 9,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": false,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 10,
+            "inputs": {
+              "temp_c": "-DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 11,
+            "inputs": {
+              "temp_c": "DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 12,
+            "inputs": {
+              "temp_c": -40,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 13,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 14,
+            "inputs": {
+              "temp_c": -39.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 15,
+            "inputs": {
+              "temp_c": 149.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 16,
+            "inputs": {
+              "temp_c": "+Infinity",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 17,
+            "inputs": {
+              "temp_c": "-Infinity",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 18,
+            "inputs": {
+              "temp_c": -40.1,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 19,
+            "inputs": {
+              "temp_c": 150.1,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-03-4-001",
+        "requirement": "REQ-CTL-03-4@v1",
+        "purpose": "리셋과 과열 또는 무효 입력의 동일 호출 활성화, 유효성 양끝 경계 및 자료형 극값",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 75,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 20,
+              "sensor_valid": false,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 75.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 5,
+            "inputs": {
+              "temp_c": "+Infinity",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 6,
+            "inputs": {
+              "temp_c": "-Infinity",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 7,
+            "inputs": {
+              "temp_c": 100,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 8,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 9,
+            "inputs": {
+              "temp_c": -40.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 10,
+            "inputs": {
+              "temp_c": 150.1,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 11,
+            "inputs": {
+              "temp_c": "-DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 12,
+            "inputs": {
+              "temp_c": "DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 13,
+            "inputs": {
+              "temp_c": 69.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 14,
+            "inputs": {
+              "temp_c": 74.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 15,
+            "inputs": {
+              "temp_c": -40,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 16,
+            "inputs": {
+              "temp_c": -39.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 17,
+            "inputs": {
+              "temp_c": 149.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": true
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-03-4-003",
+        "requirement": "REQ-CTL-03-4@v1",
+        "purpose": "기존 기대값 미확정 항목을 BL-003의 REQ-CTL-02-4@v2에 근거한 75.0 °C 바로 아래 대조군으로 완성",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 74.9,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_latch": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-1-001",
+        "requirement": "REQ-CTL-01-1@v1",
+        "purpose": "기존 시험 유지: 모두 활성인 상태 초기화",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "stop_cmd": true,
+              "sensor_fault": true,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-1-002",
+        "requirement": "REQ-CTL-01-1@v1",
+        "purpose": "기존 시험 유지: 각 멤버만 활성인 상태 초기화",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "stop_cmd": false,
+              "sensor_fault": true,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-1-003",
+        "requirement": "REQ-CTL-01-1@v1",
+        "purpose": "기존 시험 유지: NULL 초기화 후 정상 초기화",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "stop_cmd": true,
+              "sensor_fault": true,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-3-001",
+        "requirement": "REQ-CTL-01-3@v1",
+        "purpose": "기존 시험 유지: 센서 무효 플래그",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-3-002",
+        "requirement": "REQ-CTL-01-3@v1",
+        "purpose": "기존 시험 유지: 온도와 무관한 센서 무효 판정",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": -40.000001,
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": -40,
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 5,
+            "inputs": {
+              "temp_c": 150.000001,
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 6,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 7,
+            "inputs": {
+              "temp_c": "+Infinity",
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-4-001",
+        "requirement": "REQ-CTL-01-4@v1",
+        "purpose": "기존 시험 유지: 비유한 온도",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": "+Infinity",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": "-Infinity",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-4-002",
+        "requirement": "REQ-CTL-01-4@v1",
+        "purpose": "기존 시험 유지: 유효 범위 이탈 대표값",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": -40.1,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150.1,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-4-003",
+        "requirement": "REQ-CTL-01-4@v1",
+        "purpose": "기존 시험 유지: 범위 바로 밖과 double 극값",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": -40.000001,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150.000001,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": "-DBL_MAX",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": "DBL_MAX",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-5-001",
+        "requirement": "REQ-CTL-01-5@v1",
+        "purpose": "기존 시험 유지: 유효 대표값",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": true
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-5-002",
+        "requirement": "REQ-CTL-01-5@v1",
+        "purpose": "기존 시험 유지: 유효 범위 양끝과 바로 안쪽",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": -40,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": true
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": true
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": -39.999999,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": true
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": 149.999999,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": true
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-5-003",
+        "requirement": "REQ-CTL-01-5@v1",
+        "purpose": "기존 시험 유지: 유효 범위 바로 밖",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": -40.000001,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 150.000001,
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-5-004",
+        "requirement": "REQ-CTL-01-5@v1",
+        "purpose": "기존 시험 유지: 유효성 조건별 불충족",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": false
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": "+Infinity",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": "-Infinity",
+              "sensor_valid": true
+            },
+            "outputs": {
+              "ctl_is_input_valid(반환)": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-2-001",
+        "requirement": "REQ-CTL-01-2@v1",
+        "purpose": "기존 시험 유지: 초기화 후 무효 입력의 동일 호출 갱신",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 20,
+              "sensor_valid": false,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_cmd": true,
+              "sensor_fault": true,
+              "stop_latch": true
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-2-002",
+        "requirement": "REQ-CTL-01-2@v1",
+        "purpose": "기존 시험 유지: 과열 다음 호출에서 리셋 해제",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 80,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": true,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": false,
+              "stop_latch": true
+            },
+            "outputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-2-003",
+        "requirement": "REQ-CTL-01-2@v1",
+        "purpose": "기존 시험 유지: NULL 제어 호출 후 정상 호출",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {},
+            "outputs": {}
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": true,
+              "reset_request": false
+            },
+            "outputs": {}
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            }
+          }
+        ]
+      },
+      {
+        "tc": "TC-CTL-01-6-001",
+        "requirement": "REQ-CTL-01-6@v1",
+        "purpose": "기존 시험 유지: 원인별 고장 설정과 유효 대조군",
+        "time_unit": "step",
+        "steps": [
+          {
+            "t_ms": 1,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": false,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 2,
+            "inputs": {
+              "temp_c": "NaN",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 3,
+            "inputs": {
+              "temp_c": "+Infinity",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 4,
+            "inputs": {
+              "temp_c": "-Infinity",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 5,
+            "inputs": {
+              "temp_c": -40.1,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 6,
+            "inputs": {
+              "temp_c": -40,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": true,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": false
+            }
+          },
+          {
+            "t_ms": 7,
+            "inputs": {
+              "temp_c": -39.9,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": true,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": false
+            }
+          },
+          {
+            "t_ms": 8,
+            "inputs": {
+              "temp_c": 149.9,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": true,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": false
+            }
+          },
+          {
+            "t_ms": 9,
+            "inputs": {
+              "temp_c": 150,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": true,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": false
+            }
+          },
+          {
+            "t_ms": 10,
+            "inputs": {
+              "temp_c": 150.1,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 11,
+            "inputs": {
+              "temp_c": "-DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 12,
+            "inputs": {
+              "temp_c": "DBL_MAX",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": false,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          },
+          {
+            "t_ms": 13,
+            "inputs": {
+              "temp_c": "DBL_MIN",
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": true,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": false
+            }
+          },
+          {
+            "t_ms": 14,
+            "inputs": {
+              "temp_c": 0,
+              "sensor_valid": true,
+              "reset_request": false,
+              "stop_cmd": false,
+              "sensor_fault": true,
+              "stop_latch": false
+            },
+            "outputs": {
+              "sensor_fault": false
+            }
+          },
+          {
+            "t_ms": 15,
+            "inputs": {
+              "temp_c": 25,
+              "sensor_valid": false,
+              "reset_request": true,
+              "stop_cmd": true,
+              "sensor_fault": true,
+              "stop_latch": true
+            },
+            "outputs": {
+              "sensor_fault": true
+            }
+          }
+        ]
+      }
+    ],
+    "not_tested": [],
+    "questions": [
+      "요청 밖 tests/test_ctl_02.c의 REQ-CTL-02-4@v1 참조 네 건은 변경하지 않았습니다. 해당 파일의 별도 갱신 작업을 진행해 주십시오. 이 오류들은 이번 변경만으로 해소되지 않습니다.",
+      "이 대화에는 실행 도구와 저장소가 제공되지 않아 컴파일·시험·추적 점검을 실행하지 못했습니다. 적용 후 node tools/trace/trace-check.js --root targets/project 및 게이트를 실행하고 실제 출력을 확인해 주십시오.",
+      "구문·분기·MC/DC 커버리지 수치는 측정하지 않았으며 100%를 주장하지 않습니다. 제공된 규칙상 이 환경의 컴파일러로 MC/DC를 측정할 수 없으므로, MC/DC 100% 필수 기준을 검증할 별도 도구와 증거 수집 절차를 지정해 주십시오."
+    ],
+    "assumptions": [
+      "표 기반 시험은 각 호출 직전에 공개 상태 구조체를 직접 구성합니다. 단계 간 상태를 이어 쓰지 않으며, inputs의 stop_cmd·sensor_fault·stop_latch는 해당 호출 직전 상태입니다.",
+      "대상 시험의 경계 바로 아래·위 대표값 간격은 수용 기준과 같은 0.1 °C입니다. 센서 분해능이나 구현 내부 정밀도를 가정한 것은 아닙니다.",
+      "JSON에서 비유한값은 NaN·+Infinity·-Infinity 문자열, float.h 상수는 DBL_MAX·-DBL_MAX·DBL_MIN 문자열로 표기했습니다. 코드는 해당 C 값 자체를 전달합니다.",
+      "기존 시험의 ctl_is_input_valid(반환)은 신호를 추가한 것이 아니라 기존 함수 반환값 기록 이름이며, state:null은 헤더의 포인터 인자 표현입니다. 대상 래치 시험은 승인 신호 이름만 기록합니다.",
+      "기존 TC-CTL-03-4-003의 기대값은 BL-003에 제공된 REQ-CTL-02-4@v2의 비활성 유지 문장으로 확정됩니다. 해당 요구사항의 별도 시험을 추가하거나 기존 대상 밖 추적 태그를 변경하지 않고, 동일 호출 활성화 조건의 경계 대조군으로 완성했습니다.",
+      "기존 대상 밖 시험의 동작과 태그는 유지했습니다. 비한국어 주석 표현만 한국어로 정리했습니다."
+    ],
+    "standards": []
+  },
+  "scope_out": [
+    {
+      "where": "tests/test_controller_reset.c: TC-CTL-01-5-004",
+      "verb": "바꿈",
+      "requirements": [
+        "REQ-CTL-01-5"
+      ]
+    },
+    {
+      "where": "tests/test_controller_reset.c: TC-CTL-01-2-003",
+      "verb": "바꿈",
+      "requirements": [
+        "REQ-CTL-01-2"
+      ]
+    }
+  ],
+  "warnings": [
+    "REQ-CTL-03 는 하위 요구사항으로 구체화된 상위 요구사항이라 대상에서 뺐습니다(하위 요구사항으로 검증됨).",
+    "tests/test_controller_reset.c: TC-CTL-01-5-004 — 고르지 않은 REQ-CTL-01-5 의 것을 바꿈",
+    "tests/test_controller_reset.c: TC-CTL-01-2-003 — 고르지 않은 REQ-CTL-01-2 의 것을 바꿈"
+  ],
+  "scope_approval": {
+    "requirements": [
+      "REQ-CTL-01-5",
+      "REQ-CTL-01-2"
+    ],
+    "items": [
+      {
+        "where": "tests/test_controller_reset.c: TC-CTL-01-5-004",
+        "verb": "바꿈",
+        "requirements": [
+          "REQ-CTL-01-5"
+        ]
+      },
+      {
+        "where": "tests/test_controller_reset.c: TC-CTL-01-2-003",
+        "verb": "바꿈",
+        "requirements": [
+          "REQ-CTL-01-2"
+        ]
+      }
+    ],
+    "approved_by": "HJ",
+    "approved_at": "2026-11-21T03:13:21.874Z"
+  },
+  "applied_at": "2026-11-21T03:13:21.874Z"
+}

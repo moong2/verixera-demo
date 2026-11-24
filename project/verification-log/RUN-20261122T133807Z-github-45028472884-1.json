@@ -1,0 +1,543 @@
+{
+  "schema": "verification-run/v1",
+  "run_id": "github-45028472884-1",
+  "source": "ci",
+  "started_at": "2026-11-22T13:38:07.802Z",
+  "commit": "473a4084b2dba1c6a8d8d2163bf26631bf51ecb4",
+  "uncommitted_changes": 0,
+  "baseline_id": "BL-003",
+  "baseline_hash": "sha256:1f23fcb84fcff35641ae81dfca6b52551d1ae8cd538a08fe076fe754d65a88ba",
+  "config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:bd1c990a6265255a63c515e7c9828fe71a27b7855df2c0571997ad2bb7f843f7",
+    "compiler": "gcc-14",
+    "compiler_used": "chosen",
+    "cc": "gcc-14",
+    "cflags": "-std=c11 -Wall -Wextra -Wpedantic -Wstrict-prototypes -Wmissing-prototypes -Wundef -Wuninitialized -Wshadow -Wconversion -Wsign-conversion -Werror -O0 --coverage -fcondition-coverage"
+  },
+  "environment": {
+    "image": "node:22.23.5-trixie@sha256:c103d7b5aa3bf627c8b98db941d52556f04e0b5d9352b3d7b6391245d26620f8",
+    "os": "linux 7.0.0-1020-azure x64",
+    "node": "v22.23.5",
+    "cc": "gcc-14 (Debian 14.2.0-19) 14.2.0",
+    "make": "GNU Make 4.4.1",
+    "pinned": true,
+    "fingerprint": "sha256:c75ea02b31cb3fd41b0ee81580533c59d81818f3cd66d6bade9c3e3fa5150eb2"
+  },
+  "result_fingerprint": "sha256:405d9960c859d8c1556277fe94fd7d1451696968e63b1c17e1f67268e656df69",
+  "gate": "pass",
+  "summary": {
+    "pass": 72,
+    "fail": 0,
+    "skip": 0,
+    "total": 72
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-CTL-01",
+      "version": 1,
+      "status": "완전",
+      "tests": []
+    },
+    {
+      "requirement_id": "REQ-CTL-01-1",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-1-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-1-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-1-003",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-01-2",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-2-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-2-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-2-003",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-01-3",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-3-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-3-002",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-01-4",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-4-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-4-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-4-003",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-01-5",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-5-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-5-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-5-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-5-004",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-01-6",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-6-001",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-01-7",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-7-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-7-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-7-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-7-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-7-005",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-7-006",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-01-8",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-01-8-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-8-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-8-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-8-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-8-005",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-8-006",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-01-8-007",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-02",
+      "version": 1,
+      "status": "완전",
+      "tests": []
+    },
+    {
+      "requirement_id": "REQ-CTL-02-1",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-02-1-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-1-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-1-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-1-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-1-005",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-1-006",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-1-007",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-02-2",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-02-2-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-005",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-006",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-007",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-008",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-009",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-2-010",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-02-3",
+      "version": 2,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-02-3-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-005",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-006",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-007",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-008",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-009",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-010",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-3-011",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-02-4",
+      "version": 2,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-02-4-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-4-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-4-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-4-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-02-4-005",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-03",
+      "version": 1,
+      "status": "완전",
+      "tests": []
+    },
+    {
+      "requirement_id": "REQ-CTL-03-1",
+      "version": 2,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-03-1-001",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-03-2",
+      "version": 2,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-03-2-001",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-03-3",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-03-3-001",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-03-4",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-03-4-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-03-4-003",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CTL-04",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-CTL-04-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-04-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-04-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-04-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-CTL-04-005",
+          "result": "pass"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "statement": {
+      "covered": 37,
+      "total": 37,
+      "percent": 100
+    },
+    "branch": {
+      "covered": 22,
+      "total": 22,
+      "percent": 100
+    },
+    "mcdc": {
+      "covered": 22,
+      "total": 22,
+      "percent": 100
+    },
+    "tool": "gcov (gcc 14.2.0)",
+    "files": [
+      {
+        "file": "src/controller.c",
+        "statement": {
+          "covered": 37,
+          "total": 37,
+          "percent": 100
+        },
+        "branch": {
+          "covered": 22,
+          "total": 22,
+          "percent": 100
+        },
+        "mcdc": {
+          "covered": 22,
+          "total": 22,
+          "percent": 100
+        },
+        "functions": [],
+        "uncovered_lines": [],
+        "uncovered_branches": [],
+        "uncovered_conditions": []
+      }
+    ]
+  },
+  "static_analysis": {
+    "level": "recommended",
+    "ran": true,
+    "tool": "cppcheck",
+    "version": "2.17.1",
+    "fail_on": "warning",
+    "counted": 0,
+    "total": 2,
+    "findings": [
+      {
+        "id": "redundantInitialization",
+        "severity": "style",
+        "message": "Redundant initialization for 'next'. The initialized value is overwritten before it is read.",
+        "cwe": "563",
+        "file": "src/controller.c",
+        "line": 79
+      },
+      {
+        "id": "redundantAssignment",
+        "severity": "style",
+        "message": "Variable 'next' is assigned an expression that holds the same value.",
+        "cwe": "563",
+        "file": "src/controller.c",
+        "line": 88
+      }
+    ]
+  },
+  "problems": [],
+  "build_errors": [],
+  "failures": [],
+  "ci": {
+    "number": 3,
+    "url": "https://github.com/moong2/project/actions/runs/45028472884"
+  },
+  "sources": null,
+  "code_sources": null
+}

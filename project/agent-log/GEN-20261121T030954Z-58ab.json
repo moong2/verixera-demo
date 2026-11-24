@@ -1,0 +1,127 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261121T030954Z-58ab",
+  "role": "code",
+  "created_at": "2026-11-21T03:09:54.835Z",
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "baseline_id": "BL-003",
+  "baseline_hash": "sha256:1f23fcb84fcff35641ae81dfca6b52551d1ae8cd538a08fe076fe754d65a88ba",
+  "requirements": [
+    "REQ-CTL-02-4@v2",
+    "REQ-CTL-03-3@v1",
+    "REQ-CTL-04@v1"
+  ],
+  "signals": [
+    "reset_request@v1",
+    "sensor_fault@v1",
+    "sensor_valid@v1",
+    "stop_cmd@v1",
+    "stop_latch@v1",
+    "temp_c@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [
+    {
+      "name": "automotive-c-coding-rules",
+      "path": "docs/coding-rules/automotive-c-coding-rules/SKILL.md",
+      "sha256": "sha256:a1b8a0088e687e6ae03334ebd8050cb1982bb5b26d81760891ccc4bc98545f13"
+    }
+  ],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:bd1c990a6265255a63c515e7c9828fe71a27b7855df2c0571997ad2bb7f843f7"
+  },
+  "prompt_sha256": "sha256:8222fcf4b1f8ab8753739629b039908142483e1d2b74270aa6808d8fccfeb7b6",
+  "response_sha256": "sha256:e2cca92e41466afcbbdc3129439c72387a98aa566dfa9999e1a755a0b46e1505",
+  "inputs": [
+    {
+      "path": "docs/design/controller.md",
+      "sha256": "sha256:e80e1d603daf300c81ae6cbc6562ac22807870f977b9409b936b5c01072a68ad"
+    },
+    {
+      "path": "src/controller.c",
+      "sha256": "sha256:42e2c6546eb801b3f678a25149c288dfc5e3ea2fb6d84fe952b352d2387731f1"
+    },
+    {
+      "path": "src/controller.h",
+      "sha256": "sha256:51b8d699d396d159b480b30a7f13a4b717f9fd7f5172c64136745c672e6b5852"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "sha256:bfe9905936cb335a0f0498890fbef82a6082a9dde586f3bd4ca50b0caf0bd332"
+    }
+  ],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "docs/design/controller.md",
+      "action": "modified",
+      "sha256": "sha256:94b4fb3c40f1a191bf04eee85e8ec03d7d8c6561f9d5c903e2ee3d3d08e41c05"
+    },
+    {
+      "path": "src/controller.c",
+      "action": "modified",
+      "sha256": "sha256:5f8f7f564aee7e8b11027899c1a0969f5fd54c0e3d71bc6cff3f801a622fbbaa"
+    }
+  ],
+  "report": {
+    "implemented": [
+      {
+        "requirement": "REQ-CTL-02-4@v2",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-3@v1",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-04@v1",
+        "design_items": [
+          "SWD-CTL-010"
+        ],
+        "functions": [
+          "src/controller.c:ctl_step"
+        ]
+      }
+    ],
+    "not_implemented": [],
+    "questions": [],
+    "assumptions": [
+      "새로운 임계값, 신호, 오류 시 동작은 정하지 않았다. 기존 구현이 대상 세 요구사항을 충족하므로 상태 전이식은 보존하고 상세 설계, 함수 계약 및 한국어 주석을 보완했다.",
+      "선택하지 않은 요구사항 전용 함수와 설계 항목은 변경하지 않았다. 기존 헤더와 Makefile도 변경하지 않았다.",
+      "기존 NULL 상태 포인터 무동작 처리는 호환성을 위해 보존했으며, 대상 요구사항의 상태·출력 계약은 유효한 상태 객체에 적용한다.",
+      "AUTO-CD 프로파일과 프로젝트 필수 코딩 규칙을 변경 범위에 적용했다. 정적 분석 또는 MISRA 준수 판정이 완료되었다고 주장하지 않는다.",
+      "실행 도구와 저장소 접근 수단이 제공되지 않아 node tools/trace/trace-check.js --root targets/project 및 make -s test를 실행하지 못했다. 점검기 출력, 컴파일 결과, 시험 결과와 커버리지는 확인하지 못했다."
+    ],
+    "standards": []
+  },
+  "warnings": [
+    "src/controller.c:ctl_next_latch() — 고르지 않은 REQ-CTL-02-1, REQ-CTL-02-2, REQ-CTL-02-3, REQ-CTL-03-1, REQ-CTL-03-2, REQ-CTL-03-4 도 쓰는 것을 바꿈 (그 요구사항의 시험도 다시 실행해야 함)",
+    "docs/design/controller.md: SWD-CTL-008 — 고르지 않은 REQ-CTL-02-3, REQ-CTL-03-2 도 쓰는 것을 바꿈 (그 요구사항의 시험도 다시 실행해야 함)"
+  ],
+  "applied_at": "2026-11-21T03:10:02.873Z"
+}

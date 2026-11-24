@@ -1,0 +1,265 @@
+{
+  "schema": "requirement-set-check/v1",
+  "id": "SETCHECK-20261120T010122Z-46c1",
+  "created_at": "2026-11-20T01:01:22.582Z",
+  "requested_by": "HJ",
+  "agent": {
+    "role": "requirements-set-check",
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5"
+  },
+  "inputs": {
+    "conversation": false,
+    "writer_notes": false,
+    "signals": 6
+  },
+  "prompt_hash": "sha256:a7dd53e2d18895e221c72e62a10c5399b144b974475fb30af77788aeff68478e",
+  "output_hash": "sha256:a53bbca383fe5c0bf3e9c907b6abf36ca1d15013bbd6eb5c457075257ee89633",
+  "requirements": [
+    {
+      "id": "REQ-CTL-01",
+      "content_hash": "sha256:856c88cd50e73acc64b17a1f87a63e2b35de7838e28dae68f837588333fb77ee"
+    },
+    {
+      "id": "REQ-CTL-01-1",
+      "content_hash": "sha256:ba0243e65f1ea41512babe023fefb440117857e30b1d5480052ac4654dc1cc4a"
+    },
+    {
+      "id": "REQ-CTL-01-2",
+      "content_hash": "sha256:2e74b64070849ae881ca0eb64c5abd117f2e6ed1962a39323c8511f0bdb18d99"
+    },
+    {
+      "id": "REQ-CTL-01-3",
+      "content_hash": "sha256:54a2327a9e6852c02dfba8205360d66b4fb7f7914315c24d97df3a901632ce08"
+    },
+    {
+      "id": "REQ-CTL-01-4",
+      "content_hash": "sha256:5ffd897b3cfd12e00387dd734bc4ea67e61114b04b7e7c40fd8432d7eeac054b"
+    },
+    {
+      "id": "REQ-CTL-01-5",
+      "content_hash": "sha256:ecee79613800848c7e5899605c6ff522927bbdf718617f4d8d8fc4a425734bdc"
+    },
+    {
+      "id": "REQ-CTL-01-6",
+      "content_hash": "sha256:ed3b9ab3c11e1795bb6220c14e06ce07e9adc315eb33631d651b52cb8ad03a6f"
+    },
+    {
+      "id": "REQ-CTL-01-7",
+      "content_hash": "sha256:f8e3744551c2fdd09108899ffc4ce2e62d8bb0114451a702761095427c3c96c2"
+    },
+    {
+      "id": "REQ-CTL-01-8",
+      "content_hash": "sha256:506a224934313e8c4bdca912270e2ee81a5c0c12fc6a9e8401e92295e44928ac"
+    },
+    {
+      "id": "REQ-CTL-02",
+      "content_hash": "sha256:922342372b72c4a02f151d4f3399732dbaec08295cac5dd459a8bee6e33cf33c"
+    },
+    {
+      "id": "REQ-CTL-02-1",
+      "content_hash": "sha256:e0ccb5e7c5dc99ca4104b630f7bfe1e28260f32acaf8dbfa1e045f33cd73540c"
+    },
+    {
+      "id": "REQ-CTL-02-2",
+      "content_hash": "sha256:6aa7d991a7ac6077c926735cb1a610249c75e54f8b9d4c4fb6dac524f5f4a1b2"
+    },
+    {
+      "id": "REQ-CTL-02-3",
+      "content_hash": "sha256:bba31b25e6847c6b8a021d42a38b9a209d4073c7737f65dfa1f7ff26e72e2d63"
+    },
+    {
+      "id": "REQ-CTL-02-4",
+      "content_hash": "sha256:544ba942d98c394ee48399bfb57311928d286fdce939d4303d563dcfc73829ce"
+    },
+    {
+      "id": "REQ-CTL-03",
+      "content_hash": "sha256:e8b1a7877087b8352c786c5d017ec48fd6bdef791510991a2c7eda655da4c5ec"
+    },
+    {
+      "id": "REQ-CTL-03-1",
+      "content_hash": "sha256:712ec9d0a89bedc0c9e24632def471f40286d9fd74ac61cbd317cbac6c89dbab"
+    },
+    {
+      "id": "REQ-CTL-03-2",
+      "content_hash": "sha256:0b59275c1c621b372d9666f543218d5514b4a9ceb6934fff7fb14e3ff258a5bb"
+    },
+    {
+      "id": "REQ-CTL-03-3",
+      "content_hash": "sha256:82b43d3f858945b32c111a333353e9f1211d4262e880075d092c3ab0ff8e0325"
+    },
+    {
+      "id": "REQ-CTL-03-4",
+      "content_hash": "sha256:e697c6af505c925997775fe7ee26fd66988a7bc2b302704023d70c242a0b9c2a"
+    },
+    {
+      "id": "REQ-CTL-04",
+      "content_hash": "sha256:47604af3263bea3efee8e91b0727d8a0d5620f7a091e5a0e3623b51e518a475e"
+    }
+  ],
+  "characteristics": [
+    {
+      "id": "C10",
+      "name": "완전성",
+      "verdict": "partial",
+      "summary": "기능 영역(초기화, 입력 판정, 래치 설정·해제, 정지 명령 출력)은 대체로 덮여 있다. 다만 Unwanted Behaviour가 3개뿐이고, 리셋 요청이 들어왔을 때 래치가 비활성인 경우 등 일부 경우가 빠져 있다. 전원 인가 직후 초기 입력 상태도 정의되지 않았다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-02-4",
+            "REQ-CTL-03-1",
+            "REQ-CTL-03-4"
+          ],
+          "text": "정지 래치가 비활성인 상태에서 리셋 요청이 발생하고 입력이 유효하며 온도가 75.0 °C 미만인 경우의 동작이 명시되어 있지 않다. REQ-CTL-02-4는 '리셋 요청이 없음'을 조건으로 하고, REQ-CTL-03-1은 래치가 활성일 때만 적용된다. 또한 온도 70.0 °C 이상 75.0 °C 미만 구간에서 비활성 래치에 리셋이 들어오는 경우도 같은 이유로 비어 있다.",
+          "suggestion": "래치 비활성 + 리셋 요청 + 입력 유효 + 온도 75.0 °C 미만의 결과(래치 유지 비활성 등)를 명시하는 요구사항을 추가한다. 결정이 필요하다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01",
+            "REQ-CTL-01-1",
+            "REQ-CTL-02-3",
+            "REQ-CTL-03-1"
+          ],
+          "text": "Unwanted Behaviour 유형이 REQ-CTL-01-3, REQ-CTL-01-4, REQ-CTL-02-2 세 개뿐이다. 리셋 요청이 발생한 호출에서 입력이 무효인 경우처럼 고장·잘못된 입력에 대한 동작은 REQ-CTL-03-3에만 있고 해제 경로 쪽 고장 대응은 약하다. 전원 인가 직후 센서 유효성 플래그, 온도값, 리셋 요청의 초기 상태에 대한 요구도 없다.",
+          "suggestion": "전원 인가·초기화 직후 첫 호출 전의 입력(sensor_valid, temp_c, reset_request)의 처리 방식을 정의하는 요구사항을 추가한다. 입력 신호의 초기 값도 결정이 필요하다."
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "일관성",
+      "verdict": "partial",
+      "summary": "같은 조건에서 서로 다른 동작을 요구하는 직접적 충돌은 확인되지 않았다. 다만 해제 조건(리셋·유효·70.0 °C 미만)이 두 요구사항에 중복되고, REQ-CTL-01-8은 REQ-CTL-01-7과 중복된다. '센서 고장'과 '입력 무효'를 같은 개념처럼 쓰는 용어 불일치도 있다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-01-7",
+            "REQ-CTL-01-8"
+          ],
+          "text": "REQ-CTL-01-7은 유효 입력이면 센서 고장 플래그를 False로 설정한다고 요구하고, REQ-CTL-01-8은 직전 무효·현재 유효이면 래치 상태와 무관하게 False로 설정한다고 요구한다. 두 요구의 결과가 같아 중복이다. REQ-CTL-01-7의 인수 기준에 이미 '직전 True였더라도 유효 입력이면 False로 복귀'가 있다.",
+          "suggestion": "두 요구 중 하나로 통합하거나, 래치 상태와 무관하다는 점을 REQ-CTL-01-7에 명시하고 REQ-CTL-01-8을 삭제한다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-02-3",
+            "REQ-CTL-03-1",
+            "REQ-CTL-03"
+          ],
+          "text": "정지 래치 해제 조건(리셋 요청·입력 유효·온도 70.0 °C 미만)이 REQ-CTL-02-3, REQ-CTL-03-1, REQ-CTL-03 상위 요구에 중복 기술되어 있다. 현재 내용은 일치하지만, 한쪽만 바뀌면 불일치가 생길 수 있다.",
+          "suggestion": "해제 조건은 한 곳(REQ-CTL-03-1)에서만 정의하고, REQ-CTL-02-3은 유지 조건만 기술하도록 정리한다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-02",
+            "REQ-CTL-02-2",
+            "REQ-CTL-01-6"
+          ],
+          "text": "상위 요구 REQ-CTL-02는 '센서 고장' 시 래치를 활성화한다고 쓰지만, REQ-CTL-02-2는 '입력 무효'를 조건으로 쓰고, REQ-CTL-01-6은 '입력 무효'를 센서 고장 플래그 설정 조건으로 쓴다. 세 요구가 같은 개념(센서 고장/입력 무효)을 서로 다른 용어로 가리킨다.",
+          "suggestion": "'센서 고장'과 '입력 무효'의 관계(동일 개념인지, 무효에 포함되는 하위 집합인지)를 정의하고 용어를 통일한다. 결정이 필요하다."
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "실현 가능성",
+      "verdict": "pass",
+      "summary": "세트 전체를 함께 만족시킬 수 없는 조합은 확인되지 않았다. 해제 경계(70.0 °C 미만)와 유지 경계(70.0 °C 이상), 래치 설정 경계(75.0 °C 이상)가 서로 맞게 배치되어 있다.",
+      "issues": []
+    },
+    {
+      "id": "C13",
+      "name": "이해 가능성",
+      "verdict": "partial",
+      "summary": "상위·하위 구조(REQ-CTL-01~04와 세부 요구)가 잘 묶여 있다. 다만 '입력 유효', '입력 무효', '호출', '리셋 요청'의 의미를 정의하는 용어 설명이 없고, 중첩된 조건 구조(REQ-CTL-03-3, 03-4 등)가 읽기 어렵다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-01-2",
+            "REQ-CTL-03-1",
+            "REQ-CTL-02-3"
+          ],
+          "text": "'리셋 요청'이 상태(레벨)인지 이벤트(발생 순간)인지 정의되어 있지 않다. REQ-CTL-03-1은 '리셋 요청이 발생함'이라는 이벤트로 쓰고, REQ-CTL-02-3은 '리셋 요청'이라는 상태로 쓴다. '호출'과 '동일 호출'의 범위, '내부 상태'가 무엇인지도 정의되지 않았다.",
+          "suggestion": "용어 정의(리셋 요청의 신호 형태, 호출의 단위, 내부 상태의 목록)를 세트 앞부분에 추가한다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-02-4",
+            "REQ-CTL-03-3",
+            "REQ-CTL-03-4"
+          ],
+          "text": "WHILE·WHEN·IF가 중첩된 Complex 요구사항이 여러 개 있어, 상태 조건과 이벤트 조건을 한 번에 읽기 어렵다. 특히 REQ-CTL-03-4는 '리셋 요청' 하에서 래치를 설정하는데, 이것이 해제 요구 묶음(REQ-CTL-03) 아래 있어 구조상 의도가 드러나지 않는다.",
+          "suggestion": "조건을 '입력 판정', '래치 설정', '래치 해제' 묶음으로 재배치하고, 복합 조건은 조건 표(진리표)로 함께 제시하는 방안을 검토한다."
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "name": "타당성 확인 가능성",
+      "verdict": "partial",
+      "summary": "모든 요구사항에 인수 기준이 있고 경계값(−40.0, 70.0, 75.0, 150.0 °C)이 대체로 검증 가능하다. 다만 '내부 상태 갱신', '복귀 조건', '래치 = 활성 유지 가능' 같은 표현은 주관적이며, 신호 표의 최소·최대값과 초기값이 비어 있어 검증 기준을 확인할 수 없다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-01-2",
+            "REQ-CTL-01-8",
+            "REQ-CTL-02"
+          ],
+          "text": "REQ-CTL-01-2의 '입력을 평가하고 출력과 내부 상태를 갱신한다'는 어떤 내부 상태를 어떤 값으로 갱신하는지 정해져 있지 않아 검증 기준이 주관적이다. REQ-CTL-01-8의 인수 기준 '래치 = 활성 유지 가능'도 '가능'이라 판정 결과가 하나로 정해지지 않는다. REQ-CTL-02 상위 요구의 '복귀 조건'도 하위 요구가 구체화하기 전까지 검증할 수 없다.",
+          "suggestion": "갱신 대상 내부 상태를 목록으로 명시하고, '가능'을 '유지된다' 또는 '해제되지 않는다' 같은 단정형으로 바꾼다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01-4",
+            "REQ-CTL-01-5",
+            "REQ-CTL-02-1"
+          ],
+          "text": "신호 표의 temp_c 최소·최대(min/max)가 비어 있어 온도 입력 범위와 판정 기준(−40.0 °C, 150.0 °C)을 신호 표에서 확인할 수 없다. 또한 sensor_valid, reset_request의 초기값과 reset_request의 단위('?')도 비어 있다.",
+          "suggestion": "신호 표에 temp_c의 min/max(센서 측정 범위와 요구 경계의 관계 포함), sensor_valid·reset_request의 초기값을 채운다. 값은 요구사항과 일치시키며, 결정이 필요하다."
+        }
+      ]
+    },
+    {
+      "id": "C15",
+      "name": "정확성",
+      "verdict": "partial",
+      "summary": "상위 요구와 하위 요구의 구조는 맞지만, 일부 하위 요구(REQ-CTL-03-1, REQ-CTL-03-2, REQ-CTL-02-3)는 원문 출처(SW-010~SW-012)와 다르게 변경되었다. 출처 문서가 함께 갱신되었는지 확인되지 않았고, 과열 개념과 입력 무효 개념의 대응도 명확하지 않다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-03-1",
+            "REQ-CTL-03-2",
+            "REQ-CTL-02-3",
+            "REQ-CTL-03"
+          ],
+          "text": "해제 경계가 '이하'에서 '미만'으로, 유지 조건이 '초과'에서 '이상'으로 바뀌었다(70.0 °C 처리 변경). 변경은 사용자 요청으로 표시되어 있으나 상위 출처(SW-010~SW-012)는 원문 그대로이다. 출처와 하위 요구가 어긋난 상태로 남아 있어 추적성이 깨진다.",
+          "suggestion": "출처 요구사항(SW-010~SW-012)을 같은 경계 기준으로 갱신하거나, 변경 근거와 승인 기록을 추적 정보에 남긴다. 승인 여부는 결정이 필요하다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-02",
+            "REQ-CTL-02-2",
+            "REQ-CTL-02-1"
+          ],
+          "text": "상위 요구는 '과열'을 정지 래치의 조건으로 쓰지만, 하위 요구에서 과열은 온도 75.0 °C 이상(REQ-CTL-02-1)이고, 150.0 °C 초과는 '입력 무효'(REQ-CTL-02-2)로 처리된다. 과열과 센서 고장/입력 무효의 대응이 상위 의도와 일치하는지 확인되지 않는다.",
+          "suggestion": "과열 기준(75.0 °C)과 센서 고장(입력 무효) 기준을 상위 의도와 대조하여 정의를 확정한다. 결정이 필요하다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-03-4"
+          ],
+          "text": "REQ-CTL-03-4는 리셋 요청이 발생한 호출에서 조건이 맞으면 래치를 활성으로 설정한다고 요구한다. 래치 설정 조건은 REQ-CTL-02-1, REQ-CTL-02-2에서 이미 정의되어 있으므로, 리셋 요청을 조건으로 한 중복이거나 의도가 다른 요구일 수 있다. 상위 해제 요구(REQ-CTL-03)의 취지와도 맞지 않는다.",
+          "suggestion": "REQ-CTL-03-4가 기존 설정 조건과 다른 의도(예: 리셋이 래치를 해제하지 못하게 막는 것)를 가졌는지 출처와 대조하고, 필요 없으면 통합하거나 삭제한다."
+        }
+      ]
+    }
+  ],
+  "dropped": [],
+  "counts": {
+    "pass": 1,
+    "partial": 5,
+    "fail": 0,
+    "none": 0,
+    "issues": 12
+  },
+  "passed": true
+}

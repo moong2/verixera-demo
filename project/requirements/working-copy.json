@@ -1,0 +1,481 @@
+{
+ "schema": "ears-working-copy/v1",
+ "note": "웹앱의 작업 중 요구사항(고정하기 전의 트리) — 프로젝트를 열 때 불러온다. 승인된 요구사항은 BL-*.baseline.json 이다",
+ "project": "project",
+ "based_on": "BL-004",
+ "updated_at": "2026-11-23T02:26:54.388Z",
+ "requirements": [
+  {
+   "id": "REQ-CTL-01",
+   "text": "the 제어기 shall 온도 센서 입력의 유효성을 판정하여 센서 고장 플래그에 반영한다.",
+   "type": "Ubiquitous",
+   "parent": null,
+   "summary": "온도 입력 유효성 감시",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "제어 함수 호출마다 센서 고장 플래그가 입력 유효성 판정 결과와 일치한다"
+   ],
+   "source": "SW-001~SW-007 상위 요구",
+   "ltl": "□(sensor_fault ↔ input_invalid)",
+   "ltlText": "G(sensor_fault <-> input_invalid)"
+  },
+  {
+   "id": "REQ-CTL-01-1",
+   "text": "WHEN 제어기가 초기화되면, the 제어기 shall 정지 명령, 센서 고장 플래그, 정지 래치를 각각 False로 설정한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-01",
+   "summary": "초기화 시 출력·래치 False",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "초기화 직후 정지 명령 = False",
+    "초기화 직후 센서 고장 플래그 = False",
+    "초기화 직후 정지 래치 = False"
+   ],
+   "source": "SW-001",
+   "ltl": "□(controller_initialized → ○(¬stop_cmd ∧ ¬sensor_fault ∧ ¬stop_latch))",
+   "ltlText": "G(controller_initialized -> X(!stop_cmd & !sensor_fault & !stop_latch))"
+  },
+  {
+   "id": "REQ-CTL-01-2",
+   "text": "WHEN 제어 함수가 호출되면, the 제어기 shall 동일 호출 내에서 입력을 평가하고 출력과 내부 상태를 갱신한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-01",
+   "summary": "호출 내 평가 및 갱신",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "제어 함수 1회 호출이 끝나면 그 호출의 입력이 평가되어 있다",
+    "같은 호출이 끝나면 출력과 내부 상태가 갱신되어 있다"
+   ],
+   "source": "SW-002",
+   "ltl": "□(control_called → (input_evaluated ∧ outputs_state_updated))",
+   "ltlText": "G(control_called -> (input_evaluated & outputs_state_updated))"
+  },
+  {
+   "id": "REQ-CTL-01-3",
+   "text": "IF 센서 유효성 플래그가 False이면, THEN the 제어기 shall 온도값과 무관하게 입력을 무효로 판정한다.",
+   "type": "Unwanted Behaviour",
+   "parent": "REQ-CTL-01",
+   "summary": "센서 플래그 False면 무효",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "센서 유효성 플래그 = False이고 온도 25.0 °C이면 입력 무효",
+    "센서 유효성 플래그 = False이고 온도가 범위 밖이어도 입력 무효"
+   ],
+   "source": "SW-003",
+   "ltl": "□(¬sensor_valid_flag → input_invalid)",
+   "ltlText": "G(!sensor_valid_flag -> input_invalid)"
+  },
+  {
+   "id": "REQ-CTL-01-4",
+   "text": "IF [온도값이 유한하지 않음 OR 온도값이 −40.0 °C 미만이거나 150.0 °C 초과], THEN the 제어기 shall 센서 유효성 플래그 값과 무관하게 입력을 무효로 판정한다.",
+   "type": "Unwanted Behaviour",
+   "parent": "REQ-CTL-01",
+   "summary": "비유한·범위 밖 온도면 무효",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "온도 = NaN이고 플래그 True이면 입력 무효",
+    "온도 = +∞ 또는 −∞이고 플래그 True이면 입력 무효",
+    "온도 < −40.0 °C이고 플래그 True이면 입력 무효",
+    "온도 > 150.0 °C이고 플래그 True이면 입력 무효"
+   ],
+   "source": "SW-004",
+   "ltl": "□((¬temp_finite ∨ ¬temp_in_range) → input_invalid)",
+   "ltlText": "G((!temp_finite | !temp_in_range) -> input_invalid)"
+  },
+  {
+   "id": "REQ-CTL-01-5",
+   "text": "WHEN [센서 유효성 플래그가 True AND 온도값이 유한함 AND 온도값이 −40.0 °C 이상 150.0 °C 이하], the 제어기 shall 입력을 유효로 판정한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-01",
+   "summary": "세 조건 충족 시에만 유효",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "플래그 True, 온도 25.0 °C이면 입력 유효",
+    "플래그 True, 온도 −40.0 °C이면 입력 유효",
+    "플래그 True, 온도 150.0 °C이면 입력 유효",
+    "세 조건 중 하나라도 불충족이면 입력 유효가 아님"
+   ],
+   "source": "SW-005",
+   "ltl": "□(input_valid ↔ (sensor_valid_flag ∧ temp_finite ∧ temp_in_range))",
+   "ltlText": "G(input_valid <-> (sensor_valid_flag & temp_finite & temp_in_range))"
+  },
+  {
+   "id": "REQ-CTL-01-6",
+   "text": "WHEN 제어 함수 호출에서 입력이 무효로 판정되면, the 제어기 shall 센서 고장 플래그를 True로 설정한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-01",
+   "summary": "무효 입력 시 고장 플래그 True",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "입력이 무효로 판정된 호출에서 센서 고장 플래그 = True"
+   ],
+   "source": "SW-006",
+   "ltl": "□(input_invalid → sensor_fault)",
+   "ltlText": "G(input_invalid -> sensor_fault)"
+  },
+  {
+   "id": "REQ-CTL-01-7",
+   "text": "WHEN 제어 함수 호출에서 입력이 유효로 판정되면, the 제어기 shall 센서 고장 플래그를 False로 설정한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-01",
+   "summary": "유효 입력 시 고장 플래그 False",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "입력이 유효로 판정된 호출에서 센서 고장 플래그 = False",
+    "직전 호출에서 True였더라도 유효 입력이면 False로 복귀"
+   ],
+   "source": "SW-007",
+   "ltl": "□(input_valid → ¬sensor_fault)",
+   "ltlText": "G(input_valid -> !sensor_fault)"
+  },
+  {
+   "id": "REQ-CTL-01-8",
+   "text": "WHEN 직전 호출에서 무효였던 입력이 현재 호출에서 유효로 판정되면, the 제어기 shall 정지 래치 상태와 무관하게 센서 고장 플래그를 False로 설정한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-01",
+   "summary": "센서 복구 시 고장 플래그 False",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "직전 무효, 현재 유효, 래치 활성이면 센서 고장 플래그 = False이고 래치 = 활성 유지 가능",
+    "직전 무효, 현재 유효, 래치 비활성이면 센서 고장 플래그 = False"
+   ],
+   "source": "SW-016",
+   "ltl": "□((input_invalid ∧ ○input_valid) → ○¬sensor_fault)",
+   "ltlText": "G((input_invalid & X(input_valid)) -> X(!sensor_fault))"
+  },
+  {
+   "id": "REQ-CTL-02",
+   "text": "the 제어기 shall 과열 또는 센서 고장 시 정지 래치를 활성화하고 복귀 조건 전까지 활성 상태로 유지한다.",
+   "type": "Ubiquitous",
+   "parent": null,
+   "summary": "과열·고장 시 정지 래치 보호",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "정지 조건이 성립한 호출 종료 시 정지 래치가 활성 상태이다"
+   ],
+   "source": "SW-008~SW-010, SW-017 상위 요구",
+   "ltl": "□((overtemp_detected ∨ input_invalid) → stop_latch)",
+   "ltlText": "G((overtemp_detected | input_invalid) -> stop_latch)"
+  },
+  {
+   "id": "REQ-CTL-02-1",
+   "text": "WHEN 제어 함수 호출에서 [입력이 유효함 AND 온도값이 75.0 °C 이상], the 제어기 shall 감지 센서의 활성 여부와 무관하게 동일 호출에서 정지 래치를 활성화한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-02",
+   "summary": "유효 75.0 °C 이상이면 감지 무관 래치 활성",
+   "status": "confirmed",
+   "draftReason": "",
+   "missingInfo": [],
+   "acceptanceCriteria": [
+    "유효 입력 75.0 °C이면 같은 호출에서 정지 래치 = 활성",
+    "유효 입력 74.9 °C이면 이 요구로는 래치가 활성화되지 않음",
+    "유효 입력 150.0 °C이면 정지 래치 = 활성",
+    "감지 센서 비활성, 유효 75.0 °C이면 같은 호출에서 정지 래치 = 활성",
+    "감지 센서 활성, 유효 75.0 °C이면 같은 호출에서 정지 래치 = 활성"
+   ],
+   "source": "SW-008",
+   "ltl": "□(overtemp_detected → stop_latch)",
+   "ltlText": "G(overtemp_detected -> stop_latch)",
+   "ltlExplanation": "유효한 입력이 75.0 °C 이상이어서 과열이 감지된 호출이 끝났을 때 정지 래치는 항상 활성 상태이며, 감지 센서의 활성 여부는 이 결과에 영향을 주지 않는다.",
+   "propositions": [
+    {
+     "name": "overtemp_detected",
+     "desc": "입력이 유효하고 온도값이 75.0 °C 이상임"
+    },
+    {
+     "name": "stop_latch",
+     "desc": "제어 함수 호출 종료 시 정지 래치가 활성 상태임"
+    }
+   ]
+  },
+  {
+   "id": "REQ-CTL-02-2",
+   "text": "IF 제어 함수 호출에서 입력이 무효로 판정되면, THEN the 제어기 shall 동일 호출에서 정지 래치를 활성화한다.",
+   "type": "Unwanted Behaviour",
+   "parent": "REQ-CTL-02",
+   "summary": "무효 입력이면 래치 활성",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "센서 유효성 플래그 = False이면 같은 호출에서 정지 래치 = 활성",
+    "온도 = NaN이면 정지 래치 = 활성",
+    "온도 > 150.0 °C이면 정지 래치 = 활성"
+   ],
+   "source": "SW-009",
+   "ltl": "□(input_invalid → stop_latch)",
+   "ltlText": "G(input_invalid -> stop_latch)"
+  },
+  {
+   "id": "REQ-CTL-02-3",
+   "text": "WHILE 정지 래치가 활성 상태이면, the 제어기 shall [리셋 요청 AND 입력 유효 AND 온도값 70.0 °C 미만]이 충족되는 호출 전까지 정지 래치를 활성 상태로 유지한다.",
+   "type": "State-driven",
+   "parent": "REQ-CTL-02",
+   "summary": "래치 활성 유지",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "래치 활성, 리셋 요청 없음이면 다음 호출에서도 래치 = 활성",
+    "래치 활성, 리셋 요청, 유효 69.9 °C이면 해제 허용",
+    "래치 활성, 리셋 요청, 유효 70.0 °C이면 래치 = 활성"
+   ],
+   "source": "SW-010 (해제 경계 70.0 °C 미만 변경 반영)",
+   "ltl": "□(stop_latch → ○(stop_latch ∨ reset_release_condition))",
+   "ltlText": "G(stop_latch -> X(stop_latch | reset_release_condition))"
+  },
+  {
+   "id": "REQ-CTL-02-4",
+   "text": "WHILE 정지 래치가 비활성 상태이면, WHEN 제어 함수 호출에서 [입력이 유효함 AND 온도값이 75.0 °C 미만], the 제어기 shall 리셋 요청 여부와 무관하게 정지 래치를 비활성 상태로 유지한다.",
+   "type": "Complex",
+   "parent": "REQ-CTL-02",
+   "summary": "리셋 무관 정상 구간 래치 비활성 유지",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "래치 비활성, 유효 74.9 °C, 리셋 없음이면 래치 = 비활성",
+    "래치 비활성, 유효 −40.0 °C, 리셋 없음이면 래치 = 비활성",
+    "래치 비활성, 리셋 요청, 유효 74.9 °C이면 래치 = 비활성"
+   ],
+   "source": "SW-017",
+   "ltl": "□((¬stop_latch ∧ ○(input_valid ∧ temp_below_75)) → ○¬stop_latch)",
+   "ltlText": "G((!stop_latch & X(input_valid & temp_below_75)) -> X(!stop_latch))"
+  },
+  {
+   "id": "REQ-CTL-03",
+   "text": "the 제어기 shall 리셋 해제 조건이 충족될 때에만 정지 래치를 해제한다.",
+   "type": "Ubiquitous",
+   "parent": null,
+   "summary": "정해진 조건에서만 래치 해제",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "정지 래치가 활성에서 비활성으로 바뀐 호출에서는 반드시 리셋 해제 조건이 충족되어 있다"
+   ],
+   "source": "SW-011~SW-014 상위 요구 (해제 경계 70.0 °C 미만 변경 반영)",
+   "ltl": "□((stop_latch ∧ ○¬stop_latch) → ○reset_release_condition)",
+   "ltlText": "G((stop_latch & X(!stop_latch)) -> X(reset_release_condition))"
+  },
+  {
+   "id": "REQ-CTL-03-1",
+   "text": "WHEN [리셋 요청이 발생함 AND 입력이 유효함 AND 온도값이 70.0 °C 미만], the 제어기 shall 정지 래치를 해제한다.",
+   "type": "Event-driven",
+   "parent": "REQ-CTL-03",
+   "summary": "리셋 조건 충족 시 래치 해제",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "래치 활성, 리셋 요청, 유효 69.9 °C이면 래치 = 비활성",
+    "래치 활성, 리셋 요청, 유효 −40.0 °C이면 래치 = 비활성",
+    "래치 활성, 리셋 요청, 유효 70.0 °C이면 래치 = 활성"
+   ],
+   "source": "SW-011 (사용자 변경: 이하 → 미만, 원문과 상이)",
+   "ltl": "□(reset_release_condition → ¬stop_latch)",
+   "ltlText": "G(reset_release_condition -> !stop_latch)"
+  },
+  {
+   "id": "REQ-CTL-03-2",
+   "text": "WHILE 정지 래치가 활성 상태이면, IF [입력이 유효함 AND 온도값이 70.0 °C 이상], THEN the 제어기 shall 리셋 요청 여부와 무관하게 정지 래치를 활성 상태로 유지한다.",
+   "type": "Complex",
+   "parent": "REQ-CTL-03",
+   "summary": "70.0 °C 이상 시 래치 유지",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "래치 활성, 리셋 요청, 유효 70.0 °C이면 래치 = 활성",
+    "래치 활성, 리셋 요청, 유효 70.1 °C이면 래치 = 활성",
+    "래치 활성, 리셋 요청, 유효 74.9 °C이면 래치 = 활성",
+    "래치 활성, 리셋 요청, 유효 150.0 °C이면 래치 = 활성"
+   ],
+   "source": "SW-012 (사용자 변경: 초과 → 이상, 원문과 상이)",
+   "ltl": "□((stop_latch ∧ ○(input_valid ∧ temp_at_least_70)) → ○stop_latch)",
+   "ltlText": "G((stop_latch & X(input_valid & temp_at_least_70)) -> X(stop_latch))"
+  },
+  {
+   "id": "REQ-CTL-03-3",
+   "text": "WHILE 정지 래치가 활성 상태이면, IF 입력이 무효로 판정되면, THEN the 제어기 shall 리셋 요청 여부와 무관하게 정지 래치를 활성 상태로 유지한다.",
+   "type": "Complex",
+   "parent": "REQ-CTL-03",
+   "summary": "무효 입력 시 래치 유지",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "래치 활성, 리셋 요청, 센서 유효성 플래그 = False이면 래치 = 활성",
+    "래치 활성, 리셋 요청, 온도 = NaN이면 래치 = 활성"
+   ],
+   "source": "SW-013",
+   "ltl": "□((stop_latch ∧ ○input_invalid) → ○stop_latch)",
+   "ltlText": "G((stop_latch & X(input_invalid)) -> X(stop_latch))"
+  },
+  {
+   "id": "REQ-CTL-03-4",
+   "text": "WHEN 동일 호출에서 리셋 요청이 발생하면, IF [입력이 유효하고 온도값이 75.0 °C 이상이거나 입력이 무효임], THEN the 제어기 shall 정지 래치를 활성 상태로 설정한다.",
+   "type": "Complex",
+   "parent": "REQ-CTL-03",
+   "summary": "정지 조건과 리셋 동시 시 정지 우선",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "리셋 요청과 유효 75.0 °C가 같은 호출이면 래치 = 활성",
+    "리셋 요청과 입력 무효가 같은 호출이면 래치 = 활성"
+   ],
+   "source": "SW-014",
+   "ltl": "□((reset_request ∧ (overtemp_detected ∨ input_invalid)) → stop_latch)",
+   "ltlText": "G((reset_request & (overtemp_detected | input_invalid)) -> stop_latch)"
+  },
+  {
+   "id": "REQ-CTL-04",
+   "text": "WHEN 제어 함수 호출이 종료되면, the 제어기 shall 정지 명령 출력을 정지 래치 상태와 동일하게 설정한다.",
+   "type": "Event-driven",
+   "parent": null,
+   "summary": "정지 명령 = 정지 래치",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "호출 종료 시 래치 = 활성이면 정지 명령 = True",
+    "호출 종료 시 래치 = 비활성이면 정지 명령 = False"
+   ],
+   "source": "SW-015",
+   "ltl": "□(control_returned → (stop_command ↔ stop_latch))",
+   "ltlText": "G(control_returned -> (stop_command <-> stop_latch))"
+  }
+ ],
+ "signals": [
+  {
+   "name": "reset_request",
+   "direction": "input",
+   "type": "bool",
+   "unit": "-",
+   "min": "",
+   "max": "",
+   "initial": "",
+   "description": "리셋 요청",
+   "requirements": [
+    "REQ-CTL-02-3",
+    "REQ-CTL-02-4",
+    "REQ-CTL-03-1",
+    "REQ-CTL-03-2",
+    "REQ-CTL-03-3",
+    "REQ-CTL-03-4"
+   ]
+  },
+  {
+   "name": "sensor_fault",
+   "direction": "internal",
+   "type": "bool",
+   "unit": "-",
+   "min": "",
+   "max": "",
+   "initial": "false",
+   "description": "센서 고장 플래그",
+   "requirements": [
+    "REQ-CTL-01-1",
+    "REQ-CTL-01-6",
+    "REQ-CTL-01-7",
+    "REQ-CTL-01-8"
+   ]
+  },
+  {
+   "name": "sensor_valid",
+   "direction": "input",
+   "type": "bool",
+   "unit": "-",
+   "min": "",
+   "max": "",
+   "initial": "",
+   "description": "센서 유효성 플래그",
+   "requirements": [
+    "REQ-CTL-01-3",
+    "REQ-CTL-01-4",
+    "REQ-CTL-01-5"
+   ]
+  },
+  {
+   "name": "stop_cmd",
+   "direction": "output",
+   "type": "bool",
+   "unit": "-",
+   "min": "",
+   "max": "",
+   "initial": "false",
+   "description": "정지 명령. 호출 종료 시 정지 래치와 같다",
+   "requirements": [
+    "REQ-CTL-01-1",
+    "REQ-CTL-04"
+   ]
+  },
+  {
+   "name": "stop_latch",
+   "direction": "internal",
+   "type": "bool",
+   "unit": "-",
+   "min": "",
+   "max": "",
+   "initial": "false",
+   "description": "정지 래치 (true = 활성)",
+   "requirements": [
+    "REQ-CTL-01-1",
+    "REQ-CTL-02-1",
+    "REQ-CTL-02-2",
+    "REQ-CTL-02-3",
+    "REQ-CTL-02-4",
+    "REQ-CTL-03-1",
+    "REQ-CTL-03-2",
+    "REQ-CTL-03-3",
+    "REQ-CTL-03-4",
+    "REQ-CTL-04"
+   ]
+  },
+  {
+   "name": "temp_c",
+   "direction": "input",
+   "type": "double",
+   "unit": "°C",
+   "min": "",
+   "max": "",
+   "initial": "",
+   "description": "측정 온도. NaN·±∞ 가능",
+   "requirements": [
+    "REQ-CTL-01-3",
+    "REQ-CTL-01-4",
+    "REQ-CTL-01-5",
+    "REQ-CTL-02-1",
+    "REQ-CTL-02-2",
+    "REQ-CTL-02-3",
+    "REQ-CTL-02-4",
+    "REQ-CTL-03-1",
+    "REQ-CTL-03-2",
+    "REQ-CTL-03-3",
+    "REQ-CTL-03-4"
+   ]
+  },
+  {
+   "name": "detect_active",
+   "direction": "input",
+   "type": "bool",
+   "unit": "-",
+   "min": "",
+   "max": "",
+   "initial": "",
+   "description": "감지 센서 활성 상태 (true = 활성)",
+   "requirements": [
+    "REQ-CTL-02-1"
+   ]
+  },
+  {
+   "name": "input_valid",
+   "direction": "internal",
+   "type": "bool",
+   "unit": "-",
+   "min": "",
+   "max": "",
+   "initial": "",
+   "description": "입력 유효 판정 결과 (true = 유효, false = 무효)",
+   "requirements": [
+    "REQ-CTL-01-3",
+    "REQ-CTL-01-4",
+    "REQ-CTL-01-5",
+    "REQ-CTL-01-6",
+    "REQ-CTL-01-7",
+    "REQ-CTL-01-8",
+    "REQ-CTL-02-1",
+    "REQ-CTL-02-2",
+    "REQ-CTL-02-3",
+    "REQ-CTL-02-4",
+    "REQ-CTL-03-1",
+    "REQ-CTL-03-2",
+    "REQ-CTL-03-3",
+    "REQ-CTL-03-4"
+   ]
+  }
+ ]
+}

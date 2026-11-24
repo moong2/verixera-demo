@@ -1,0 +1,152 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261119T053809Z-d506",
+  "role": "code",
+  "created_at": "2026-11-19T05:38:09.860Z",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "baseline_id": "BL-002",
+  "baseline_hash": "sha256:30c99ead3af263a044e32308c20cede222ee5a2037aa853b016a33751cce4418",
+  "requirements": [
+    "REQ-CTL-02-3@v2",
+    "REQ-CTL-03-1@v2",
+    "REQ-CTL-03-2@v2"
+  ],
+  "signals": [
+    "reset_request@v1",
+    "sensor_fault@v1",
+    "sensor_valid@v1",
+    "stop_cmd@v1",
+    "stop_latch@v1",
+    "temp_c@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [
+    {
+      "name": "automotive-c-coding-rules",
+      "path": "docs/coding-rules/automotive-c-coding-rules/SKILL.md",
+      "sha256": "sha256:a1b8a0088e687e6ae03334ebd8050cb1982bb5b26d81760891ccc4bc98545f13"
+    }
+  ],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:32ebb52dd7d30daf475127a6dbe81a40604fa82070593f6347d526267df1f4ce"
+  },
+  "prompt_sha256": "sha256:fd161b4eaa556676a817256bf0840cb594e449f531929383897bfd55a05b5c02",
+  "response_sha256": "sha256:26e177e5bc8108b0f789402214d68befd005f4fc54e3905cdd9ec3323d6afa15",
+  "inputs": [
+    {
+      "path": "docs/design/controller.md",
+      "sha256": "sha256:4dcf6face790ebbc71b61931e1a4dbce7dd46eadde31e02757e0d8fbab68b772"
+    },
+    {
+      "path": "src/controller.c",
+      "sha256": "sha256:6aae41d24b03fc9527b093ea246606545393389e2c0fc7a5482266a9e3086559"
+    },
+    {
+      "path": "src/controller.h",
+      "sha256": "sha256:51b8d699d396d159b480b30a7f13a4b717f9fd7f5172c64136745c672e6b5852"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "sha256:bfe9905936cb335a0f0498890fbef82a6082a9dde586f3bd4ca50b0caf0bd332"
+    }
+  ],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "docs/design/controller.md",
+      "action": "modified",
+      "sha256": "sha256:c353706577591b6b70910acc44a4e122a043c41fb56b06b2aa9370305b03541f"
+    },
+    {
+      "path": "src/controller.c",
+      "action": "modified",
+      "sha256": "sha256:31145d5e93461194214699337911cf58e7c5c946301f2827a4c3f0a65203601d"
+    }
+  ],
+  "report": {
+    "implemented": [
+      {
+        "requirement": "REQ-CTL-02-3@v2",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-1@v2",
+        "design_items": [
+          "SWD-CTL-009"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-2@v2",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      }
+    ],
+    "not_implemented": [],
+    "questions": [],
+    "assumptions": [
+      "v2 변경의 핵심은 정지 래치 해제 온도 경계다. 기존 '70.0 °C 이하'(<=)를 '70.0 °C 미만'(<)으로 고쳤고, 70.0 °C 는 리셋 요청이 있어도 활성 유지가 된다.",
+      "SWD-CTL-008 은 고르지 않은 REQ-CTL-02-4@v1, REQ-CTL-03-3@v1 도 함께 만족하는 공유 설계 항목이다. 그 두 요구사항의 동작은 바꾸지 않고, 태그만 02-3@v2, 03-2@v2 로 올렸다.",
+      "요청 밖 추가: 설계 문서 1.3절의 '신호 표 초안'을 승인된 신호 표에 맞춘 @signal 선언(여섯 신호, 모두 @v1)으로 바꿨다. 추적 점검의 T12 오류를 해소하기 위한 것이며, 코드 동작은 바뀌지 않는다.",
+      "설계 문서 머리말의 대상 Baseline 을 BL-001 에서 BL-002 로 고쳤다. 버전이 오르지 않은 다른 요구사항의 설계 항목은 그대로 두었다."
+    ],
+    "standards": []
+  },
+  "scope_out": [
+    {
+      "where": "docs/design/controller.md: SWD-CTL-010",
+      "verb": "바꿈",
+      "requirements": [
+        "REQ-CTL-04"
+      ]
+    }
+  ],
+  "warnings": [
+    "src/controller.c:ctl_next_latch() — 고르지 않은 REQ-CTL-02-1, REQ-CTL-02-2, REQ-CTL-02-4, REQ-CTL-03-3, REQ-CTL-03-4 도 쓰는 것을 바꿈 (그 요구사항의 시험도 다시 실행해야 함)",
+    "docs/design/controller.md: SWD-CTL-008 — 고르지 않은 REQ-CTL-02-4, REQ-CTL-03-3 도 쓰는 것을 바꿈 (그 요구사항의 시험도 다시 실행해야 함)",
+    "docs/design/controller.md: SWD-CTL-010 — 고르지 않은 REQ-CTL-04 의 것을 바꿈"
+  ],
+  "scope_approval": {
+    "requirements": [
+      "REQ-CTL-04"
+    ],
+    "items": [
+      {
+        "where": "docs/design/controller.md: SWD-CTL-010",
+        "verb": "바꿈",
+        "requirements": [
+          "REQ-CTL-04"
+        ]
+      }
+    ],
+    "approved_by": "HJ",
+    "approved_at": "2026-11-19T05:39:01.544Z"
+  },
+  "applied_at": "2026-11-19T05:39:01.544Z"
+}

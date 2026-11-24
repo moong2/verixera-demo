@@ -1,0 +1,117 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261121T030529Z-d140",
+  "role": "code",
+  "created_at": "2026-11-21T03:05:29.348Z",
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "baseline_id": "BL-003",
+  "baseline_hash": "sha256:1f23fcb84fcff35641ae81dfca6b52551d1ae8cd538a08fe076fe754d65a88ba",
+  "requirements": [
+    "REQ-CTL-02-4@v2",
+    "REQ-CTL-04@v1"
+  ],
+  "signals": [
+    "reset_request@v1",
+    "sensor_fault@v1",
+    "sensor_valid@v1",
+    "stop_cmd@v1",
+    "stop_latch@v1",
+    "temp_c@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [
+    {
+      "name": "automotive-c-coding-rules",
+      "path": "docs/coding-rules/automotive-c-coding-rules/SKILL.md",
+      "sha256": "sha256:a1b8a0088e687e6ae03334ebd8050cb1982bb5b26d81760891ccc4bc98545f13"
+    }
+  ],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:bd1c990a6265255a63c515e7c9828fe71a27b7855df2c0571997ad2bb7f843f7"
+  },
+  "prompt_sha256": "sha256:334765d11562b07289bec255188942f40e7ec5dbe3e7f2197491953e1799570e",
+  "response_sha256": "sha256:dae313def096785a3fb3afe88657d8e2c22c67657894f06f53c9993d13b32e14",
+  "inputs": [
+    {
+      "path": "docs/design/controller.md",
+      "sha256": "sha256:c353706577591b6b70910acc44a4e122a043c41fb56b06b2aa9370305b03541f"
+    },
+    {
+      "path": "src/controller.c",
+      "sha256": "sha256:a668f8500f8d8aa0f6b38457bee2e427ea98c534be17e5a5535efb73e9b0ca8f"
+    },
+    {
+      "path": "src/controller.h",
+      "sha256": "sha256:51b8d699d396d159b480b30a7f13a4b717f9fd7f5172c64136745c672e6b5852"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "sha256:bfe9905936cb335a0f0498890fbef82a6082a9dde586f3bd4ca50b0caf0bd332"
+    }
+  ],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "docs/design/controller.md",
+      "action": "modified",
+      "sha256": "sha256:e80e1d603daf300c81ae6cbc6562ac22807870f977b9409b936b5c01072a68ad"
+    },
+    {
+      "path": "src/controller.c",
+      "action": "modified",
+      "sha256": "sha256:42e2c6546eb801b3f678a25149c288dfc5e3ea2fb6d84fe952b352d2387731f1"
+    }
+  ],
+  "report": {
+    "implemented": [
+      {
+        "requirement": "REQ-CTL-02-4@v2",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-04@v1",
+        "design_items": [
+          "SWD-CTL-010"
+        ],
+        "functions": [
+          "src/controller.c:ctl_step"
+        ]
+      }
+    ],
+    "not_implemented": [],
+    "questions": [],
+    "assumptions": [
+      "기존 상태 전이식은 비활성·유효·75.0 °C 미만 조건에서 리셋 요청 여부와 무관하게 false를 유지하므로 기능 변경 없이 설계 설명과 현재 버전 추적 정보를 갱신했다.",
+      "기존 정지 명령 대입은 최종 래치 갱신 이후 수행되므로 유지했다.",
+      "기존 NULL 무동작 처리는 보존했으며, 새로운 고장 대응 동작으로 정하거나 승인한 것은 아니다.",
+      "선택하지 않은 요구사항만 구현하는 함수와 설계 항목은 변경하지 않았다. 헤더와 Makefile은 기존 내용을 유지한다."
+    ],
+    "standards": []
+  },
+  "warnings": [
+    "src/controller.c:ctl_next_latch() — 고르지 않은 REQ-CTL-02-1, REQ-CTL-02-2, REQ-CTL-02-3, REQ-CTL-03-1, REQ-CTL-03-2, REQ-CTL-03-3, REQ-CTL-03-4 도 쓰는 것을 바꿈 (그 요구사항의 시험도 다시 실행해야 함)",
+    "src/controller.c:ctl_step() — 고르지 않은 REQ-CTL-01-2 도 쓰는 것을 바꿈 (그 요구사항의 시험도 다시 실행해야 함)",
+    "docs/design/controller.md: SWD-CTL-008 — 고르지 않은 REQ-CTL-02-3, REQ-CTL-03-2, REQ-CTL-03-3 도 쓰는 것을 바꿈 (그 요구사항의 시험도 다시 실행해야 함)"
+  ],
+  "applied_at": "2026-11-21T03:05:40.219Z"
+}

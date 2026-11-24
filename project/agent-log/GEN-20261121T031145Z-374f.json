@@ -1,0 +1,200 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261121T031145Z-374f",
+  "role": "code",
+  "created_at": "2026-11-21T03:11:45.296Z",
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "baseline_id": "BL-003",
+  "baseline_hash": "sha256:1f23fcb84fcff35641ae81dfca6b52551d1ae8cd538a08fe076fe754d65a88ba",
+  "requirements": [
+    "REQ-CTL-02-1@v1",
+    "REQ-CTL-02-2@v1",
+    "REQ-CTL-02-3@v2",
+    "REQ-CTL-02-4@v2",
+    "REQ-CTL-03-1@v2",
+    "REQ-CTL-03-2@v2",
+    "REQ-CTL-03-3@v1",
+    "REQ-CTL-03-4@v1"
+  ],
+  "refined_excluded": [
+    "REQ-CTL-02@v1",
+    "REQ-CTL-03@v1"
+  ],
+  "signals": [
+    "reset_request@v1",
+    "sensor_fault@v1",
+    "sensor_valid@v1",
+    "stop_cmd@v1",
+    "stop_latch@v1",
+    "temp_c@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [
+    {
+      "name": "automotive-c-coding-rules",
+      "path": "docs/coding-rules/automotive-c-coding-rules/SKILL.md",
+      "sha256": "sha256:a1b8a0088e687e6ae03334ebd8050cb1982bb5b26d81760891ccc4bc98545f13"
+    }
+  ],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:bd1c990a6265255a63c515e7c9828fe71a27b7855df2c0571997ad2bb7f843f7"
+  },
+  "prompt_sha256": "sha256:238bed1472c5f71598d7a79fcec95a80e6b74029c5574d89bfa19d2e12ba7ce3",
+  "response_sha256": "sha256:3cf1702732d046d1fff32419cabe41f3cb21b0e19ab3f25a8e9d1fb9ef50c4b0",
+  "inputs": [
+    {
+      "path": "docs/design/controller.md",
+      "sha256": "sha256:94b4fb3c40f1a191bf04eee85e8ec03d7d8c6561f9d5c903e2ee3d3d08e41c05"
+    },
+    {
+      "path": "src/controller.c",
+      "sha256": "sha256:5f8f7f564aee7e8b11027899c1a0969f5fd54c0e3d71bc6cff3f801a622fbbaa"
+    },
+    {
+      "path": "src/controller.h",
+      "sha256": "sha256:51b8d699d396d159b480b30a7f13a4b717f9fd7f5172c64136745c672e6b5852"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "sha256:bfe9905936cb335a0f0498890fbef82a6082a9dde586f3bd4ca50b0caf0bd332"
+    }
+  ],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "docs/design/controller.md",
+      "action": "modified",
+      "sha256": "sha256:a21e14d12299b0c046606f4bf253f564df6a4bd22816a0bdcade270f940056c1"
+    }
+  ],
+  "report": {
+    "implemented": [
+      {
+        "requirement": "REQ-CTL-02-1@v1",
+        "design_items": [
+          "SWD-CTL-007"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-02-2@v1",
+        "design_items": [
+          "SWD-CTL-007"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-02-3@v2",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-02-4@v2",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-1@v2",
+        "design_items": [
+          "SWD-CTL-009"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-2@v2",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-3@v1",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-4@v1",
+        "design_items": [
+          "SWD-CTL-007"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch"
+        ]
+      }
+    ],
+    "not_implemented": [],
+    "questions": [],
+    "assumptions": [
+      "대상 요구사항은 제공된 기존 ctl_next_latch의 구현과 계약으로 이미 충족된다. implemented는 기존 구현의 검토 결과이며, 이번 산출물에서는 상세 설계만 보완했다.",
+      "선택하지 않은 요구사항 전용 설계 항목과 함수는 변경하지 않았다. 기존 소스·헤더·Makefile도 변경하지 않았다.",
+      "명령 실행 도구가 제공되지 않아 node tools/trace/trace-check.js --root targets/project 및 make -s test를 실행하지 못했다. 실제 명령 출력은 없으며 추적 점검·컴파일·시험·정적 분석 통과를 주장하지 않는다."
+    ],
+    "standards": []
+  },
+  "scope_out": [
+    {
+      "where": "docs/design/controller.md: SWD-CTL-010",
+      "verb": "바꿈",
+      "requirements": [
+        "REQ-CTL-04"
+      ]
+    }
+  ],
+  "warnings": [
+    "REQ-CTL-02 는 하위 요구사항으로 구체화된 상위 요구사항이라 대상에서 뺐습니다(하위 요구사항으로 검증됨).",
+    "REQ-CTL-03 는 하위 요구사항으로 구체화된 상위 요구사항이라 대상에서 뺐습니다(하위 요구사항으로 검증됨).",
+    "docs/design/controller.md: SWD-CTL-010 — 고르지 않은 REQ-CTL-04 의 것을 바꿈"
+  ],
+  "scope_approval": {
+    "requirements": [
+      "REQ-CTL-04"
+    ],
+    "items": [
+      {
+        "where": "docs/design/controller.md: SWD-CTL-010",
+        "verb": "바꿈",
+        "requirements": [
+          "REQ-CTL-04"
+        ]
+      }
+    ],
+    "approved_by": "HJ",
+    "approved_at": "2026-11-21T03:12:02.225Z"
+  },
+  "applied_at": "2026-11-21T03:12:02.225Z"
+}

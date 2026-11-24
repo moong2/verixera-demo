@@ -1,0 +1,307 @@
+{
+  "schema": "requirement-set-check/v1",
+  "id": "SETCHECK-20261119T051217Z-25fe",
+  "created_at": "2026-11-19T05:12:17.460Z",
+  "requested_by": "HJ",
+  "agent": {
+    "role": "requirements-set-check",
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5"
+  },
+  "inputs": {
+    "conversation": false,
+    "writer_notes": false,
+    "signals": 0
+  },
+  "prompt_hash": "sha256:fd13d6c26f771e965af31f6af8005927481327c7ab692e701309a450aa2b4235",
+  "output_hash": "sha256:b2c23ee9ad98da8f0403c06e203205001ddb55e16d3c08311dd5facbb3164d26",
+  "requirements": [
+    {
+      "id": "REQ-CTL-01",
+      "content_hash": "sha256:856c88cd50e73acc64b17a1f87a63e2b35de7838e28dae68f837588333fb77ee"
+    },
+    {
+      "id": "REQ-CTL-01-1",
+      "content_hash": "sha256:bf7ed54438944f88fa1cd3d2f8c38704bc17dbfc72841e5d194fa96654724361"
+    },
+    {
+      "id": "REQ-CTL-01-2",
+      "content_hash": "sha256:918b88a344714c2adb17f92d4ff4721425fabb9b892308359a64dd92c13bf635"
+    },
+    {
+      "id": "REQ-CTL-01-3",
+      "content_hash": "sha256:82418272fee81ec9adf8abbe4f548df623ff56be32c3e4ec320d087964d88085"
+    },
+    {
+      "id": "REQ-CTL-01-4",
+      "content_hash": "sha256:f8c5f5be8f5f732a0b5da07a19cc518c36229cec2f86f929c04ab260563bf846"
+    },
+    {
+      "id": "REQ-CTL-01-5",
+      "content_hash": "sha256:3426e92458a3baa743ffb7cce717e49efc249bba736dbcfac8039d71a36e790e"
+    },
+    {
+      "id": "REQ-CTL-01-6",
+      "content_hash": "sha256:cf79312042bf7abb7060e672055815fca9b9cb7c170734c6c17ec304301d8346"
+    },
+    {
+      "id": "REQ-CTL-01-7",
+      "content_hash": "sha256:824e59f88b1588dcdbce7722b655f82c9815f67095130ca2c6345da3d35d180e"
+    },
+    {
+      "id": "REQ-CTL-02",
+      "content_hash": "sha256:922342372b72c4a02f151d4f3399732dbaec08295cac5dd459a8bee6e33cf33c"
+    },
+    {
+      "id": "REQ-CTL-02-1",
+      "content_hash": "sha256:3b8ad51095bb9a96f577bbde641922b5e4eb6b9d449b8dcfaf3fb19c31aab559"
+    },
+    {
+      "id": "REQ-CTL-02-2",
+      "content_hash": "sha256:ff12b474f022a08dfd61f6d10a411bb82863c22b3ff9ab05cc576fcf2a721fb1"
+    },
+    {
+      "id": "REQ-CTL-02-3",
+      "content_hash": "sha256:28d9ef4119d414df86aedf3a18a6d406a417f02e79e72e739cfd82b9fe3241da"
+    },
+    {
+      "id": "REQ-CTL-02-4",
+      "content_hash": "sha256:6dd2631930dde906744a176ed7a5b4c0b00e949ff520ec605170b0cf660f2f9f"
+    },
+    {
+      "id": "REQ-CTL-03",
+      "content_hash": "sha256:8948a0e20a09b3d5a19f91cb5d438a8004eee9ff4bedae3a85edfc1e44fa7900"
+    },
+    {
+      "id": "REQ-CTL-03-1",
+      "content_hash": "sha256:2d582f8b5b039f75b4ccec54c66a16acea5ae66b19272c0268b09e42092ec272"
+    },
+    {
+      "id": "REQ-CTL-03-2",
+      "content_hash": "sha256:f618d3bf8f399fccd259901a1aece161c21244683c14fc8b99146a6a73000ff8"
+    },
+    {
+      "id": "REQ-CTL-03-3",
+      "content_hash": "sha256:8d975c3bb6041e6860280c5faebfbee06e76bd2bb5bb99d123bf9cb44d59847e"
+    },
+    {
+      "id": "REQ-CTL-03-4",
+      "content_hash": "sha256:bf3f9dc6987388fd0d6ad8b495d9c56da85465de4b5cf6b2e06f1c62fe3e968f"
+    },
+    {
+      "id": "REQ-CTL-04",
+      "content_hash": "sha256:47604af3263bea3efee8e91b0727d8a0d5620f7a091e5a0e3623b51e518a475e"
+    },
+    {
+      "id": "REQ-CTL-01-8",
+      "content_hash": "sha256:cd12a6772737a40fde764180272daa10b9bf78e4efc609126fe0259db5df8642"
+    }
+  ],
+  "characteristics": [
+    {
+      "id": "C10",
+      "name": "완전성",
+      "verdict": "partial",
+      "summary": "센서 유효성 판정, 과열 정지 래치, 리셋 해제, 정지 명령 출력은 대부분 다룬다. 다만 래치 비활성 상태에서 리셋 요청이 들어오는 일부 조합과 입출력·실행 환경 요구가 빠져 있다. 지금도 구현·시험 판단은 가능하다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-02-4",
+            "REQ-CTL-03-4",
+            "REQ-CTL-02-1"
+          ],
+          "text": "래치가 비활성이고 리셋 요청이 있으며 입력이 유효하고 온도가 75.0 °C 미만인 경우의 동작이 어디에도 없다. REQ-CTL-02-4는 '리셋 요청이 없음'일 때만 유지를 규정하고, REQ-CTL-03-4는 75.0 °C 이상이거나 무효인 경우만 다룬다. 래치 비활성 상태에서의 리셋은 무시되는 것으로 보이지만 명시되어 있지 않다.",
+          "suggestion": "래치 비활성 상태에서 유효하고 75.0 °C 미만인 입력과 함께 들어온 리셋 요청의 동작(무시·유지)을 명시한다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-03-1",
+            "REQ-CTL-02-3"
+          ],
+          "text": "'리셋 요청이 발생함'이 레벨(유지되는 값)인지 에지(발생 순간)인지 정의되어 있지 않다. 리셋 요청이 여러 호출에 걸쳐 유지될 때의 동작을 판단할 수 없다.",
+          "suggestion": "리셋 요청 신호의 성격(레벨/에지, 호출 간 유지 여부)을 정하고 요구사항에 반영한다."
+        },
+        {
+          "requirements": [],
+          "text": "인터페이스(입력 신호 이름·형식·단위, 출력 신호), 제어 함수 호출 주기·응답 시간, 안전·운영 관련 비기능 요구가 없다. 제어 함수가 호출되지 않거나 지연되는 경우에 대한 요구도 없다.",
+          "suggestion": "입출력 신호 목록과 호출 주기·응답 시간 제약을 요구사항 또는 신호 표로 추가한다. 값은 이해관계자가 정해야 한다."
+        },
+        {
+          "requirements": [],
+          "text": "Unwanted Behaviour 가 3건이다(REQ-CTL-01-3, REQ-CTL-01-4, REQ-CTL-02-2). 모두 센서 입력 무효 관련이다. 리셋 요청 자체의 이상 입력 같은 다른 오류 경우는 다루지 않는다.",
+          "suggestion": "센서 입력 외의 이상 경우가 실제로 존재하는지 확인하고, 없다면 그 범위를 명시한다."
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "일관성",
+      "verdict": "partial",
+      "summary": "같은 조건에서 서로 다른 동작을 요구하는 충돌은 보이지 않고 단위(°C)도 일관된다. 그러나 같은 내용을 반복하는 요구사항이 많고 용어가 혼용되어 있다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-01-7",
+            "REQ-CTL-01-8"
+          ],
+          "text": "입력이 유효로 판정되면 센서 고장 플래그를 False로 설정한다는 같은 요구를 두 번 말한다. REQ-CTL-01-8은 직전 무효였던 경우에 래치 상태와 무관하다는 조건만 덧붙인다. 래치 상태가 플래그에 영향을 주는 요구는 없으므로 REQ-CTL-01-8은 REQ-CTL-01-7에 포함된다. 또한 REQ-CTL-01-8은 번호가 REQ-CTL-04 뒤에 놓여 있다.",
+          "suggestion": "REQ-CTL-01-8을 REQ-CTL-01-7에 통합하거나 삭제하고, 래치와 플래그가 독립이라는 점은 REQ-CTL-01-7의 인수 기준으로 옮긴다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-02-3",
+            "REQ-CTL-03-1",
+            "REQ-CTL-03-2",
+            "REQ-CTL-03-3"
+          ],
+          "text": "래치 해제 조건(리셋 요청 AND 유효 AND 70.0 °C 이하)과 해제 불가 조건(70.0 °C 초과, 무효)이 REQ-CTL-02-3과 REQ-CTL-03-1~03-3에서 이중으로 정의된다. 한쪽만 고치면 서로 어긋날 위험이 있다.",
+          "suggestion": "해제 조건은 한 곳에서만 정의하고 다른 곳은 참조한다. 또는 해제 요구와 유지 요구를 각각 하나로 합친다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-03-4",
+            "REQ-CTL-02-1",
+            "REQ-CTL-02-2"
+          ],
+          "text": "REQ-CTL-03-4(리셋과 함께 75.0 °C 이상이거나 무효이면 래치 활성)는 REQ-CTL-02-1·02-2의 활성화 조건에 리셋 요청이 동반된 경우일 뿐이다. 같은 요구가 다시 나온다.",
+          "suggestion": "REQ-CTL-02-1·02-2의 활성화 조건이 리셋 요청과 무관하게 우선한다고 한 곳에 명시하고 REQ-CTL-03-4는 삭제하거나 인수 기준으로 옮긴다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01-3",
+            "REQ-CTL-01-4",
+            "REQ-CTL-01-5"
+          ],
+          "text": "REQ-CTL-01-5의 유효 조건은 REQ-CTL-01-3·01-4의 무효 조건을 정확히 뒤집은 것이다. 유효와 무효 판정이 서로를 반복한다.",
+          "suggestion": "유효 판정 조건을 하나로 정의하고, 그 외에는 무효라고 한 번만 쓴다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01",
+            "REQ-CTL-01-3",
+            "REQ-CTL-01-6",
+            "REQ-CTL-02",
+            "REQ-CTL-02-2"
+          ],
+          "text": "'센서 유효성 플래그'(입력 신호), '센서 고장 플래그'(출력·내부 상태), '입력 유효/무효'(판정 결과), '센서 고장'(REQ-CTL-02)이 구분 없이 섞여 쓰인다. REQ-CTL-02의 '센서 고장'이 어느 개념인지 알 수 없다. 'REQ-CTL-02 인수 기준'의 '정지 조건'과 '복귀 조건'(REQ-CTL-02) 대 '리셋 해제 조건'(REQ-CTL-03)도 같은 개념에 다른 말을 쓴다.",
+          "suggestion": "용어집으로 신호 값과 판정 결과, 플래그를 구분하고 같은 개념에는 한 용어만 쓴다."
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "실현 가능성",
+      "verdict": "pass",
+      "summary": "모든 요구가 한 번의 제어 함수 호출 안에서 입력 평가, 래치 갱신, 출력 설정을 하는 순차 논리다. 서로 맞지 않는 시간·성능·자원 요구는 보이지 않는다.",
+      "issues": []
+    },
+    {
+      "id": "C13",
+      "name": "이해 가능성",
+      "verdict": "partial",
+      "summary": "ID 접두(01~04)로 묶음은 읽히지만 상위·하위 관계가 메타데이터에 없고 신호·용어 정의가 따로 없어 전체 구조를 파악하기 어렵다.",
+      "issues": [
+        {
+          "requirements": [],
+          "text": "모든 요구사항의 parent 가 '(최상위)'로 되어 있어 REQ-CTL-01-1 등이 REQ-CTL-01의 하위인지 ID 이름으로만 추정할 수 있다. 상위 요구(REQ-CTL-01~03)와 하위 요구의 관계가 데이터로 연결되어 있지 않다.",
+          "suggestion": "하위 요구사항의 parent 를 해당 상위 요구 ID 로 지정해 계층을 명시한다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01-8",
+            "REQ-CTL-04"
+          ],
+          "text": "REQ-CTL-01-8이 REQ-CTL-04 뒤에 놓여 있어 REQ-CTL-01 그룹이 흩어져 있다. REQ-CTL-03-4도 활성화를 다루는데 해제를 다루는 REQ-CTL-03 아래에 있어 소속이 맞지 않는다.",
+          "suggestion": "관련 요구를 한 그룹으로 모으고 그룹 안의 순서를 정리한다. 활성화 요구는 REQ-CTL-02 아래에 둔다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-02",
+            "REQ-CTL-02-3"
+          ],
+          "text": "'정지 조건', '복귀 조건', '리셋 해제 조건', '정지 래치', '정지 명령' 등 핵심 용어가 정의되어 있지 않다. 정지 래치(내부 상태)와 정지 명령(출력)의 관계는 REQ-CTL-04를 읽어야 알 수 있다.",
+          "suggestion": "용어집에서 이 용어들과 각 신호의 의미를 정의한다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-02-4",
+            "REQ-CTL-03-2",
+            "REQ-CTL-03-3",
+            "REQ-CTL-03-4"
+          ],
+          "text": "WHILE, WHEN, IF를 겹쳐 쓴 Complex 요구(예: 'WHILE …이면, IF …이면, THEN …')가 읽기 어렵고 조건의 우선 관계가 모호하다. 특히 REQ-CTL-03-4는 '유효하고 75.0 °C 이상이거나 입력이 무효임'의 묶음이 불분명하다.",
+          "suggestion": "조건을 목록이나 괄호로 구분해 우선 관계를 분명히 하고, 한 요구에 조건 구조를 하나만 두도록 나눈다."
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "name": "타당성 확인 가능성",
+      "verdict": "partial",
+      "summary": "대부분 요구에 입력값과 기대 출력이 있는 인수 기준이 있어 시험 가능하다. 그러나 상위 니즈와 임계값 근거가 없어 세트가 목표를 달성하는지 확인할 수 없고, 일부 인수 기준은 모호하다.",
+      "issues": [
+        {
+          "requirements": [],
+          "text": "세트가 달성해야 할 상위 목표(예: 과열 시 정지 보장)와 임계값 75.0 °C·70.0 °C·−40.0~150.0 °C의 근거가 없다. 인수 기준은 개별 요구의 시험만 다루므로 세트 전체가 의도를 달성하는지는 확인할 수 없다.",
+          "suggestion": "상위 니즈와 임계값 근거(센서 사양, 안전 요건 등)를 연결하고 세트 수준의 검증 시나리오(과열 → 정지 → 리셋 → 복귀)를 추가한다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01-8"
+          ],
+          "text": "인수 기준 '래치 = 활성 유지 가능'이 '가능'이라고 되어 있어 합격·불합격을 정할 수 없다.",
+          "suggestion": "'래치 활성 상태가 센서 고장 플래그 갱신에 영향받지 않는다' 같이 관측 가능한 값으로 쓴다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01-2",
+            "REQ-CTL-02"
+          ],
+          "text": "REQ-CTL-01-2의 인수 기준('입력이 평가되어 있다')은 관측 가능한 결과가 없다. REQ-CTL-02는 활성화만 확인하고 '복귀 조건 전까지 유지'는 확인하지 않으며, 인수 기준의 '정지 조건'은 정의되어 있지 않다.",
+          "suggestion": "관측 가능한 출력·상태값으로 인수 기준을 다시 쓰고, 유지에 대한 기준을 추가한다."
+        }
+      ]
+    },
+    {
+      "id": "C15",
+      "name": "정확성",
+      "verdict": "partial",
+      "summary": "상위 요구와 하위 요구의 내용은 대체로 맞지만, 출처 대응이 불명확한 곳과 상위 요구의 해석이 흔들리는 곳이 있다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-CTL-02",
+            "REQ-CTL-02-1",
+            "REQ-CTL-02-2"
+          ],
+          "text": "REQ-CTL-02의 '과열 또는 센서 고장 시'에서 '센서 고장'이 하위 요구에서는 '입력 무효'(REQ-CTL-02-2)로 구현되고, REQ-CTL-01-6의 '센서 고장 플래그'와의 관계는 명시되지 않는다. 상위 의도가 센서 고장 플래그(True)인지 입력 무효인지에 따라 하위 요구가 달라질 수 있다.",
+          "suggestion": "상위 요구의 '센서 고장'을 어느 신호·판정으로 볼지 정하고 하위 요구와 맞춘다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-03",
+            "REQ-CTL-03-4"
+          ],
+          "text": "REQ-CTL-03은 래치 해제 조건을 정하는 상위 요구인데 REQ-CTL-03-4는 래치 활성화를 정한다. 하위 요구가 상위 요구의 범위를 벗어난다.",
+          "suggestion": "REQ-CTL-03-4를 REQ-CTL-02 아래로 옮기거나 상위 요구의 범위를 고쳐 일치시킨다."
+        },
+        {
+          "requirements": [
+            "REQ-CTL-01-8"
+          ],
+          "text": "REQ-CTL-01-8의 출처 SW-016은 래치 상태와 센서 고장 플래그가 독립이라는 의도로 보이지만, 요구 본문은 REQ-CTL-01-7과 같은 내용만 반복해 그 의도가 드러나지 않는다.",
+          "suggestion": "SW-016 원문과 대조해 의도(독립성)를 분명히 드러내는 문장으로 고친다."
+        }
+      ]
+    }
+  ],
+  "dropped": [],
+  "counts": {
+    "pass": 1,
+    "partial": 5,
+    "fail": 0,
+    "none": 0,
+    "issues": 19
+  },
+  "passed": true
+}

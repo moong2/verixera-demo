@@ -1,0 +1,3994 @@
+{
+  "schema": "tc-procedures/v1",
+  "items": {
+    "TC-CTL-03-1-001": {
+      "hash": "sha256:9f072bb485a2a50a6fd75bd79aa3c5ee32792debe13059276aa9b2fc8739bd2a",
+      "time_unit": "step",
+      "description": "리셋 요청+유효+70.0 °C 미만이면 해제(69.9, −40.0), 70.0 은 유지. 리셋·유효성 각각의 독립 영향과 자료형 극값 확인",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 70,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": 70.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 7,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 8,
+          "inputs": {
+            "temp_c": -39.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 9,
+          "inputs": {
+            "temp_c": -1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 10,
+          "inputs": {
+            "temp_c": 1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 11,
+          "inputs": {
+            "temp_c": 2.2250738585072014e-308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 12,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 13,
+          "inputs": {
+            "temp_c": -40.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022426Z-87b7",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:52.935Z"
+      }
+    },
+    "TC-CTL-03-2-004": {
+      "hash": "sha256:77119c279fef8491e786d84b009d659cbdc33525b5f55296efc68e5b1bfe8f36",
+      "time_unit": "step",
+      "description": "초기화 직후 정지 래치와 정지 명령을 활성(1)으로 직접 설정해 래치 활성 상태에서 시작한다. 이어서 유효 범위 상한 150.0 °C, 센서 유효, 리셋 요청 입력으로 제어 함수를 한 번 호출하면 래치가 활성으로 유지되는지 확인한다. 시험은 stop_latch 를 읽으며, 호출 종료 시 stop_cmd 는 정지 래치와 같으므로 stop_cmd=1 로 옮겼다.",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "file": "tests/test_controller_reset.c",
+        "startLine": 177,
+        "endLine": 187,
+        "where": "tc_ctl_03_2_004, 181~187행; check 29~40행; latch_after 18~26행 (ctl_init 21행, 래치·정지 명령 초기값 설정 22~23행, ctl_step 24행, 반환값 25행)",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-19T23:46:55.700Z",
+        "prompt_hash": "sha256:ac67411f2df75575ee45b88a6ed54544e22b7b8d3888cfab7f66febe2214f178"
+      }
+    },
+    "TC-CTL-03-4-001": {
+      "hash": "sha256:1fa1078ac4e7cb5237147bc3c4325e1e87ce16929c3805dabc46ca2bbf01b3e5",
+      "time_unit": "step",
+      "description": "리셋 요청과 같은 호출에서 유효 75.0 °C 이상 또는 입력 무효이면 래치 활성(시작 래치 비활성·활성 모두), 75.0 미만 대조군은 해제 규칙을 따름",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 75,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 20,
+            "sensor_valid": 0,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 75.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "temp_c": "+inf",
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "temp_c": "-inf",
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 7,
+          "inputs": {
+            "temp_c": 100,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 8,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 9,
+          "inputs": {
+            "temp_c": -40.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 10,
+          "inputs": {
+            "temp_c": 150.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 11,
+          "inputs": {
+            "temp_c": -1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 12,
+          "inputs": {
+            "temp_c": 1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 13,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 14,
+          "inputs": {
+            "temp_c": 74.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 15,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 16,
+          "inputs": {
+            "temp_c": -39.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 17,
+          "inputs": {
+            "temp_c": 149.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 18,
+          "inputs": {
+            "temp_c": 75,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 19,
+          "inputs": {
+            "temp_c": 20,
+            "sensor_valid": 0,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 20,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022426Z-87b7",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:52.935Z"
+      }
+    },
+    "TC-CTL-03-1-002": {
+      "hash": "sha256:10f1b24eb5e7b6498bdb12e9a60b76219061a230a7511cc260a5e3caab04cc23",
+      "time_unit": "step",
+      "description": "초기화 직후 시험이 정지 래치를 활성(stop_latch=true, stop_cmd=true)으로 직접 설정해 둔 상태에서, 리셋 요청과 센서 유효, 온도 −40.0 °C(유효 범위 하한)로 제어 함수를 한 번 호출하면 정지 래치가 해제되어 정지 명령이 0이 되는지 확인한다.",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "file": "tests/test_controller_reset.c",
+        "startLine": 64,
+        "endLine": 74,
+        "where": "tc_ctl_03_1_002 72행 check(tc, true, -40.0, true, true, false); latch_after 20~25행; check 32~33행",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-20T00:16:36.836Z",
+        "prompt_hash": "sha256:ac67411f2df75575ee45b88a6ed54544e22b7b8d3888cfab7f66febe2214f178"
+      }
+    },
+    "TC-CTL-03-1-006": {
+      "hash": "sha256:497e64dbc57b1d9e37646096377f58f752fcef2920ad6e1e130c48a58a989768",
+      "time_unit": "step",
+      "description": "센서 유효성 플래그가 0이면 리셋 요청과 온도 25.0 °C 또는 69.9 °C 가 있어도 정지 래치가 해제되지 않고 활성 상태를 유지하는지 확인한다. 각 확인 전에 정지 래치를 활성(1)으로 직접 설정하고 호출한다. 확인 값은 호출 종료 시 정지 래치와 같은 stop_cmd 로 옮겼다.",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 0,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "file": "tests/test_controller_reset.c",
+        "startLine": 114,
+        "endLine": 125,
+        "where": "tc_ctl_03_1_006, 118~125행; latch_after 18~26행, check 29~40행",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-20T08:45:14.837Z",
+        "prompt_hash": "sha256:ac67411f2df75575ee45b88a6ed54544e22b7b8d3888cfab7f66febe2214f178"
+      }
+    },
+    "TC-CTL-01-1-001": {
+      "hash": "sha256:027c583125c1348a6b9dc858431d539604cc2508b264ca4329daa43bff250398",
+      "time_unit": "step",
+      "description": "정지 명령, 센서 고장 플래그, 정지 래치가 모두 true인 상태에서 ctl_init을 한 번 호출한 뒤, 정지 명령이 false인지 확인한다. 초기 상태 구조체는 입력 신호가 아니므로 inputs에 적지 않는다.",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "stop_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "file": "tests/test_controller_reset.c",
+        "startLine": 109,
+        "endLine": 123,
+        "where": "tc_ctl_01_1_001, 113~123행 (ctl_init 호출 118행, 확인 119행)",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:54:43.715Z",
+        "prompt_hash": "sha256:ac67411f2df75575ee45b88a6ed54544e22b7b8d3888cfab7f66febe2214f178"
+      }
+    },
+    "TC-CTL-01-1-002": {
+      "hash": "sha256:a2f669ffdbf3fdcc79dca304e0f63bf5b10fb268a7fcd00c134300957fd648ad",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 각 멤버만 활성인 상태 초기화",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "stop_cmd": true,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "stop_cmd": false,
+            "sensor_fault": true,
+            "stop_latch": false
+          },
+          "outputs": {
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": true
+          },
+          "outputs": {
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-1-003": {
+      "hash": "sha256:8ec1029d823f70c1867ae4850aaa02468a7ea85044cade439a4653a996889898",
+      "time_unit": "step",
+      "description": "단계 1에서 무효 인자(NULL)로 초기화를 호출해도 동작이 멈추지 않는다. 단계 2에서 세 멤버가 모두 true인 상태를 정상 초기화하면 정지 명령이 False가 되는지 확인한다.",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {},
+          "outputs": {
+            "stop_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "file": "tests/test_controller_reset.c",
+        "startLine": 161,
+        "endLine": 176,
+        "where": "tc_ctl_01_1_003, 165~176행 (ctl_init(NULL) 170행, ctl_init(&s) 171행, 기대값 확인 172행)",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:33:44.004Z",
+        "prompt_hash": "sha256:ac67411f2df75575ee45b88a6ed54544e22b7b8d3888cfab7f66febe2214f178"
+      }
+    },
+    "TC-CTL-01-2-001": {
+      "hash": "sha256:b5722569be39d2c219ad2c276be8e5992e69ce8c0a4ec4d860c585363ad51869",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 초기화 후 무효 입력의 동일 호출 갱신",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 20,
+            "sensor_valid": false,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "stop_cmd": true,
+            "sensor_fault": true,
+            "stop_latch": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-2-002": {
+      "hash": "sha256:08aa1926619f8558af930fb22626aee0f5185e2fd606ffc0d75c5a303ec762c2",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 과열 다음 호출에서 리셋 해제",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "stop_cmd": true,
+            "sensor_fault": false,
+            "stop_latch": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": true,
+            "reset_request": true,
+            "stop_cmd": true,
+            "sensor_fault": false,
+            "stop_latch": true
+          },
+          "outputs": {
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-2-003": {
+      "hash": "sha256:fec40af17b87abd834c51ddf6ef2f68d504dd52f1d3634e96306f7c38dd494ac",
+      "time_unit": "step",
+      "description": "기존 시험 유지: NULL 제어 호출 후 정상 호출",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": true,
+            "reset_request": false
+          },
+          "outputs": {}
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-3-001": {
+      "hash": "sha256:b594ecb0569e05cc220e9d346d8de62c3324f739a7fb14d1007348a9e205de7d",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 센서 무효 플래그",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-3-002": {
+      "hash": "sha256:76bc5e3965ec6ba1ca990384fa03c8e1e6c56cc8292af2546125be11d92a9d91",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 온도와 무관한 센서 무효 판정",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": -40.000001,
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "temp_c": 150.000001,
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 7,
+          "inputs": {
+            "temp_c": "+Infinity",
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-4-001": {
+      "hash": "sha256:6e0a698059ccd350d71a53e3085767be474efaef4f5e9270cd249a1456b324c8",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 비유한 온도",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "+Infinity",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": "-Infinity",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-4-002": {
+      "hash": "sha256:ed5dc11cea0a05c6a45081b4d8bcc5c62017d3bee749c29855cfc9e89854c200",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 유효 범위 이탈 대표값",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": -40.1,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150.1,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-4-003": {
+      "hash": "sha256:ddfb6225af0bd87ea30bedea985a46b38207b26aac865f50ba4faf605538e79c",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 범위 바로 밖과 double 극값",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": -40.000001,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150.000001,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": "-DBL_MAX",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": "DBL_MAX",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-5-001": {
+      "hash": "sha256:eab131bb097832ad808921f1ddf3574b2debe5f2da5902b739f3d543616e6da9",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 유효 대표값",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-5-002": {
+      "hash": "sha256:37c27bfc759259675e51825834f1e920a37420a4f5f67c137e376fc69fad31ba",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 유효 범위 양끝과 바로 안쪽",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": true
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": -39.999999,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": true
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": 149.999999,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-5-003": {
+      "hash": "sha256:13ed31893a200c7240f834541af2d5025455235d23c2c0d5f458e84cf3f099cb",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 유효 범위 바로 밖",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": -40.000001,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150.000001,
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-5-004": {
+      "hash": "sha256:ff6c8b826d40b19a271e95068e565564145d7b6590f1e299c396b6e8f80351ec",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 유효성 조건별 불충족",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": false
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": "+Infinity",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": "-Infinity",
+            "sensor_valid": true
+          },
+          "outputs": {
+            "ctl_is_input_valid(반환)": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-6-001": {
+      "hash": "sha256:1ce09a54827bcbc2a724c78622209814127e71abe8453920ad9539266a502ec7",
+      "time_unit": "step",
+      "description": "기존 시험 유지: 원인별 고장 설정과 유효 대조군",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": false,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": "+Infinity",
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": "-Infinity",
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "temp_c": -40.1,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": true,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": false
+          }
+        },
+        {
+          "t_ms": 7,
+          "inputs": {
+            "temp_c": -39.9,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": true,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": false
+          }
+        },
+        {
+          "t_ms": 8,
+          "inputs": {
+            "temp_c": 149.9,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": true,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": false
+          }
+        },
+        {
+          "t_ms": 9,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": true,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": false
+          }
+        },
+        {
+          "t_ms": 10,
+          "inputs": {
+            "temp_c": 150.1,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 11,
+          "inputs": {
+            "temp_c": "-DBL_MAX",
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 12,
+          "inputs": {
+            "temp_c": "DBL_MAX",
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": false,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 13,
+          "inputs": {
+            "temp_c": "DBL_MIN",
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": true,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": false
+          }
+        },
+        {
+          "t_ms": 14,
+          "inputs": {
+            "temp_c": 0,
+            "sensor_valid": true,
+            "reset_request": false,
+            "stop_cmd": false,
+            "sensor_fault": true,
+            "stop_latch": false
+          },
+          "outputs": {
+            "sensor_fault": false
+          }
+        },
+        {
+          "t_ms": 15,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": false,
+            "reset_request": true,
+            "stop_cmd": true,
+            "sensor_fault": true,
+            "stop_latch": true
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T025735Z-fff0",
+        "provider": "openai",
+        "model": "gpt-6.1-sol",
+        "at": "2026-11-21T03:13:21.887Z"
+      }
+    },
+    "TC-CTL-01-6-002": {
+      "hash": "sha256:9f0859b5eb2bf22d5fbef49c5f0da062dffc20725e4ee1836ffda4907c91cba2",
+      "time_unit": "step",
+      "description": "NaN, 범위 경계 바로 밖(상한·하한) 세 무효 구간에서 각 호출마다 센서 고장 플래그가 true 인지 (결함 주입, 경계값, 동등 분할)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": true,
+            "reset_request": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": 150.000001,
+            "sensor_valid": true,
+            "reset_request": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "temp_c": -40.000001,
+            "sensor_valid": true,
+            "reset_request": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261120T141604Z-3a97",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-20T14:16:32.499Z"
+      }
+    },
+    "TC-CTL-01-6-003": {
+      "hash": "sha256:ccea9a51ddd8cdd7f68689e77c7c57bb3898c31f491abab74faa776667dcdc0d",
+      "time_unit": "step",
+      "description": "리셋 요청이 true 인 무효 호출에서 고장 플래그가 true 이고, 이어지는 무효 호출에서도 유지되는지 (오류 추정, 인터페이스)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 20,
+            "sensor_valid": false,
+            "reset_request": true
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": true,
+            "reset_request": false
+          },
+          "outputs": {
+            "sensor_fault": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261120T141604Z-3a97",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-20T14:16:32.499Z"
+      }
+    },
+    "TC-CTL-01-7-001": {
+      "hash": "sha256:06fcad2895cc09827e2956ace84dc0fee7bb1627afe3f63be71b95152c06f53b",
+      "time_unit": "step",
+      "description": "직전 호출 무효로 고장 플래그가 true 인 상태에서 온도 25.0 °C 의 유효 입력이면 고장 플래그가 false 로 복귀하는지 확인 (요구사항 분석, 동등 분할)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-7-002": {
+      "hash": "sha256:82e9da1f90333824176bfa3ec38c8533761fefb58cb8135f5b5d7d6428d973c3",
+      "time_unit": "step",
+      "description": "유효 입력 하한 경계 -40.0 °C 에서 고장 플래그가 false 가 되는지 확인 (경계값)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-7-003": {
+      "hash": "sha256:1ee71d8f5e7dc03a74d8c891f79575544d2c8f7254f3ec55057424f6eb728d66",
+      "time_unit": "step",
+      "description": "유효 입력 상한 경계 150.0 °C 에서 고장 플래그가 false 가 되는지 확인 (경계값)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-7-004": {
+      "hash": "sha256:93639833faea1de4b10f0468d3dc540f28fe29bf08fdd79086dd097e6bbad330",
+      "time_unit": "step",
+      "description": "온도 NaN 으로 무효였던 직후의 유효 입력에서 고장 플래그가 false 로 복귀하는지 확인 (결함 주입, 오류 추정)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-7-005": {
+      "hash": "sha256:2a8891a8075e6f644ba6430c59ae60e17a3f83b571aef4d6e4d5defa4ad8a92c",
+      "time_unit": "step",
+      "description": "상한 초과 150.5 °C 로 무효였던 직후의 유효 입력에서 고장 플래그가 false 로 복귀하는지 확인 (오류 추정, 동등 분할)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150.5,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-7-006": {
+      "hash": "sha256:4167c28e6cbf143a1a20f420b6e3b25c2a36178ab740a81013c8e14c6aab5127",
+      "time_unit": "step",
+      "description": "유효 입력이면 리셋 요청 유무와 무관하게 고장 플래그가 false 인지 확인 (요구사항 분석, 동등 분할)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-8-001": {
+      "hash": "sha256:31f8a39e32ac3830051f0fa512ee7688bc01e4564dc0370c18d4bf5b908602db",
+      "time_unit": "step",
+      "description": "직전 무효, 현재 유효, 정지 래치 활성(무효 호출이 래치를 활성화함)일 때 고장 플래그가 false 인지 확인 (요구사항 분석, 동등 분할)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-8-002": {
+      "hash": "sha256:c40ca7fff14db45d4250472caf49c49b525be1fa2c00ae6bcd40575941de3fc9",
+      "time_unit": "step",
+      "description": "직전 무효, 현재 유효, 정지 래치 비활성일 때 고장 플래그가 false 인지 확인 (요구사항 분석). 래치 비활성은 호출 사이에 직접 설정",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch(사전 설정)": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-8-003": {
+      "hash": "sha256:2d3c552ad25017c218bd755f185c05dad36d2f0a47c47e7b35f632efcc4793b6",
+      "time_unit": "step",
+      "description": "직전 상한 초과 무효 후 현재 상한 경계 150.0 °C 유효 입력(래치 활성)에서 고장 플래그가 false 인지 확인 (경계값)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150.5,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-8-004": {
+      "hash": "sha256:4610f0cbebc153b68a593fba94110e09be5f8a2901936d5b77be29aee6638739",
+      "time_unit": "step",
+      "description": "직전 NaN 무효 후 현재 하한 경계 -40.0 °C 유효 입력(래치 비활성 사전 설정)에서 고장 플래그가 false 인지 확인 (경계값, 결함 주입)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch(사전 설정)": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-8-005": {
+      "hash": "sha256:630c241a482e2480c5db1fd2373f3fcd8152fe5bf7eb4b7b59bd5782d4fb6f0d",
+      "time_unit": "step",
+      "description": "무효, 무효(NaN), 유효 순서의 입력 열에서 무효 구간은 고장 플래그 true, 유효 복귀 시 false 인지 확인 (결함 주입, 상태 순서)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-8-006": {
+      "hash": "sha256:505f96af2fc2fe76e20d97afdc3218fce0a4d9c63996b8e87e2289a4f5563d5c",
+      "time_unit": "step",
+      "description": "직전 무효 후 현재도 무효이면 01-8 이 적용되지 않아 고장 플래그가 true 를 유지하는지 확인 (오류 추정, 부정 경우)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-01-8-007": {
+      "hash": "sha256:aaf498262e8cce58ba05d0030dc11f999a13b8e52b3980d51eb16cbd542e477d",
+      "time_unit": "step",
+      "description": "하한 바로 아래 -40.5 °C 의 무효 입력에서는 01-8 이 적용되지 않아 고장 플래그가 true 를 유지하는지 확인 (경계값 바로 아래, 부정 경우)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": -40.5,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "sensor_fault": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015324Z-9662",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:36.058Z"
+      }
+    },
+    "TC-CTL-02-1-001": {
+      "hash": "sha256:7d3e119767d32563bc5aec8085d6797a40e93c93a44e2a4c145e8486ce96a01c",
+      "time_unit": "step",
+      "description": "감지 센서 비활성, 유효 75.0 °C 경계에서 같은 호출에 래치 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 75,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-002": {
+      "hash": "sha256:bb6cd772917402fe1c18551a8388ddd332b0a28af045a4399f7492761907d5f4",
+      "time_unit": "step",
+      "description": "유효 74.9 °C는 이 요구로 래치를 활성화하지 않음",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 74.9,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-003": {
+      "hash": "sha256:2e0576a5bd7a5dd4d15eb34d1ceb55e61a4ecba0bcb2c669c8bef62f5ea928b1",
+      "time_unit": "step",
+      "description": "75.0 °C 바로 위에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 75.00000000000001,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-004": {
+      "hash": "sha256:cf99394291f73fcfb6f4f37766646d17d1eaf732a7d105ee5f07723845a55eb0",
+      "time_unit": "step",
+      "description": "유효 상한 150.0 °C에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-005": {
+      "hash": "sha256:b0034a6d057ac6a081a97e558b400ac5e8235a2356775ca9429dba026c836c32",
+      "time_unit": "step",
+      "description": "고온과 센서 무효 중첩 시 안전 쪽 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 0,
+            "reset_request": 0,
+            "detect_active": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-001": {
+      "hash": "sha256:96b3927add7680fe512f07f147ef83d1bc697abbba695a2555bb1af5286cbedf",
+      "time_unit": "step",
+      "description": "센서 유효성 플래그 false 이면 정상 온도에서도 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-002": {
+      "hash": "sha256:169bb76ee93785e4de84ad63d94995e040302441a09154435d86c165aefcebbe",
+      "time_unit": "step",
+      "description": "온도 NaN 에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-003": {
+      "hash": "sha256:0ae79e1e0f06c94fe353f0708f67120ce9cb4fedca09084f8944f06609c89906",
+      "time_unit": "step",
+      "description": "온도 150.1 °C(상한 초과)에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150.1,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-004": {
+      "hash": "sha256:588e8eabc0068195c56a0504b82e8ee1aa7d136699ff0fc373e2e75ef0bcfc69",
+      "time_unit": "step",
+      "description": "온도 +∞ 에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "Infinity",
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-005": {
+      "hash": "sha256:cadf5d542cbe30f38024bcbef5f57ab04f606d86a76b85d780c743cc4d54ebbc",
+      "time_unit": "step",
+      "description": "온도 -∞ 에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "-Infinity",
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-001": {
+      "hash": "sha256:c4be1b2591584366646f2f82dabe816fd5e0c73a45c6d6d0f7acb6669f699ef0",
+      "time_unit": "step",
+      "description": "리셋 없으면 냉각되어도 래치 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-002": {
+      "hash": "sha256:ef295da42c957a5bff44804569ef836e40c1f671a0d111cdb27aba7a373fa88f",
+      "time_unit": "step",
+      "description": "리셋 요청, 유효 69.9 °C에서 해제",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-003": {
+      "hash": "sha256:0ec7e1b764bf656845fea9cb7ae34de3603b3334aeb3b57fc9533e287b9db2f6",
+      "time_unit": "step",
+      "description": "해제 경계 70.0 °C에서 래치 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 70,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-004": {
+      "hash": "sha256:94eea64b184587227ae362e3e00c35179c34da6437f9834685738d1fa0a5d244",
+      "time_unit": "step",
+      "description": "리셋 항만 거짓일 때 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-005": {
+      "hash": "sha256:22aac7903b03588d524ee5274c4c55a2d85fc212dd1843d134846efe868a3347",
+      "time_unit": "step",
+      "description": "입력 유효 항만 거짓일 때 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 0,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-4-001": {
+      "hash": "sha256:981f3f959788b3ccbb79a5cadfbd79c93f603af64b5e67e601206c1a6fae82b4",
+      "time_unit": "step",
+      "description": "비활성, 유효 74.9 °C, 리셋 없음에서 비활성 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 74.9,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-4-002": {
+      "hash": "sha256:98a14ccd9761c39880ea203ef5c7bcc9da1cfd6f8f7de6929309b39d87c47c4e",
+      "time_unit": "step",
+      "description": "유효 하한 -40.0 °C에서 비활성 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-04-001": {
+      "hash": "sha256:0cefb2753126751aac1eb60ee354be6b541d983254d07facf4338824ca31b5d2",
+      "time_unit": "step",
+      "description": "정지 래치 활성 구간(호출 전 래치 활성, 정지 명령 비활성). 리셋 없는 유효 25 °C 입력으로 래치는 유지되고, 호출 종료 시 정지 명령이 활성이어야 함(수용 기준 1). 래치 값 true 는 REQ-CTL-02-3 에서 옴",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "stop_latch": 1,
+            "stop_cmd": 0,
+            "sensor_fault": 0,
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1,
+            "stop_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015558Z-2aad",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:52.922Z"
+      }
+    },
+    "TC-CTL-04-002": {
+      "hash": "sha256:f62097e8e0d7627e3ffcee431e861c119354c01d570450ef814f45e84a8120f9",
+      "time_unit": "step",
+      "description": "정지 래치 비활성 구간이며 호출 전 정지 명령은 활성(상태 순서가 뒤바뀐 경우). 유효 25 °C 입력으로 래치는 비활성 유지, 호출 종료 시 정지 명령이 비활성이어야 함(수용 기준 2). 래치 값 false 는 REQ-CTL-02-4 에서 옴",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "stop_latch": 0,
+            "stop_cmd": 1,
+            "sensor_fault": 0,
+            "temp_c": 25,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 0,
+            "stop_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015558Z-2aad",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:52.922Z"
+      }
+    },
+    "TC-CTL-04-003": {
+      "hash": "sha256:9b35c8cf716c26ea3781df4938538ae17bcce9c90df16763639b641a04e0b767",
+      "time_unit": "step",
+      "description": "초기화 후 과열 입력(80 °C, 유효)을 한 번 호출. 호출 안에서 래치가 활성화되고(REQ-CTL-02-1), 호출 종료 시 정지 명령도 활성이어야 함",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "stop_cmd": 0,
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1,
+            "stop_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015558Z-2aad",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:52.922Z"
+      }
+    },
+    "TC-CTL-04-004": {
+      "hash": "sha256:b32e9de8261e5b05fc59f5f45ce051f5b3d6281869e82d9a8a383c6b7fe52178",
+      "time_unit": "step",
+      "description": "정지 래치 활성 상태에서 리셋 요청, 유효 60 °C 입력. 해제 조건 충족(REQ-CTL-03-1)으로 래치가 비활성이 되고, 호출 종료 시 정지 명령도 비활성이어야 함",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "stop_latch": 1,
+            "stop_cmd": 1,
+            "sensor_fault": 0,
+            "temp_c": 60,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 0,
+            "stop_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015558Z-2aad",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:52.922Z"
+      }
+    },
+    "TC-CTL-04-005": {
+      "hash": "sha256:3e4b042666c86f037ee9c774acfeaaaf9100e01f95120058b360164ad3968e40",
+      "time_unit": "step",
+      "description": "센서 유효성 플래그 False 인 고장 입력(25 °C 라도 무효, REQ-CTL-01-3). 무효 입력은 호출 안에서 래치를 활성화(REQ-CTL-02-2)하므로 호출 종료 시 정지 명령도 활성이어야 함",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "stop_cmd": 0,
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 25,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1,
+            "stop_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261121T015558Z-2aad",
+        "provider": "anthropic",
+        "model": "claude-haiku-5-5",
+        "at": "2026-11-21T02:34:52.922Z"
+      }
+    },
+    "TC-CTL-03-2-001": {
+      "hash": "sha256:2ed919211a2251e6a9b9b71bcd3a6d771aab1997b043642fb2413709951467dd",
+      "time_unit": "step",
+      "description": "래치 활성 중 유효하고 70.0 °C 이상이면 리셋 요청과 무관하게 유지(70.0, 70.1, 74.9, 150.0) 및 69.9 대조군",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 70,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 70.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 74.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "temp_c": 72.5,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "temp_c": 100,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 7,
+          "inputs": {
+            "temp_c": 70,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 8,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 9,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 0,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 10,
+          "inputs": {
+            "temp_c": -1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 11,
+          "inputs": {
+            "temp_c": 1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 12,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 13,
+          "inputs": {
+            "temp_c": 149.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 14,
+          "inputs": {
+            "temp_c": 150.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022426Z-87b7",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:52.935Z"
+      }
+    },
+    "TC-CTL-03-3-001": {
+      "hash": "sha256:eee359215a20c2e3cf7a056a16cfe8b439317f3de2565ec7f18032353073146a",
+      "time_unit": "step",
+      "description": "래치 활성 중 입력 무효(플래그 false, NaN, ±∞, 범위 밖, ±DBL_MAX)이면 리셋 요청과 무관하게 유지하고, 유효 경계 대조군은 70 기준을 따름",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 20,
+            "sensor_valid": 0,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": "+inf",
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "temp_c": "-inf",
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "temp_c": -40.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "temp_c": 150.1,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 7,
+          "inputs": {
+            "temp_c": 20,
+            "sensor_valid": 0,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 8,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 9,
+          "inputs": {
+            "temp_c": "NaN",
+            "sensor_valid": 0,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 10,
+          "inputs": {
+            "temp_c": -1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 11,
+          "inputs": {
+            "temp_c": 1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 12,
+          "inputs": {
+            "temp_c": -40,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 13,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 14,
+          "inputs": {
+            "temp_c": -39.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        },
+        {
+          "t_ms": 15,
+          "inputs": {
+            "temp_c": 149.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 16,
+          "inputs": {
+            "temp_c": "+inf",
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 17,
+          "inputs": {
+            "temp_c": "-inf",
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 18,
+          "inputs": {
+            "temp_c": -40.1,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 19,
+          "inputs": {
+            "temp_c": 150.1,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "stop_latch": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022426Z-87b7",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:52.935Z"
+      }
+    },
+    "TC-CTL-02-1-006": {
+      "hash": "sha256:c86003b0072439a13d49e9911d268aaf92eff72a8a8a8d20be54d51d37d035fc",
+      "time_unit": "step",
+      "description": "75.0 °C 바로 아래, 리셋 없음에서 비활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 74.99999999999999,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-007": {
+      "hash": "sha256:ef20059da453d6d40a268187fe1f942f10aacd3ad06cc5e3849a7afe43dcbaf4",
+      "time_unit": "step",
+      "description": "리셋 요청과 유효 75.0 °C 동시 입력에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 75,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "detect_active": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-006": {
+      "hash": "sha256:336d48ba5027cb8997150c6b62b9c8841d883edda128ad0d891067efd83c94dd",
+      "time_unit": "step",
+      "description": "상한 150.0 °C 바로 위에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150.00000000000003,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-007": {
+      "hash": "sha256:24564952d5be640162a23f6aab22793d9d4ee5ec299bab8b25f0849438fba0a1",
+      "time_unit": "step",
+      "description": "상한 150.0 °C 바로 아래(유효 과열)에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 149.99999999999997,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-008": {
+      "hash": "sha256:1041f7826be7b2bded807af12a6ce5e8bd7e783a6cddd7828f42ae30fb2a91b5",
+      "time_unit": "step",
+      "description": "하한 -40.0 °C 바로 아래에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": -40.00000000000001,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-009": {
+      "hash": "sha256:6e8102ed31709862a4ed5e780f226112a67b97c05bf9f6798b91d96b19f5cbc2",
+      "time_unit": "step",
+      "description": "double 유한 최댓값에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-2-010": {
+      "hash": "sha256:00fe1b356258fa74e8169b5d44705c7b2377b49154ef171d5f4da90a4855dc6a",
+      "time_unit": "step",
+      "description": "double 유한 최솟값과 리셋 요청에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": -1.7976931348623157e+308,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-006": {
+      "hash": "sha256:94dca976fef858b951d332d320b221ae0d199266dce3d4d67fd67a9e53c04b9b",
+      "time_unit": "step",
+      "description": "70.0 °C 바로 위에서 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 70.00000000000001,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-007": {
+      "hash": "sha256:adc6419bea5eb3c613b97b0ab71963af87b0e5717e01e76471e44580f331f59b",
+      "time_unit": "step",
+      "description": "리셋 없음, 무효, 저온 조합에서 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 69.9,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-008": {
+      "hash": "sha256:c8db64d63b09ce09e1c4276721a989c29f0ec85a0c9bd8e571877b957a29e273",
+      "time_unit": "step",
+      "description": "리셋 없음, 유효, 70.0 °C 조합에서 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 70,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-009": {
+      "hash": "sha256:b7faa41a787bc96a5bfbd69019fd7600aa8d34563c4db6b76f92fddbf3995e6b",
+      "time_unit": "step",
+      "description": "리셋 없음, 무효, 70.0 °C 조합에서 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 70,
+            "sensor_valid": 0,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-010": {
+      "hash": "sha256:680a492c9e454efd4a0b063f3a8eed1f4cb354382647022d819280048d9845b5",
+      "time_unit": "step",
+      "description": "리셋 있음, 무효, 70.0 °C 조합에서 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 70,
+            "sensor_valid": 0,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-3-011": {
+      "hash": "sha256:87396f4d14cc65382f5b27129efd061925559d35c9bccc350a1de7120f1d76d6",
+      "time_unit": "step",
+      "description": "70.0 °C 바로 아래에서 리셋 요청으로 해제",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "temp_c": 69.99999999999999,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-4-003": {
+      "hash": "sha256:6692d9772c03744a9b993a445efaf74daf2b1d6f9528a6b6421bfe15226aaa99",
+      "time_unit": "step",
+      "description": "75.0 °C 바로 아래에서 비활성 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 74.99999999999999,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-4-004": {
+      "hash": "sha256:38dd318e836f0f201e53ae57aba90cb3ead47518a7726cc777d4494c09628909",
+      "time_unit": "step",
+      "description": "-40.0 °C 바로 위에서 비활성 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": -39.99999999999999,
+            "sensor_valid": 1,
+            "reset_request": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-4-005": {
+      "hash": "sha256:819b08e3f9ac50c6edd39d4a66c91d1e25e2df998f76b21b0713d3c62f0c7da9",
+      "time_unit": "step",
+      "description": "비활성, 리셋 요청, 유효 74.9 °C에서도 비활성 유지",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 74.9,
+            "sensor_valid": 1,
+            "reset_request": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-03-4-003": {
+      "hash": "sha256:3a82e887a1aa414410016c3f3b8cf97b4a028189538ef0e58a82efff1f99865d",
+      "time_unit": "step",
+      "description": "경계 바로 아래 74.9 °C: 비활성 시작·리셋 요청·유효이면 새로 활성화하지 않음(75.0 경계의 아래쪽 대조)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "temp_c": 74.9,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "stop_latch": 0
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022426Z-87b7",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:52.935Z"
+      }
+    },
+    "TC-CTL-02-1-008": {
+      "hash": "sha256:e63568039fcf6a1f87b4185af1aa53ad224a974b7d0d28fc667554da0f01d581",
+      "time_unit": "step",
+      "description": "감지 센서 활성, 유효 75.0 °C에서 같은 호출에 래치 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 75,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-009": {
+      "hash": "sha256:51aa69093d5f008643ef3cd3d089e7bae4a61c39fb4b5d81a067f4bda68d2d38",
+      "time_unit": "step",
+      "description": "감지 센서 활성, 유효 150.0 °C에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 150,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-010": {
+      "hash": "sha256:ed34b77c30128bec0fe5c889c235c528889b1b47f74525539f51618807ba25e4",
+      "time_unit": "step",
+      "description": "감지 센서 활성이어도 유효 74.9 °C는 활성화하지 않음",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 74.9,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-011": {
+      "hash": "sha256:d8dd2f7741e8cf9b62edf1c6bcf8abfd12536cc0a9590cf795ea7a52adf98872",
+      "time_unit": "step",
+      "description": "감지 센서 활성, 75.0 °C 바로 위에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 75.00000000000001,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-012": {
+      "hash": "sha256:a964614573074c4b19339cf538633c217eaf2fb736f141925437460c6ec93e82",
+      "time_unit": "step",
+      "description": "감지 센서 활성, 75.0 °C 바로 아래에서 비활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 74.99999999999999,
+            "sensor_valid": 1,
+            "reset_request": 0,
+            "detect_active": 1
+          },
+          "outputs": {
+            "stop_latch": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-013": {
+      "hash": "sha256:ec4cca98fe7e95833be78f37e2c4bf2edbe56fdee8040c53f96cd4d7a0998ae2",
+      "time_unit": "step",
+      "description": "감지 센서 활성, 센서 무효일 때 안전 쪽 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 80,
+            "sensor_valid": 0,
+            "reset_request": 0,
+            "detect_active": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    },
+    "TC-CTL-02-1-014": {
+      "hash": "sha256:9ca52491b949c20270f97a14758230f7e71bff0c320450191fb268677fd4d413",
+      "time_unit": "step",
+      "description": "감지 센서 활성, 리셋 요청과 유효 75.0 °C 동시 입력에서 활성",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "temp_c": 75,
+            "sensor_valid": 1,
+            "reset_request": 1,
+            "detect_active": 1
+          },
+          "outputs": {
+            "stop_latch": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261123T022246Z-e374",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-23T02:25:49.170Z"
+      }
+    }
+  }
+}

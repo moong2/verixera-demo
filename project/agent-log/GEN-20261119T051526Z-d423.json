@@ -1,0 +1,406 @@
+{
+  "schema": "agent-generation/v1",
+  "generation_id": "GEN-20261119T051526Z-d423",
+  "role": "code",
+  "created_at": "2026-11-19T05:15:26.305Z",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "baseline_id": "BL-001",
+  "baseline_hash": "sha256:1611a5d20c90602dcc2a325572c762c15705ed75ca3cb0a270c7590fb97e96b3",
+  "requirements": [
+    "REQ-CTL-01-1@v1",
+    "REQ-CTL-01-2@v1",
+    "REQ-CTL-01-3@v1",
+    "REQ-CTL-01-4@v1",
+    "REQ-CTL-01-5@v1",
+    "REQ-CTL-01-6@v1",
+    "REQ-CTL-01-7@v1",
+    "REQ-CTL-01-8@v1",
+    "REQ-CTL-02-1@v1",
+    "REQ-CTL-02-2@v1",
+    "REQ-CTL-02-3@v1",
+    "REQ-CTL-02-4@v1",
+    "REQ-CTL-03-1@v1",
+    "REQ-CTL-03-2@v1",
+    "REQ-CTL-03-3@v1",
+    "REQ-CTL-03-4@v1",
+    "REQ-CTL-04@v1"
+  ],
+  "refined_excluded": [
+    "REQ-CTL-01@v1",
+    "REQ-CTL-02@v1",
+    "REQ-CTL-03@v1"
+  ],
+  "rules": [
+    {
+      "path": "targets/AGENTS.md",
+      "sha256": "sha256:d6e3f390361052c8098a60d88ccb501440a0b347cea25d2d9db9080cb7a4de8b"
+    },
+    {
+      "path": "tools/trace/TAG_RULES.md",
+      "sha256": "sha256:3bc2f0f18158d6abb6e7e8d7bbab83fa4f75673d5a238ba55d267e7331fdb641"
+    }
+  ],
+  "skills": [
+    {
+      "name": "automotive-c-coding-rules",
+      "path": "docs/coding-rules/automotive-c-coding-rules/SKILL.md",
+      "sha256": "sha256:a1b8a0088e687e6ae03334ebd8050cb1982bb5b26d81760891ccc4bc98545f13"
+    }
+  ],
+  "project_config": {
+    "domain": "automotive",
+    "level": "D",
+    "asil": "D",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:32ebb52dd7d30daf475127a6dbe81a40604fa82070593f6347d526267df1f4ce"
+  },
+  "prompt_sha256": "sha256:7370840056176a90183cb939f651341f33e6c18a57c46adec834c52bfe7439a3",
+  "response_sha256": "sha256:2455bf12a95c6bfc64a94b618705f1e906b5fce912f566c1f2bcc029bb310c44",
+  "inputs": [],
+  "documents": [],
+  "manual_testcases": [],
+  "outputs": [
+    {
+      "path": "Makefile",
+      "action": "added",
+      "sha256": "sha256:bfe9905936cb335a0f0498890fbef82a6082a9dde586f3bd4ca50b0caf0bd332"
+    },
+    {
+      "path": "docs/design/controller.md",
+      "action": "added",
+      "sha256": "sha256:4dcf6face790ebbc71b61931e1a4dbce7dd46eadde31e02757e0d8fbab68b772"
+    },
+    {
+      "path": "src/controller.c",
+      "action": "added",
+      "sha256": "sha256:6aae41d24b03fc9527b093ea246606545393389e2c0fc7a5482266a9e3086559"
+    },
+    {
+      "path": "src/controller.h",
+      "action": "added",
+      "sha256": "sha256:51b8d699d396d159b480b30a7f13a4b717f9fd7f5172c64136745c672e6b5852"
+    }
+  ],
+  "report": {
+    "implemented": [
+      {
+        "requirement": "REQ-CTL-01-1@v1",
+        "design_items": [
+          "SWD-CTL-001"
+        ],
+        "functions": [
+          "src/controller.c:ctl_init"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-01-2@v1",
+        "design_items": [
+          "SWD-CTL-002"
+        ],
+        "functions": [
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-01-3@v1",
+        "design_items": [
+          "SWD-CTL-003"
+        ],
+        "functions": [
+          "src/controller.c:ctl_is_input_valid"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-01-4@v1",
+        "design_items": [
+          "SWD-CTL-004"
+        ],
+        "functions": [
+          "src/controller.c:ctl_is_input_valid"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-01-5@v1",
+        "design_items": [
+          "SWD-CTL-005"
+        ],
+        "functions": [
+          "src/controller.c:ctl_is_input_valid"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-01-6@v1",
+        "design_items": [
+          "SWD-CTL-006"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_fault",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-01-7@v1",
+        "design_items": [
+          "SWD-CTL-006"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_fault",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-01-8@v1",
+        "design_items": [
+          "SWD-CTL-006"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_fault",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-02-1@v1",
+        "design_items": [
+          "SWD-CTL-007"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-02-2@v1",
+        "design_items": [
+          "SWD-CTL-007"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-02-3@v1",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-02-4@v1",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-1@v1",
+        "design_items": [
+          "SWD-CTL-009"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-2@v1",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-3@v1",
+        "design_items": [
+          "SWD-CTL-008"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-03-4@v1",
+        "design_items": [
+          "SWD-CTL-007"
+        ],
+        "functions": [
+          "src/controller.c:ctl_next_latch",
+          "src/controller.c:ctl_step"
+        ]
+      },
+      {
+        "requirement": "REQ-CTL-04@v1",
+        "design_items": [
+          "SWD-CTL-010"
+        ],
+        "functions": [
+          "src/controller.c:ctl_step"
+        ]
+      }
+    ],
+    "not_implemented": [],
+    "questions": [
+      "온도 입력의 자료형(현재 double)과 단위(°C)를 확정해 주세요. 요구사항에 자료형이 없어 NaN·±∞ 를 표현할 수 있는 부동소수로 정했습니다.",
+      "센서 고장 플래그를 외부 출력 신호로 볼지 내부 상태로 볼지 정해 주세요. 현재는 상태 구조체 멤버로 노출합니다.",
+      "정지 래치가 비활성이고 유효 입력이 75.0 °C 미만(예: 72.0 °C)일 때 리셋 요청이 들어오면 래치는 비활성 유지로 구현했습니다. 이 경우의 별도 동작이 필요한지 확인해 주세요.",
+      "state 포인터가 NULL 일 때의 동작이 요구사항에 없어 아무 동작도 하지 않도록 했습니다. 다른 안전 동작이 필요한지 확인해 주세요."
+    ],
+    "assumptions": [
+      "온도 자료형은 double, 단위는 °C 로 정했다(assumed: type).",
+      "bool 신호의 자료형은 stdbool.h 의 bool 로 정했다(assumed: type).",
+      "REQ-CTL-01-8 은 별도 상태(직전 무효 기억) 없이 ctl_next_fault 가 현재 입력 유효성만으로 판정해 만족한다.",
+      "NaN·±∞ 판정은 math.h 매크로 대신 '온도 >= -40.0 이고 온도 <= 150.0 이면 유효' 비교로 한다(NaN 은 비교 거짓, ±∞ 는 범위 밖).",
+      "ctl_next_fault, ctl_next_latch 는 static 보조 함수이지만 설계 항목 SWD-CTL-006~009 를 구현하므로 @implements 를 붙였다. 요구사항 밖 보조 함수는 없다.",
+      "Makefile 은 tests/ 의 시험 파일을 src/*.c 와 한 번에 빌드한다. CFLAGS 는 컴파일·링크 명령에 넣었다.",
+      "신호 표 초안은 설계 문서의 '인터페이스' 절 1.3 과 보고의 signals 에 있다. 승인 전이라 신호 태그는 쓰지 않았다."
+    ],
+    "standards": [],
+    "signals": [
+      {
+        "assumed": [
+          "type",
+          "unit"
+        ],
+        "name": "temp_c",
+        "direction": "input",
+        "type": "double",
+        "unit": "°C",
+        "min": "",
+        "max": "",
+        "initial": "",
+        "description": "측정 온도. NaN·±∞ 가능",
+        "requirements": [
+          "REQ-CTL-01-3",
+          "REQ-CTL-01-4",
+          "REQ-CTL-01-5",
+          "REQ-CTL-02-1",
+          "REQ-CTL-02-2",
+          "REQ-CTL-02-3",
+          "REQ-CTL-02-4",
+          "REQ-CTL-03-1",
+          "REQ-CTL-03-2",
+          "REQ-CTL-03-3",
+          "REQ-CTL-03-4"
+        ]
+      },
+      {
+        "assumed": [
+          "type"
+        ],
+        "name": "sensor_valid",
+        "direction": "input",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "",
+        "description": "센서 유효성 플래그",
+        "requirements": [
+          "REQ-CTL-01-3",
+          "REQ-CTL-01-4",
+          "REQ-CTL-01-5"
+        ]
+      },
+      {
+        "assumed": [
+          "type"
+        ],
+        "name": "reset_request",
+        "direction": "input",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "",
+        "description": "리셋 요청",
+        "requirements": [
+          "REQ-CTL-02-3",
+          "REQ-CTL-02-4",
+          "REQ-CTL-03-1",
+          "REQ-CTL-03-2",
+          "REQ-CTL-03-3",
+          "REQ-CTL-03-4"
+        ]
+      },
+      {
+        "assumed": [
+          "type"
+        ],
+        "name": "stop_cmd",
+        "direction": "output",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "false",
+        "description": "정지 명령. 호출 종료 시 정지 래치와 같다",
+        "requirements": [
+          "REQ-CTL-01-1",
+          "REQ-CTL-04"
+        ]
+      },
+      {
+        "assumed": [
+          "direction",
+          "type"
+        ],
+        "name": "sensor_fault",
+        "direction": "internal",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "false",
+        "description": "센서 고장 플래그",
+        "requirements": [
+          "REQ-CTL-01-1",
+          "REQ-CTL-01-6",
+          "REQ-CTL-01-7",
+          "REQ-CTL-01-8"
+        ]
+      },
+      {
+        "assumed": [
+          "type"
+        ],
+        "name": "stop_latch",
+        "direction": "internal",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "false",
+        "description": "정지 래치 (true = 활성)",
+        "requirements": [
+          "REQ-CTL-01-1",
+          "REQ-CTL-02-1",
+          "REQ-CTL-02-2",
+          "REQ-CTL-02-3",
+          "REQ-CTL-02-4",
+          "REQ-CTL-03-1",
+          "REQ-CTL-03-2",
+          "REQ-CTL-03-3",
+          "REQ-CTL-03-4",
+          "REQ-CTL-04"
+        ]
+      }
+    ]
+  },
+  "warnings": [
+    "REQ-CTL-01 는 하위 요구사항으로 구체화된 상위 요구사항이라 대상에서 뺐습니다(하위 요구사항으로 검증됨).",
+    "REQ-CTL-02 는 하위 요구사항으로 구체화된 상위 요구사항이라 대상에서 뺐습니다(하위 요구사항으로 검증됨).",
+    "REQ-CTL-03 는 하위 요구사항으로 구체화된 상위 요구사항이라 대상에서 뺐습니다(하위 요구사항으로 검증됨)."
+  ],
+  "applied_at": "2026-11-19T05:16:10.400Z"
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "coverage-justifications/v1",
+  "note": "커버리지 정당화 — 사람이 남긴 근거. 측정값은 바꾸지 않고 유효 커버리지에만 더한다.",
+  "items": [
+    {
+      "id": "CJ-20261123T030203Z-e782",
+      "file": "src/controller.c",
+      "line": 151,
+      "kind": "statement",
+      "text": "if (state != NULL) {",
+      "reason": "포인터가 NULL인 것은 단위 검증 시험에서 재현 불가함",
+      "by": "HJ",
+      "at": "2026-11-23T03:02:03.251Z",
+      "status": "withdrawn",
+      "category": "other",
+      "withdrawn_by": "HJ",
+      "withdrawn_at": "2026-11-23T04:16:34.291Z",
+      "withdrawn_note": "테스트입니다"
+    },
+    {
+      "id": "CJ-20261123T043156Z-f2b1",
+      "file": "src/controller.c",
+      "line": 151,
+      "kind": "branch",
+      "text": "if (state != NULL) {",
+      "reason": "포인터가 NULL인 것은 단위 검증 시험에서 재현 불가함",
+      "by": "HJ",
+      "at": "2026-11-23T04:31:56.956Z",
+      "status": "active",
+      "category": "other"
+    },
+    {
+      "id": "CJ-20261123T043156Z-1c62",
+      "file": "src/controller.c",
+      "line": 151,
+      "kind": "mcdc",
+      "text": "if (state != NULL) {",
+      "reason": "포인터가 NULL인 것은 단위 검증 시험에서 재현 불가함",
+      "by": "HJ",
+      "at": "2026-11-23T04:31:56.977Z",
+      "status": "active",
+      "category": "other"
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "schema": "requirement-review/v1",
+  "id": "REVIEW-20261119T043139Z-672e",
+  "created_at": "2026-11-19T04:31:39.700Z",
+  "requested_by": "HJ",
+  "agent": {
+    "role": "requirements-review",
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5"
+  },
+  "inputs": {
+    "conversation": false,
+    "writer_notes": false,
+    "signals": 0,
+    "focus": [
+      "REQ-CTL-01-1"
+    ]
+  },
+  "prompt_hash": "sha256:6d3ce734a286a9ead97c79b5eabcabcae79631a481997050cb0238b59579e4a7",
+  "output_hash": "sha256:2a7ab3604078fb0c4a643bdd636eb13196cbe8d89eba08afe30ae691e335dd11",
+  "requirements": [
+    {
+      "id": "REQ-CTL-01",
+      "content_hash": "sha256:856c88cd50e73acc64b17a1f87a63e2b35de7838e28dae68f837588333fb77ee"
+    },
+    {
+      "id": "REQ-CTL-01-1",
+      "content_hash": "sha256:bf7ed54438944f88fa1cd3d2f8c38704bc17dbfc72841e5d194fa96654724361"
+    },
+    {
+      "id": "REQ-CTL-01-2",
+      "content_hash": "sha256:918b88a344714c2adb17f92d4ff4721425fabb9b892308359a64dd92c13bf635"
+    },
+    {
+      "id": "REQ-CTL-01-3",
+      "content_hash": "sha256:82418272fee81ec9adf8abbe4f548df623ff56be32c3e4ec320d087964d88085"
+    },
+    {
+      "id": "REQ-CTL-01-4",
+      "content_hash": "sha256:f8c5f5be8f5f732a0b5da07a19cc518c36229cec2f86f929c04ab260563bf846"
+    },
+    {
+      "id": "REQ-CTL-01-5",
+      "content_hash": "sha256:3426e92458a3baa743ffb7cce717e49efc249bba736dbcfac8039d71a36e790e"
+    },
+    {
+      "id": "REQ-CTL-01-6",
+      "content_hash": "sha256:cf79312042bf7abb7060e672055815fca9b9cb7c170734c6c17ec304301d8346"
+    },
+    {
+      "id": "REQ-CTL-01-7",
+      "content_hash": "sha256:824e59f88b1588dcdbce7722b655f82c9815f67095130ca2c6345da3d35d180e"
+    }
+  ],
+  "results": [
+    {
+      "id": "REQ-CTL-01-1",
+      "findings": [
+        {
+          "fid": "F001",
+          "severity": "major",
+          "category": "completeness",
+          "text": "'정지 명령'과 '정지 래치'는 이 요구사항에서만 나오고, 집합의 어느 요구사항에도 정의나 갱신 조건이 없다. 두 값이 무엇인지, 센서 고장 플래그와 어떤 관계인지, 언제 True가 되고 언제 해제되는지 알 수 없다. 초기값만 있고 이후 동작이 없어서 구현과 시험에서 이 값들의 의미를 판단할 수 없다.",
+          "suggestion": "정지 명령과 정지 래치의 설정·유지·해제 조건을 다루는 요구사항을 추가하거나, 이 값들이 이 요구사항 집합의 범위 밖이라면 근거와 출처를 명시한다. 정지 래치가 센서 고장 플래그와 독립인지도 정해야 한다."
+        },
+        {
+          "fid": "F002",
+          "severity": "minor",
+          "category": "interface",
+          "text": "정지 명령, 센서 고장 플래그, 정지 래치가 출력 신호인지 내부 상태인지 구분이 없다. 신호 표도 없어서 이름, 타입, 관측 방법이 확인되지 않는다. 수용 기준의 '초기화 직후'에 어떤 시점과 인터페이스로 값을 읽는지도 정해지지 않았다.",
+          "suggestion": "세 항목의 신호 이름, 타입(불리언), 구분(출력 또는 내부 상태)을 신호 표에 맞춰 적고, 수용 기준에 관측 방법을 명시한다. 예: 초기화 완료 후 첫 제어 함수 호출 전에 읽는다."
+        },
+        {
+          "fid": "F003",
+          "severity": "minor",
+          "category": "ambiguity",
+          "text": "'제어기가 초기화되면'이 무엇을 가리키는지 모호하다. 최초 생성 시에만 해당하는지, 재시작이나 리셋 같은 재초기화도 포함하는지 알 수 없다. 재초기화 때 이미 True였던 정지 래치나 센서 고장 플래그를 다시 False로 지우는 것이 의도인지도 분명하지 않다.",
+          "suggestion": "초기화 이벤트(생성자 호출, 리셋 명령 등)를 정의하고, 재초기화 시 래치 상태를 지우는 것이 맞는지 작성자가 확인한다."
+        },
+        {
+          "fid": "F004",
+          "severity": "minor",
+          "category": "traceability",
+          "text": "ID는 REQ-CTL-01의 하위 요구사항(-1~-7) 형태인데 parent가 모두 '(최상위)'로 되어 있다. REQ-CTL-01은 센서 유효성 판정이 목적이지만, 이 요구사항은 정지 명령과 정지 래치까지 다뤄서 상위 요구와 범위가 맞지 않는다.",
+          "suggestion": "parent를 REQ-CTL-01로 연결할지 결정한다. 정지 명령과 정지 래치 초기화가 별개 기능이면 별도 상위 요구사항으로 분리하는 것을 검토한다."
+        }
+      ]
+    }
+  ],
+  "set_findings": [
+    {
+      "requirements": [
+        "REQ-CTL-01-1",
+        "REQ-CTL-01-6",
+        "REQ-CTL-01-7"
+      ],
+      "fid": "F005",
+      "severity": "major",
+      "category": "completeness",
+      "text": "센서 고장 플래그가 True가 된 뒤 정지 명령이나 정지 래치에 미치는 영향이 어느 요구사항에도 없다. 초기화에서 정지 명령과 정지 래치를 다루면서 이후 갱신 규칙이 없어서, 센서 고장 시 제어기가 어떤 출력을 내야 하는지 검증할 수 없다.",
+      "suggestion": "센서 고장 상태와 정지 명령·정지 래치의 관계(예: 고장 시 정지 여부, 래치 해제 조건)를 요구사항으로 추가한다. 구체적인 동작은 작성자가 결정해야 한다."
+    }
+  ],
+  "dropped": [],
+  "counts": {
+    "findings": 5,
+    "major": 2,
+    "minor": 3,
+    "question": 0
+  }
+}

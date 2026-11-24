@@ -158,3 +158,5 @@ void ctl_step_detect(ctl_state_t *state, double temp_c, bool sensor_valid, bool 
 
     return;
 }
+
+/* QA: 시연 서버에서 고친 줄 */

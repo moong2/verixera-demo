@@ -97,9 +97,18 @@ function toolsFingerprint() {
   for (const f of files.sort()) { h.update(path.relative(base, f).split(path.sep).join("/")); h.update("\0"); try { h.update(fs.readFileSync(f)); } catch (_) { /* 읽지 못함 */ } }
   return { files: files.length, sha256: "sha256:" + h.digest("hex") };
 }
+// 검증 기록은 저장소에 올라가 공개될 수 있다. 실행 파일 경로에 PC 사용자 이름(C:\Users\<이름>, /home/<이름>)이 남지 않게
+// 홈 폴더 부분을 ~ 로 바꾼다. 어떤 도구를 어디서 썼는지(패키지 폴더 이름 등)는 그대로 남는다.
+function maskHome(p) {
+  if (!p) return p;
+  let out = String(p);
+  const home = os.homedir();
+  if (home && out.toLowerCase().startsWith(home.toLowerCase())) out = "~" + out.slice(home.length);
+  return out.replace(/^[A-Za-z]:[\\/]Users[\\/][^\\/]+/i, "~").replace(/^\/(?:home|Users)\/[^/]+/, "~");
+}
 function toolInventory(cwd, env, t) {
   const e = env || process.env;
-  const one = (role, cmd, versionArgs, extra) => (cmd ? Object.assign({ role, command: cmd, path: whichCmd(cmd, e), version: toolVersion(cwd, cmd, versionArgs, e) }, extra || {}) : null);
+  const one = (role, cmd, versionArgs, extra) => (cmd ? Object.assign({ role, command: cmd, path: maskHome(whichCmd(cmd, e)), version: toolVersion(cwd, cmd, versionArgs, e) }, extra || {}) : null);
   let target = null;
   if (t.cc) { try { target = execFileSync(t.cc, ["-dumpmachine"], { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], timeout: 10000, env: e }).trim() || null; } catch (_) { target = null; } }
   const sa = t.static;
@@ -107,7 +116,7 @@ function toolInventory(cwd, env, t) {
     one("컴파일러", t.cc, ["--version"], { target, chosen: t.compiler || null, used: t.compilerUsed || null, flags: e.CFLAGS || null }),
     one("빌드 도구", t.make, ["--version"], { test_command: t.testCmd || null }),
     t.coverage ? one("커버리지 도구", t.gcov, ["--version"], { mcdc: Boolean(t.mcdc) }) : null,
-    sa ? (sa.ran ? { role: "정적 분석기", command: "cppcheck", path: sa.path || null, version: sa.version || null, options: sa.command || null, fail_on: sa.fail_on || null } : { role: "정적 분석기", command: "cppcheck", path: null, version: sa.version || null, note: sa.reason || "실행하지 못함" }) : null,
+    sa ? (sa.ran ? { role: "정적 분석기", command: "cppcheck", path: maskHome(sa.path) || null, version: sa.version || null, options: sa.command || null, fail_on: sa.fail_on || null } : { role: "정적 분석기", command: "cppcheck", path: null, version: sa.version || null, note: sa.reason || "실행하지 못함" }) : null,
     { role: "실행 환경", command: null, path: null, version: `${os.platform()} ${os.release()} ${os.arch()} · Node ${process.version}`, image: e.TRACE_ENV_IMAGE || null },
     Object.assign({ role: "검증 도구(tools/)", command: "node tools/trace/run-gate.js", path: null, version: null }, (() => { const f = toolsFingerprint(); return { sha256: f.sha256, files: f.files }; })()),
   ];
@@ -161,9 +170,50 @@ const HELP = `추적성 게이트: 시험 실행 → 결과 파일 → 추적 �
 결과: <out>/results.json, <out>/test-output.log, <out>/trace-matrix.json, <out>/trace-matrix.md
 종료 코드: 0 통과, 1 시험 실패 또는 추적성 오류, 2 실행 조건 오류`;
 
+// ── 공개 시연 서버: 방문자 코드를 서버와 다른 사용자로 실행 ──
+// 시연 서버에서는 방문자가 C 코드·Makefile 을 저장하고 빌드·시험(make test)을 돌릴 수 있다. 이 명령이 서버와 같은 사용자로 돌면
+// 서버만 읽어야 하는 파일(GitHub 열쇠 파일 등)과 다른 방문자의 폴더를 읽을 수 있다. 그래서 EARS_BUILD_SOCKET 이 있으면
+// (시연 컨테이너의 entrypoint.sh 가 정한다) 그 소켓의 빌드 실행기(tools/demo/build-runner.js)에게 빌드를 부탁한다.
+// 실행기는 root 로 떠 있다가 빌드만 전용 사용자(vxbuilder)로 실행한다. sudo 는 쓰지 않는다(Render 는 no-new-privileges).
+// 실행기에 닿지 못하면 서버 사용자로 몰래 돌리지 않고 실패로 알린다.
+// 넘기는 환경변수는 빌드에 필요한 것만 고른다(비밀 값은 원래 환경에 없지만, 혹시 생겨도 넘어가지 않게).
+const BUILD_ENV_KEYS = /^(PATH|CC|CXX|CFLAGS|CPPFLAGS|LDFLAGS|MAKEFLAGS|LANG|LC_[A-Z]+|TZ|EARS_TC|GCOV_PREFIX|GCOV_PREFIX_STRIP|TRACE_[A-Z_]+)$/;
+function buildEnv(env) {
+  const src = env || process.env;
+  const out = {};
+  for (const k of Object.keys(src).sort()) if (BUILD_ENV_KEYS.test(k) && typeof src[k] === "string") out[k] = src[k];
+  return out;
+}
+function runViaRunner(socketPath, cmd, { cwd, env, timeoutMs }) {
+  return new Promise((resolve) => {
+    const net = require("node:net");
+    let buf = ""; let done = false;
+    const finish = (r) => { if (done) return; done = true; clearTimeout(guard); resolve(r); };
+    const fail = (why) => finish({ error: Object.assign(new Error(why), { code: "ERUNNER" }), status: null, stdout: "", stderr: `${why}\n`, timedOut: false });
+    const sock = net.createConnection(socketPath);
+    // 실행기가 끝내지 못한 경우에 대비한 마지막 안전장치(실행기도 제한 시간 + 15초에 끝낸다)
+    const guard = setTimeout(() => { sock.destroy(); finish({ error: Object.assign(new Error("시험 명령 제한 시간 초과"), { code: "ETIMEDOUT" }), status: null, stdout: "", stderr: "", timedOut: true }); }, (timeoutMs || 120000) + 60000);
+    sock.setEncoding("utf8");
+    sock.on("connect", () => sock.write(JSON.stringify({ cmd, cwd: path.resolve(cwd), env: buildEnv(env), timeoutMs }) + "\n"));
+    sock.on("data", (c) => { buf += c; });
+    sock.on("end", () => {
+      let r;
+      try { r = JSON.parse(buf); } catch (_) { fail("빌드 실행기의 답을 읽지 못했습니다"); return; }
+      if (r.error && r.status === null && !r.timedOut && !r.stdout && !r.stderr) { fail(`빌드 실행기: ${r.error}`); return; }
+      finish({
+        error: r.timedOut ? Object.assign(new Error("시험 명령 제한 시간 초과"), { code: "ETIMEDOUT" }) : r.error ? new Error(r.error) : null,
+        status: r.timedOut ? null : r.status, stdout: r.stdout || "", stderr: r.stderr || "", timedOut: Boolean(r.timedOut),
+      });
+    });
+    sock.on("error", (e) => fail(`빌드 실행기에 연결하지 못했습니다(${e.code || e.message}). 시연 서버를 다시 시작해야 할 수 있습니다.`));
+  });
+}
+
 // 시험 명령을 셸로 실행하고 끝날 때까지 기다린다. 제한 시간을 넘기면 그 명령이 띄운 프로세스까지 모두 끝낸다.
 // (셸만 끝내면 실제 시험 프로그램이 남아 계속 돌고, Windows 에서는 폴더를 잡고 있게 된다)
 function runShell(cmd, { cwd, env, timeoutMs }) {
+  const socketPath = process.env.EARS_BUILD_SOCKET;
+  if (socketPath) return runViaRunner(socketPath, cmd, { cwd, env, timeoutMs });
   return new Promise((resolve) => {
     const win = process.platform === "win32";
     const LIMIT = 64 * 1024 * 1024;
@@ -343,7 +393,7 @@ async function run(argv, hooks) {
   return { code, text: lines.join("\n"), problems: [...problems, ...settingProblems], dirty, resultsFile, report: checked.report, record };
 }
 
-module.exports = { run, parseTestOutput, runShell, describeEnvironment, resultFingerprint, canonical };
+module.exports = { run, parseTestOutput, runShell, describeEnvironment, resultFingerprint, canonical, maskHome, buildEnv, runViaRunner };
 
 if (require.main === module) {
   run(process.argv.slice(2)).then(

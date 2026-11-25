@@ -313,7 +313,7 @@ function check(baseline, model, results, env) {
   for (const s of signalTable.values()) {
     if (signalSeen.has(s.name)) continue;
     const designed = (s.requirements || []).filter((id) => designsByReq.has(id));
-    if (designed.length) err("T12", `신호 ${s.name}@v${s.version}: 이 신호를 쓰는 요구사항(${designed.join(", ")})의 설계가 있는데 설계 문서에 @signal ${s.name}@v${s.version} 선언이 없음`);
+    if (designed.length) err("T12", `신호 ${s.name}@v${s.version}: 이 신호를 쓰는 요구사항(${designed.join(", ")})의 설계가 있는데 설계 문서에 @signal ${s.name}@v${s.version} 선언이 없음 — 신호 표를 고정하기 전에 만든 설계라면, 'AI 생성'에서 ${designed.join(", ")} 의 코드를 다시 생성하면 설계 문서에 선언이 더해진다(직접 고치려면 설계 문서에 이 선언을 적는다)`);
     else if (!(s.requirements || []).length) warn("T12", `신호 ${s.name}@v${s.version}: 어느 요구사항에도 연결되지 않은 신호`);
   }
 

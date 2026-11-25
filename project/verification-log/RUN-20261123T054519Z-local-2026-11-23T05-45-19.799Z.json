@@ -30,7 +30,7 @@
       {
         "role": "컴파일러",
         "command": "gcc",
-        "path": "C:\\Users\\SURE\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\gcc.exe",
+        "path": "~\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\gcc.exe",
         "version": "gcc (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 16.2.0",
         "target": "x86_64-w64-mingw32",
         "chosen": null,
@@ -40,21 +40,21 @@
       {
         "role": "빌드 도구",
         "command": "mingw32-make",
-        "path": "C:\\Users\\SURE\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\mingw32-make.exe",
+        "path": "~\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\mingw32-make.exe",
         "version": "GNU Make 4.4.1",
         "test_command": "mingw32-make -s test"
       },
       {
         "role": "커버리지 도구",
         "command": "gcov",
-        "path": "C:\\Users\\SURE\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\gcov.exe",
+        "path": "~\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\gcov.exe",
         "version": "gcov (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 16.2.0",
         "mcdc": true
       },
       {
         "role": "정적 분석기",
         "command": "cppcheck",
-        "path": "C:\\Users\\SURE\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\cppcheck.exe",
+        "path": "~\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\cppcheck.exe",
         "version": "2.22.0",
         "options": "cppcheck --enable=warning,style,performance,portability --std=c11 --language=c --inline-suppr --suppress=missingIncludeSystem --error-exitcode=0 --quiet --xml --xml-version=2 -I src src",
         "fail_on": "warning"

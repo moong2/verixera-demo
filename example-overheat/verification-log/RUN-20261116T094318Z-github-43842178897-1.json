@@ -1,0 +1,123 @@
+{
+  "schema": "verification-run/v1",
+  "run_id": "github-43842178897-1",
+  "source": "ci",
+  "started_at": "2026-11-16T09:43:18.001Z",
+  "commit": "c191dec609d2f302a22fb62e775a654c4401ea5f",
+  "uncommitted_changes": 0,
+  "baseline_id": "BL-001",
+  "baseline_hash": "sha256:536bc7af88346bce892be4cc063764d867aef37c56c51fa349379a3c57a155ee",
+  "config": {
+    "domain": "automotive",
+    "level": "B",
+    "asil": "B",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:adba83759c9f32906974ac758fca525dd79d10dd8bd5972d325e0e382c703c3b",
+    "cc": "cc",
+    "cflags": "-std=c11 -Wall -Wextra -Wpedantic -Wstrict-prototypes -Wmissing-prototypes -Wundef -Wuninitialized -Wshadow -Wconversion -Wsign-conversion -Werror -O0 --coverage"
+  },
+  "environment": {
+    "image": "node:22.23.5-bookworm@sha256:e13726ca604184d7a91fcacab1fc09eefd642dc28e79ac34e85540dd93b78cfb",
+    "os": "linux 7.0.0-1019-azure x64",
+    "node": "v22.23.5",
+    "cc": "cc (Debian 12.2.0-14+deb12u1) 12.2.0",
+    "make": "GNU Make 4.3",
+    "pinned": true,
+    "fingerprint": "sha256:39a04301bf393f8a6bf122cd642e31e50da8c7caaad79588e7dfbc71aef27db1"
+  },
+  "result_fingerprint": "sha256:7d8952c67c4592f99f316d94fc385a7f9e1acb1c7042d237e3386466f50063a0",
+  "gate": "pass",
+  "summary": {
+    "pass": 11,
+    "fail": 0,
+    "skip": 0,
+    "total": 11
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-OTP-01",
+      "version": 1,
+      "status": "완전",
+      "tests": []
+    },
+    {
+      "requirement_id": "REQ-OTP-01-1",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-OTP-01-1-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-005",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-006",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-007",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-OTP-01-2",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-OTP-01-2-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-2-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-2-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-2-004",
+          "result": "pass"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "statement": {
+      "covered": 5,
+      "total": 5,
+      "percent": 100
+    },
+    "branch": {
+      "covered": 2,
+      "total": 2,
+      "percent": 100
+    }
+  },
+  "static_analysis": null,
+  "problems": [],
+  "build_errors": [],
+  "failures": [],
+  "ci": {
+    "number": 3,
+    "url": "https://github.com/moong2/Requirements-Quality-Assessment-Analysis-/actions/runs/43842178897"
+  },
+  "sources": null
+}

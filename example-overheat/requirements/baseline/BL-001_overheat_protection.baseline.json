@@ -1,0 +1,80 @@
+{
+  "schema": "ears-baseline/v1",
+  "baseline_id": "BL-001",
+  "project": "과열 보호 예시",
+  "created_at": "2026-11-12T00:00:00.000Z",
+  "approver": "시험용 승인자(가상)",
+  "change_reason": "추적 점검기 시험용 예시",
+  "previous_baseline": null,
+  "hash_algorithm": "sha256",
+  "hash_scope": "content_hash = sha256(정규화 JSON{requirement_id, ears_type, text, parent, acceptance_criteria}); baseline_hash = sha256(정규화 JSON{schema, baseline_id, requirements[{requirement_id, version, content_hash}]})",
+  "baseline_hash": "sha256:536bc7af88346bce892be4cc063764d867aef37c56c51fa349379a3c57a155ee",
+  "summary": {
+    "total": 3,
+    "added": [
+      "REQ-OTP-01",
+      "REQ-OTP-01-1",
+      "REQ-OTP-01-2"
+    ],
+    "modified": [],
+    "unchanged": [],
+    "removed": []
+  },
+  "open_items": {
+    "missing_acceptance_criteria": [
+      "REQ-OTP-01"
+    ],
+    "parent_not_in_baseline": [],
+    "unresolved_placeholder": []
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-OTP-01",
+      "version": 1,
+      "status": "confirmed",
+      "ears_type": "Ubiquitous",
+      "text": "보호 제어기는 과열 보호 기능을 제공해야 한다.",
+      "summary": "과열 보호 기능",
+      "parent": null,
+      "source": "NEED-OTP-01 (가상)",
+      "acceptance_criteria": [],
+      "ltl": "",
+      "ltl_text": "",
+      "content_hash": "sha256:c2de87a3e7a7aa43cdedd93330c833c2a75cc51e7b01acd69256c4346b99abee"
+    },
+    {
+      "requirement_id": "REQ-OTP-01-1",
+      "version": 1,
+      "status": "confirmed",
+      "ears_type": "Event-driven",
+      "text": "WHEN 유효한 센서 온도가 75 °C 이상인 경우, 보호 제어기는 정지 명령을 활성화해야 한다.",
+      "summary": "75 °C 이상 정지",
+      "parent": "REQ-OTP-01",
+      "source": "",
+      "acceptance_criteria": [
+        "유효 온도 74.9 °C 입력 시 정지 명령 = false",
+        "유효 온도 75.0 °C 입력 시 정지 명령 = true",
+        "유효 온도 75.1 °C 입력 시 정지 명령 = true"
+      ],
+      "ltl": "",
+      "ltl_text": "",
+      "content_hash": "sha256:581ba5d8e30e96ee82e0538c7a710e9917dbd63f8b01c777a6569fe346f25989"
+    },
+    {
+      "requirement_id": "REQ-OTP-01-2",
+      "version": 1,
+      "status": "confirmed",
+      "ears_type": "Unwanted Behaviour",
+      "text": "IF 센서 값이 무효이면, 보호 제어기는 정지 명령을 활성화해야 한다.",
+      "summary": "센서 무효 시 정지",
+      "parent": "REQ-OTP-01",
+      "source": "",
+      "acceptance_criteria": [
+        "센서 무효 입력 시 온도 값과 관계없이 정지 명령 = true"
+      ],
+      "ltl": "",
+      "ltl_text": "",
+      "content_hash": "sha256:7ae7a294b8ec09f3ea3e0528ce0de01951a9fdebea28dc816edb44dd426545c2"
+    }
+  ]
+}

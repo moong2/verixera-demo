@@ -1,0 +1,126 @@
+{
+  "schema": "verification-run/v1",
+  "run_id": "local-2026-11-15T12:02:18.213Z",
+  "source": "local",
+  "started_at": "2026-11-15T12:02:18.213Z",
+  "commit": "4862eab653dc753e48391dae962fe53797718f7a",
+  "uncommitted_changes": 0,
+  "baseline_id": "BL-001",
+  "baseline_hash": "sha256:536bc7af88346bce892be4cc063764d867aef37c56c51fa349379a3c57a155ee",
+  "config": {
+    "domain": "automotive",
+    "level": "B",
+    "asil": "B",
+    "standard": "ISO 26262-6:2018",
+    "sha256": "sha256:adba83759c9f32906974ac758fca525dd79d10dd8bd5972d325e0e382c703c3b",
+    "cc": "gcc",
+    "cflags": "-std=c11 -Wall -Wextra -Wpedantic -Wstrict-prototypes -Wmissing-prototypes -Wundef -Wuninitialized -Wshadow -Wconversion -Wsign-conversion -Werror -O0 --coverage -fcondition-coverage"
+  },
+  "environment": {
+    "image": null,
+    "os": "win32 10.0.22631 x64",
+    "node": "v26.13.0",
+    "cc": "gcc (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 16.2.0",
+    "make": "GNU Make 4.4.1",
+    "pinned": false,
+    "fingerprint": "sha256:20d71c6df451eba3eeb991dd681bed96da2092ed7ee21bbbd418413fc8029dd3"
+  },
+  "result_fingerprint": "sha256:8a31953ccdeea0d116288a8a6d50928140707cd9e9cb73252171f739aaaf738b",
+  "gate": "fail",
+  "summary": {
+    "pass": 4,
+    "fail": 0,
+    "skip": 0,
+    "total": 4
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-OTP-01",
+      "version": 1,
+      "status": "완전",
+      "tests": []
+    },
+    {
+      "requirement_id": "REQ-OTP-01-1",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-OTP-01-1-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-003",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-OTP-01-2",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-OTP-01-2-001",
+          "result": "pass"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "measured": false,
+    "reason": "계측 자료(.gcda)가 없음 — Makefile 이 CFLAGS 를 컴파일·링크에 쓰지 않거나 시험이 실행되지 않음"
+  },
+  "problems": [
+    {
+      "rule": "C-EXIT",
+      "message": "otp_should_stop(): return 문이 2개 — 함수의 출구는 하나여야 함",
+      "where": "src/overheat_protection.c:7"
+    },
+    {
+      "rule": "M1",
+      "message": "TC-OTP-01-1-001: 시험 도출 방법 표기(@method)가 없음",
+      "where": "tests/test_overheat_protection.c:17"
+    },
+    {
+      "rule": "M1",
+      "message": "TC-OTP-01-1-002: 시험 도출 방법 표기(@method)가 없음",
+      "where": "tests/test_overheat_protection.c:22"
+    },
+    {
+      "rule": "M1",
+      "message": "TC-OTP-01-1-003: 시험 도출 방법 표기(@method)가 없음",
+      "where": "tests/test_overheat_protection.c:27"
+    },
+    {
+      "rule": "M1",
+      "message": "TC-OTP-01-2-001: 시험 도출 방법 표기(@method)가 없음",
+      "where": "tests/test_overheat_protection.c:32"
+    },
+    {
+      "rule": "게이트",
+      "message": "[V-STMT] 구문 커버리지를 측정하지 못함 — 계측 자료(.gcda)가 없음 — Makefile 이 CFLAGS 를 컴파일·링크에 쓰지 않거나 시험이 실행되지 않음",
+      "where": ""
+    },
+    {
+      "rule": "게이트",
+      "message": "[V-BRANCH] 분기 커버리지를 측정하지 못함 — 계측 자료(.gcda)가 없음 — Makefile 이 CFLAGS 를 컴파일·링크에 쓰지 않거나 시험이 실행되지 않음",
+      "where": ""
+    }
+  ],
+  "build_errors": [],
+  "failures": [],
+  "ci": null,
+  "sources": {
+    "docs/design/overheat_protection.md": "sha256:9a9c5ae931cb3e0ae2413ec3a9b1ac8f581604a04976b8f51fb629b75a850630",
+    "src/overheat_protection.c": "sha256:e47901cfc458ff8644ac4f20d0064a36f81fc9216817fb53130e8f43ab461e44",
+    "src/overheat_protection.h": "sha256:aa83e5020caef54678dceb5621a4f7222d77c05741694b608fc4834f338018e2",
+    "tests/test_overheat_protection.c": "sha256:12c1d9cdfba68887f7ddc967ce45bddc55ce315397f5eb48c9d4d045a7185224",
+    "Makefile": "sha256:e052f54dc833b92daae030cee0a686bad04e18c2b9b1dadceefb273a50e40500",
+    "project.json": "sha256:eeb23d94c6a6ec29af4cf20866106e6fef64e3396df787ad218023a6ded72828"
+  }
+}

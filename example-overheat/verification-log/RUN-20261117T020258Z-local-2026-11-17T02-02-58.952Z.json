@@ -1,0 +1,135 @@
+{
+  "schema": "verification-run/v1",
+  "run_id": "local-2026-11-17T02:02:58.952Z",
+  "source": "local",
+  "started_at": "2026-11-17T02:02:58.952Z",
+  "commit": "c191dec609d2f302a22fb62e775a654c4401ea5f",
+  "uncommitted_changes": 1,
+  "baseline_id": "BL-001",
+  "baseline_hash": "sha256:536bc7af88346bce892be4cc063764d867aef37c56c51fa349379a3c57a155ee",
+  "config": {
+    "domain": "aerospace",
+    "level": "C",
+    "standard": "DO-178C",
+    "sha256": "sha256:1e00034ea1c0409b31cb12d4066d169f59a46a25ff3590c6c4d733b7af972778",
+    "cc": "gcc",
+    "cflags": "-std=c11 -Wall -Wextra -Wpedantic -Wstrict-prototypes -Wmissing-prototypes -Wundef -Wuninitialized -Wshadow -Wconversion -Wsign-conversion -Werror -O0 --coverage"
+  },
+  "environment": {
+    "image": null,
+    "os": "win32 10.0.22631 x64",
+    "node": "v26.13.0",
+    "cc": "gcc (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 16.2.0",
+    "make": "GNU Make 4.4.1",
+    "pinned": false,
+    "fingerprint": "sha256:20d71c6df451eba3eeb991dd681bed96da2092ed7ee21bbbd418413fc8029dd3"
+  },
+  "result_fingerprint": "sha256:9edcff2571fb0a33fb68bbf43ce27a1cfef72403ecb3eb185dfc96686860f37d",
+  "gate": "pass",
+  "summary": {
+    "pass": 11,
+    "fail": 0,
+    "skip": 0,
+    "total": 11
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-OTP-01",
+      "version": 1,
+      "status": "완전",
+      "tests": []
+    },
+    {
+      "requirement_id": "REQ-OTP-01-1",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-OTP-01-1-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-004",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-005",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-006",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-1-007",
+          "result": "pass"
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-OTP-01-2",
+      "version": 1,
+      "status": "완전",
+      "tests": [
+        {
+          "tc_id": "TC-OTP-01-2-001",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-2-002",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-2-003",
+          "result": "pass"
+        },
+        {
+          "tc_id": "TC-OTP-01-2-004",
+          "result": "pass"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "statement": {
+      "covered": 5,
+      "total": 5,
+      "percent": 100
+    },
+    "branch": {
+      "covered": 2,
+      "total": 2,
+      "percent": 100
+    }
+  },
+  "static_analysis": {
+    "level": "recommended",
+    "ran": true,
+    "tool": "cppcheck",
+    "version": "2.22.0",
+    "fail_on": "warning",
+    "counted": 0,
+    "total": 0,
+    "findings": []
+  },
+  "problems": [],
+  "build_errors": [],
+  "failures": [],
+  "ci": null,
+  "sources": {
+    "docs/design/overheat_protection.md": "sha256:9a9c5ae931cb3e0ae2413ec3a9b1ac8f581604a04976b8f51fb629b75a850630",
+    "src/overheat_protection.c": "sha256:ad92c2bb8ca6fb444218108c67e79947db8e7898803e28abf37a9f50894eb005",
+    "src/overheat_protection.h": "sha256:aa83e5020caef54678dceb5621a4f7222d77c05741694b608fc4834f338018e2",
+    "tests/test_overheat_protection.c": "sha256:ac9f2656d12e50298589c35e23ac1bcb9863f4581dd7b9db556aa3bb552ec7e3",
+    "Makefile": "sha256:e052f54dc833b92daae030cee0a686bad04e18c2b9b1dadceefb273a50e40500",
+    "project.json": "sha256:b828c00ff32708dc015c8880745a1de27352692d00184d97b11100fc210d5db3"
+  }
+}

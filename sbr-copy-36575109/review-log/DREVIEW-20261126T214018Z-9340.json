@@ -1,0 +1,86 @@
+{
+  "schema": "design-review/v1",
+  "review_id": "DREVIEW-20261126T214018Z-9340",
+  "created_at": "2026-11-26T21:40:18.985Z",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "baseline_id": "BL-002",
+  "baseline_hash": "sha256:2e7f097d4e3f0d13b3d5ffb9e431cec56f5a15c932d9bc75b218ce1f472b28ec",
+  "design_sha256": "sha256:7316fb819f99b070ba91d184004818b36599e7f86230fd8f4af908f5c0584cd2",
+  "inputs": [
+    {
+      "path": "design/architecture.json",
+      "sha256": "sha256:7316fb819f99b070ba91d184004818b36599e7f86230fd8f4af908f5c0584cd2"
+    },
+    {
+      "path": "docs/design/seatbelt_reminder.md",
+      "sha256": "sha256:7b5ca58399203ea3783a01df392d424b67ad5d72fa2e2ca4bbfe33c27ad2b5c1"
+    }
+  ],
+  "prompt_sha256": "sha256:aaf574c32637a4c344589b7966498da8494932c2c28913fcaa8cd1e9f14d6312",
+  "response_sha256": "sha256:0a651e4bacda31f2163cb61859ca7285b9ba22fe868e0c63ac9e466e39e1e1fa",
+  "summary": "REQ-SBR-01-1~-5의 조건과 경계값(14/15/16/200/201/255 km/h), 초기화, 실행마다 재계산하는 동작이 U-01~U-03과 SWD 문서에 빠짐없이 반영되어 있다. 요구사항에 없는 동작은 지어내지 않았다. 다만 warning_cmd 소유와 상태 보관 위치의 서술이 어긋나고, vehicle_speed 범위 표기가 설계 안에서 일관되지 않다.",
+  "findings": [
+    {
+      "level": "warning",
+      "target": "U-03",
+      "message": "신호 연결은 warning_cmd 의 소유자를 U-03 으로 적었다. 그러나 SWD 문서는 sbr_state_t 를 호출하는 쪽이 갖고 U-03 함수는 포인터로 받아 쓴다고 한다. 즉 상태 변수의 실제 저장 위치와 소유가 U-03 밖에 있어 소유 서술이 맞지 않는다. 이 구조에서는 호출자가 warning_cmd 를 직접 읽고 쓸 수 있어 U-03 의 단독 쓰기가 보장되지 않는다.",
+      "suggestion": "warning_cmd 를 U-03 소스 파일의 static 변수로 두고 읽기 인터페이스를 제공하거나, 호출자 소유 구조를 유지할 경우 연결 표의 소유자와 접근 주체(쓰기는 U-03 한정)를 이 구조에 맞게 고쳐 적는다."
+    },
+    {
+      "level": "info",
+      "target": "vehicle_speed",
+      "message": "신호 정의의 min/max 는 0~200 이지만 설계 타입은 uint8_t 이고 raw 범위는 0~255 다. REQ-SBR-01-5 의 201·255 km/h 입력을 받으려는 의도는 description 과 validity 에 적혀 있다. 그래도 min/max 만 읽으면 201 이상 입력이 허용되지 않는 것처럼 읽힌다.",
+      "suggestion": "min/max 를 물리 유효 범위(0~200)로 유지한다면 '입력 가능 범위 0~255, 유효 범위 0~200'을 필드에서 구분해 명시한다."
+    },
+    {
+      "level": "info",
+      "target": "REQ-SBR-01-4",
+      "message": "REQ-SBR-01-4 가 U-01, U-02, U-03 세 유닛에 나뉘어 할당되어 있다. 각 유닛의 acceptance 는 자기 책임만 검증하므로 요구사항 acceptance 의 2회 연속 실행 시나리오(TRUE 다음 FALSE)는 유닛 단독으로 검증되지 않는다.",
+      "suggestion": "유닛 단위 검증과 별도로, 1회차 TRUE → 2회차 FALSE 시나리오를 U-01~U-03 연계(통합) 검증 항목으로 추적한다."
+    }
+  ],
+  "rule_profile_hash": "sha256:b56d981f7c9d3283a6b708c7df2a67a011cabb71113d5ae83c586439cacd93ee",
+  "rule_results": [
+    {
+      "rule_id": "COM-05",
+      "result": "SATISFIED",
+      "evidence": "U-01 은 취득, U-02 는 판정, U-03 은 출력·초기화로 각 유닛이 한 책임으로 묶인다. 유닛 사이 값은 warning_result 와 입력 구조체 하나뿐이고 모두 한 방향이다. U-02 는 warning_cmd 를 직접 쓰지 않는다."
+    },
+    {
+      "rule_id": "COM-06",
+      "result": "SATISFIED",
+      "evidence": "U-02 의 조건은 속도 하한, 속도 상한, 탑승·미착용 세 가지이고 별도 함수로 나뉘어 있다. 내부 상태(모드·타이머·카운터·래치)는 없다."
+    },
+    {
+      "rule_id": "AUTO-01",
+      "result": "SATISFIED",
+      "evidence": "신호 처리(CMP-INPUT/U-01), 제어 판단(CMP-JUDGE/U-02), 출력 처리(CMP-OUTPUT/U-03)가 구성요소·유닛 단위로 나뉘어 있다. 판정 규칙은 U-02 한 곳에만 있다."
+    },
+    {
+      "rule_id": "AUTO-02",
+      "result": "UNDETERMINED",
+      "evidence": "문서가 호출 주기를 요구사항에 없어 정하지 않았다고 밝혔다. 한 실행 안의 순서(U-01 → U-02 → U-03)만 있다. 주기·마감 시간 자료가 없어 판단할 수 없다."
+    },
+    {
+      "rule_id": "AUTO-04",
+      "result": "UNDETERMINED",
+      "evidence": "설계에 안전등급이 다른 요소가 함께 있는지에 대한 자료가 없다. 등급은 QM 으로 주어졌으나 같은 실행 환경에서 다른 등급 요소와 공존하는지 알 수 없다."
+    },
+    {
+      "rule_id": "AUTO-08",
+      "result": "UNDETERMINED",
+      "evidence": "CPU 부하, 스택, 실행시간 제약에 관한 설계 자료가 없다. 설계는 단순 비교·논리 연산만 쓰고 동적 자원이 없다는 점만 확인된다."
+    },
+    {
+      "rule_id": "EC-02",
+      "result": "VIOLATED",
+      "evidence": "참고 의견이다. warning_cmd 는 U-03 소유로 적혀 있으나 sbr_state_t 는 호출하는 쪽이 갖고 U-03 함수가 포인터로 쓴다. 따라서 U-03 파일 안의 static 상태 변수가 아니며 다른 코드가 구조체에 직접 접근할 수 있다. 전역 변수를 피하려는 의도는 문서에 있으나 이 규칙의 기준과는 다르다. 최종 판정은 사람이 한다."
+    }
+  ],
+  "counts": {
+    "error": 0,
+    "warning": 1,
+    "info": 2
+  }
+}

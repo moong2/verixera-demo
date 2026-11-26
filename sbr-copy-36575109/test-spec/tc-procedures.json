@@ -1,0 +1,4275 @@
+{
+  "schema": "tc-procedures/v1",
+  "items": {
+    "TC-SBR-01-1-001": {
+      "hash": "sha256:021147d01eaec93dc5d2212a030f1538572b41e5e0ea055508054b21d87884e8",
+      "time_unit": "step",
+      "description": "하한 경계 바로 아래: 14 km/h 에서 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 14
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-1-002": {
+      "hash": "sha256:145c6599c9495cff2c5383ce43ee8d6889e89878561ea0416946829f6788b8db",
+      "time_unit": "step",
+      "description": "하한 경계: 15 km/h 에서 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 15
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-1-003": {
+      "hash": "sha256:9a815804ca259d0f105062a576ad7862e4a2982308f8a330729a5e1f07b6c73b",
+      "time_unit": "step",
+      "description": "하한 경계 바로 위: 16 km/h 에서 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 16
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-1-004": {
+      "hash": "sha256:eafd2a6acdfcfb1532a0fae98f5f002f08dbd7da201b6aaa55088a9b1d51f135",
+      "time_unit": "step",
+      "description": "상한 경계: 200 km/h 에서 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 200
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-1-005": {
+      "hash": "sha256:868a8c0bed78fec925a8d9148cad94612aa0f5acd023df51e4e4919a6bfd756d",
+      "time_unit": "step",
+      "description": "유효 구간 대표값: 100 km/h 에서 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 100
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-1-006": {
+      "hash": "sha256:646309fb1c2d8f16625e34f406177978e24456de0769e3166cc7209bad706269",
+      "time_unit": "step",
+      "description": "속도 도달 판정(10 km/h 이상) 경계 9/10/11",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 9
+          },
+          "outputs": {
+            "sbr_speed_reached": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 10
+          },
+          "outputs": {
+            "sbr_speed_reached": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 11
+          },
+          "outputs": {
+            "sbr_speed_reached": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T174604Z-d16a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:53:06.430Z"
+      }
+    },
+    "TC-SBR-01-1-007": {
+      "hash": "sha256:9c7fd2558781796d01b5433e170dae1a93a601cb7fcf2251fc3ad6008ad382f3",
+      "time_unit": "step",
+      "description": "범위 판정(200 km/h 이하) 199/200 에서 true",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 199
+          },
+          "outputs": {
+            "sbr_speed_in_range": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200
+          },
+          "outputs": {
+            "sbr_speed_in_range": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T174604Z-d16a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:53:06.430Z"
+      }
+    },
+    "TC-SBR-01-1-008": {
+      "hash": "sha256:924bd96fbb946e2a328b2c78aa6e9ea26302e6cc8bc386d860300e245f556a25",
+      "time_unit": "step",
+      "description": "탑승·미착용 판정의 네 조합",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "sbr_passenger_unbelted": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "sbr_passenger_unbelted": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "sbr_passenger_unbelted": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "sbr_passenger_unbelted": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T174604Z-d16a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:53:06.430Z"
+      }
+    },
+    "TC-SBR-01-2-001": {
+      "hash": "sha256:2ed274e8d899a3fd63b048b30d20e7dde025b4a8734d3845595112adc77622b9",
+      "time_unit": "step",
+      "description": "미탑승이면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 50
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-2-002": {
+      "hash": "sha256:0d5815f145b024a73f7cfd53de112e2178dec77a49dc584119466d561639d07b",
+      "time_unit": "step",
+      "description": "벨트 착용이면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1,
+            "vehicle_speed": 50
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-2-003": {
+      "hash": "sha256:31dc75c16d6139d685b2326d9a8946d3957143abdbedbb9d17024528f32958e6",
+      "time_unit": "step",
+      "description": "속도 0 km/h 이면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-2-004": {
+      "hash": "sha256:7bb8669adcbbf2ca2be9986feb670b609f04ff9332a1a8de5d848ceca06537e2",
+      "time_unit": "step",
+      "description": "미탑승이고 착용이어도 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1,
+            "vehicle_speed": 50
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-2-005": {
+      "hash": "sha256:a1827e90c7ae281c647f69ede1e33863d9bd4a6138dfeac9b78f35b57f87944c",
+      "time_unit": "step",
+      "description": "착용 상태에서 상한 경계 200 km/h 이면 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1,
+            "vehicle_speed": 200
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-2-006": {
+      "hash": "sha256:0e5f546005de40b8b248431683b91539c836dab3c37b9cebaa8152807352ae2d",
+      "time_unit": "step",
+      "description": "15 km/h 미만 경계 바로 아래 14 km/h 이면 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 14
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-2-007": {
+      "hash": "sha256:f146e257a5fe837d5b3ae38d28bed696934a80208e7d8d67a74b288d28609b89",
+      "time_unit": "step",
+      "description": "미탑승이면 상한 경계 200 km/h 에서도 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 200
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-2-008": {
+      "hash": "sha256:0392820ca73764665bae46147828640b60ba6ed43f6d7489d567ab82673edfa9",
+      "time_unit": "step",
+      "description": "200 km/h 에서 탑승자 없으면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T174604Z-d16a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:53:06.430Z"
+      }
+    },
+    "TC-SBR-01-3-001": {
+      "hash": "sha256:b312bd55721405736948a9c48048d4d8d38c3c22c268c2326206584b06f512f8",
+      "time_unit": "step",
+      "description": "이전 값이 TRUE 여도 초기화 직후 warning_cmd = FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "init": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T181443Z-3638",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:14:51.297Z"
+      }
+    },
+    "TC-SBR-01-3-002": {
+      "hash": "sha256:02ad3a8e2e42df6274f3d8c19fb7d28894c84365fb208f35366395475bad3519",
+      "time_unit": "step",
+      "description": "경고가 켜진 뒤 초기화하면 FALSE 로 돌아간다",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "init": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T181443Z-3638",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:14:51.297Z"
+      }
+    },
+    "TC-SBR-01-4-001": {
+      "hash": "sha256:ee78c3f678a83064fd7382989fe0adb6d891c2a425d392653f172b484e0806de",
+      "time_unit": "step",
+      "description": "수용 기준 순서: 1회차 TRUE 다음 2회차 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-4-002": {
+      "hash": "sha256:d9e453d5a3ae28c291553bea350a9c4c94d12a10b467a16e4221ea4884777eb5",
+      "time_unit": "step",
+      "description": "뒤바뀐 순서: 1회차 FALSE 다음 2회차 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-4-003": {
+      "hash": "sha256:5021f5855a9f8cf363359c100e81a7869d4c6e2e6dbc29e0010772fcfd26da09",
+      "time_unit": "step",
+      "description": "속도만 바뀌어도 매 실행마다 다시 정해짐(30, 14, 15 km/h)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 14
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 15
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-4-004": {
+      "hash": "sha256:d29464d9b634475a8ab3d3ba3c6b20a7e63e842faa9fd32f441edda01aeade70",
+      "time_unit": "step",
+      "description": "취득한 세 값이 변환 없이 그대로 전달됨",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 137,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "vehicle_speed": 137,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 0,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "vehicle_speed": 0,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-5-001": {
+      "hash": "sha256:8b7840bf5ad67b479a04c5adec3888217017f054fd1e193b7ac1ba015a3ef806",
+      "time_unit": "step",
+      "description": "상한 바로 위 201 km/h 이면 안전 쪽(FALSE)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 201
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-5-002": {
+      "hash": "sha256:f1a8063229b7d1a4f088e13b12c69b8e361a121c354b913bc3cde5e3ea605a97",
+      "time_unit": "step",
+      "description": "자료형 최대 255 km/h 이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 255
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-INT-01-SBR-01-5-001": {
+      "hash": "sha256:7bcd896b88024702f97716132402defe47d6a8c92a3112e89bf6ea2e0613ac44",
+      "time_unit": "step",
+      "description": "상한 200 바로 위 201 km/h 에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-5-002": {
+      "hash": "sha256:5a1d876b118e9298d8597886d40b89f6ec8a6e7a45913b6338d5f0578fc29b6b",
+      "time_unit": "step",
+      "description": "uint8_t 최대 255 km/h 에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-5-003": {
+      "hash": "sha256:0e13ca383c5f4b4e305b809442f086b5eed68698c349134a30754656cb96868d",
+      "time_unit": "step",
+      "description": "상한 경계 199/200/201 비교",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 199,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-5-004": {
+      "hash": "sha256:4248ce649928d7d0ac9ed6328e617bf2e4955ed3eecbb74d33082db38d086b45",
+      "time_unit": "step",
+      "description": "범위 초과 구간 대표값 202, 230, 254 에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 202,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 230,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 254,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-5-005": {
+      "hash": "sha256:86a32d70be6cede1f3b05718f30a632e5501806cd01c526b63365cde4d211721",
+      "time_unit": "step",
+      "description": "범위 초과에서 탑승·착용 조합과 무관하게 FALSE(안전 쪽 동작)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-5-006": {
+      "hash": "sha256:6693418603364c81dc815516209540abdec9acea7f2b2422521b42611576b335",
+      "time_unit": "step",
+      "description": "속도가 범위 안·밖을 오갈 때 이전 결과가 남지 않음(마지막 단계는 하한 15 로 수정)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-02-SBR-01-1-001": {
+      "hash": "sha256:dd32503a27339042328e173ec6deec5f837f129ad3b5a02c84f911ebaa085123",
+      "time_unit": "step",
+      "description": "하한 경계 바로 아래(14 km/h): 탑승·미착용이어도 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-1-002": {
+      "hash": "sha256:8b886c116fb8779870bc3fa0fe00322d0ba70fd19ff379c16065cfaf5dd0396e",
+      "time_unit": "step",
+      "description": "하한 경계(15 km/h): 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-1-003": {
+      "hash": "sha256:af70e064f17dfcda3c5280d1c94490b9e380719d33adf478977761018925a8a8",
+      "time_unit": "step",
+      "description": "하한 경계 바로 위(16 km/h): 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 16,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-1-004": {
+      "hash": "sha256:537e49fca54534e40379179c85bb414efbaad1adeec7b6640c15a3b831cc5b85",
+      "time_unit": "step",
+      "description": "상한 경계(200 km/h): 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-001": {
+      "hash": "sha256:66e4ce78912de8d8ffce4fb1625e92fcaf6476acde202e79d1c12b0f23bfa92b",
+      "time_unit": "step",
+      "description": "비탑승이면 경고 꺼짐(50 km/h, 미착용)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-002": {
+      "hash": "sha256:8fcb4fd1994936da4d1d0d89d81d2139e2e3740a5860abab200e228b2dbeb15e",
+      "time_unit": "step",
+      "description": "착용이면 경고 꺼짐(50 km/h, 탑승)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-003": {
+      "hash": "sha256:80431bc1f44a0fcedc11f67609ec5eee3a9fc99c7bfe318e7a82927a32b496c3",
+      "time_unit": "step",
+      "description": "정지(0 km/h)이면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 0,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-004": {
+      "hash": "sha256:4fc247d8c825e4df7da6e8a1828685a906f33e1515f0caf8e7920e6db358dc88",
+      "time_unit": "step",
+      "description": "비탑승과 착용이 동시에 충족돼도 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-005": {
+      "hash": "sha256:fddd63f9386e497ad2ae9e4672e5cefdfa2c769b693b4c7a5735ca8c653fdfcb",
+      "time_unit": "step",
+      "description": "상한 경계(200 km/h)에서도 착용이면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-006": {
+      "hash": "sha256:9d06551d9ffcd0d0d547bb46f6b65dd7c19d6ae325d1136e47bcbe001a30b8ae",
+      "time_unit": "step",
+      "description": "15 km/h 미만 구간 상단 경계(14 km/h)에서 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-007": {
+      "hash": "sha256:4c95c7119b930c6503fc83a5be0fbd76473ed2da371dceae4b6e79850c63f4f9",
+      "time_unit": "step",
+      "description": "이전 기준 속도 10 km/h 가 새 기준(15 km/h)에서는 미만이라 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 10,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-2-008": {
+      "hash": "sha256:1d891cc0baba373d0bbc145ee2f1f7583dcbf2909d026219e320fd2b3645b5ab",
+      "time_unit": "step",
+      "description": "하한 10 km/h 에서 비탑승이면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {}
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 10,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T174849Z-2914",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:55:48.619Z"
+      }
+    },
+    "TC-INT-02-SBR-01-3-001": {
+      "hash": "sha256:4901bbaefdbdfe596470a5038085c4116881c2a8cd90335ea9a1811375ae3d70",
+      "time_unit": "step",
+      "description": "경고 TRUE 상태 뒤 초기화하면 warning_cmd 가 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T181933Z-499e",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:19:36.164Z"
+      }
+    },
+    "TC-INT-02-SBR-01-4-001": {
+      "hash": "sha256:75877fb337ac6f106fd1076d08e53f139191c2b53f03820e2ac212f84b3bebf3",
+      "time_unit": "step",
+      "description": "실행마다 입력으로 다시 정함: 미착용 TRUE 다음 착용 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-4-002": {
+      "hash": "sha256:bf33e2002d302237a80e8ff10f33346c71e88fa864c51b5b431901a3a53802cd",
+      "time_unit": "step",
+      "description": "순서를 뒤바꾼 경우: 착용 FALSE 다음 미착용 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-4-003": {
+      "hash": "sha256:ef70b276590a72b3fa5cbbf77a40abeacbbd52702bdfe015955e068f58a59e30",
+      "time_unit": "step",
+      "description": "속도만 바뀌는 연속 실행에서 이전 값이 남지 않음(30, 14, 15)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-03-SBR-01-1-001": {
+      "hash": "sha256:88762c5715f8014664d5aebfe39cc1335b4586bb0d514ee3f66f64e0584d47aa",
+      "time_unit": "step",
+      "description": "경계 바로 아래: 14 km/h 이면 FALSE (사전에 50 km/h 로 경고를 켠 뒤 꺼지는지)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-1-002": {
+      "hash": "sha256:54fa04d0b7f060a7cb796a25c4ae0e7e6803ba87242abce3c3c97633f99087e9",
+      "time_unit": "step",
+      "description": "하한 경계: 15 km/h 이면 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-1-003": {
+      "hash": "sha256:334a4f9469db0e4b6d26f89dc63802037bdbddda7a981892a7d2e3275e73820b",
+      "time_unit": "step",
+      "description": "경계 바로 위: 16 km/h 이면 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 16,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-1-004": {
+      "hash": "sha256:01f1b14e97bcee63cd7293368a50f30437500723ea3b737293c6a121134da9ea",
+      "time_unit": "step",
+      "description": "상한 경계: 200 km/h 이면 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-1-005": {
+      "hash": "sha256:47a26b8f465871f6dccf9bd3d5cbbdb2d84318d6ede50e5c7dbc0d7cb4a6f5d9",
+      "time_unit": "step",
+      "description": "경고 구간 대표값 100 km/h 에서 경고 켜짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 100,
+            "passenger_occupied": true,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T175046Z-2030",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:57:09.444Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-001": {
+      "hash": "sha256:d8c9b143ee579a1baec64ac68691bb725865e0a5b01ceac6b833d71f5c79a9be",
+      "time_unit": "step",
+      "description": "비탑승이면 FALSE (사전에 경고를 켠 뒤)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-002": {
+      "hash": "sha256:f5412f2fa7673e45e327ab07441c38e83656a52116f84d23342ffceafa9d3a12",
+      "time_unit": "step",
+      "description": "착용이면 FALSE (사전에 경고를 켠 뒤)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-003": {
+      "hash": "sha256:2b4009832b1c941f6118eb936a4fd617268481ddf0d34f78ffe3ffbcf54547f2",
+      "time_unit": "step",
+      "description": "0 km/h 이면 FALSE (사전에 경고를 켠 뒤)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 0,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-004": {
+      "hash": "sha256:0703a526bd7b5352ba40adf25114c5984b882a075eb9392db400bf5d36369d70",
+      "time_unit": "step",
+      "description": "속도 상한 200 km/h 에서 착용이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-005": {
+      "hash": "sha256:b8a2df25abc4193598418366691726d20b967d51e8928b1ca35c44819955b928",
+      "time_unit": "step",
+      "description": "속도 경계 15 km/h 이어도 비탑승이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-006": {
+      "hash": "sha256:dea5865426b70282c32b01de1aaeaa5e69f7ef7b31c76125ff0a20388b98052c",
+      "time_unit": "step",
+      "description": "비탑승이면서 착용인 모순 조합이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-007": {
+      "hash": "sha256:ee6f8924369786847f2679fc8d1a39fc973f53c28cd08d0075430d374fcaf842",
+      "time_unit": "step",
+      "description": "속도 경계 15 km/h 이어도 착용이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-2-008": {
+      "hash": "sha256:3034463a96d3dc3bf8c80b0aa80a6d83eb6d0aa3c5611321b081187a158b4e23",
+      "time_unit": "step",
+      "description": "상한 200 km/h 에서 비탑승이면 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": true,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": false,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": false
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T175046Z-2030",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:57:09.444Z"
+      }
+    },
+    "TC-INT-03-SBR-01-3-001": {
+      "hash": "sha256:ca28e460d4ed17f9d6c79c06b73ef8298225bf513187939975f294b39d9c1514",
+      "time_unit": "step",
+      "description": "경고가 켜진 뒤 초기화하면 warning_cmd 가 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 50
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T182238Z-a425",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:22:41.123Z"
+      }
+    },
+    "TC-INT-03-SBR-01-4-001": {
+      "hash": "sha256:547ef11e180943f0d3cdecafd862baa19d6ce10ba8b3ac9e6b1a703666ec2d16",
+      "time_unit": "step",
+      "description": "1회차 미착용 TRUE, 2회차 착용 FALSE (수용 기준 그대로)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-4-002": {
+      "hash": "sha256:97c229e58906069d9b43a3896caa016a57d4e3695c189da3b5b9fb2aef9f66a8",
+      "time_unit": "step",
+      "description": "순서를 뒤집은 경우: 착용 FALSE 뒤 미착용 TRUE (이전 결과에 묶이지 않음)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-4-003": {
+      "hash": "sha256:33db3abef3b6880eedcfb3624fdd1efa5d07d745d5d3b7b258d842dbd3ea0609",
+      "time_unit": "step",
+      "description": "속도만 바꿔 가며 매 회차 다시 정함: 30 TRUE, 14 FALSE, 15 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-4-004": {
+      "hash": "sha256:c9789c5d1a79dea84251f6284455ad85c2d0239534941de8863305b6dbd552a5",
+      "time_unit": "step",
+      "description": "탑승 여부 변화(탑승 -> 비탑승 -> 탑승)에 따라 매번 다시 정함",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": true,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": false,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": false
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": true,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T175046Z-2030",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:57:09.444Z"
+      }
+    },
+    "TC-INT-03-SBR-01-4-005": {
+      "hash": "sha256:0c4fc6416c09465ce655756002f024d8af63704831f3e1ca312f32ed6370c207",
+      "time_unit": "step",
+      "description": "같은 입력을 반복해도 매번 같은 값으로 정함",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": false
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": true,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": true
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": true,
+            "seatbelt_buckled": false
+          },
+          "outputs": {
+            "warning_cmd": true
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T175046Z-2030",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T17:57:09.444Z"
+      }
+    },
+    "TC-SW-SBR-01-1-001": {
+      "hash": "sha256:c855de99e537a9a51601e54f1ff30d82e11c1ed50ab3e4a0cfe5be79b0444e06",
+      "time_unit": "step",
+      "description": "경고 기준 15 km/h 바로 아래(14)에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-1-002": {
+      "hash": "sha256:d09240d914cdb80c0335a6910be571f4ec97652b452b5f09ac193dd245fb9b9d",
+      "time_unit": "step",
+      "description": "하한 경계 15 km/h 에서 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-1-003": {
+      "hash": "sha256:67a7f81db3a3641542e7e455f4db61d2a2062870f369ef1c31895fd836c66e2b",
+      "time_unit": "step",
+      "description": "경계 바로 위 16 km/h 에서 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 16,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-1-004": {
+      "hash": "sha256:45a488d510ece0f5b3e0e94c56367f4c73bdb5afe3df73bcadc47b3354dee6b8",
+      "time_unit": "step",
+      "description": "상한 경계 200 km/h 에서 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-1-005": {
+      "hash": "sha256:a4f6223c3100c691c00a22730678dd9820f95adcd2e3ec2582982f15d46f8897",
+      "time_unit": "step",
+      "description": "유효 구간 대표값 100 km/h 에서 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 100,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-001": {
+      "hash": "sha256:dee69de142fde86ce15e2a76eb1f132f3f06449f3a62184548020b27dce97882",
+      "time_unit": "step",
+      "description": "탑승자 없음이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-002": {
+      "hash": "sha256:aae4bd071c67af913ba1084ef369a3da4a9d676fcde1c794b63c3494f4c6bb9d",
+      "time_unit": "step",
+      "description": "착용이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-003": {
+      "hash": "sha256:17e23cae5d86b2e4e8637f4ec8d888dddff98cd6157013bac9d28e7922c5677a",
+      "time_unit": "step",
+      "description": "0 km/h 이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 0,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-004": {
+      "hash": "sha256:f3448f3583c00b4c42a1e9fc83a3ad2e4ddab5beee42443ef823875f027fe238",
+      "time_unit": "step",
+      "description": "탑승자 없음과 착용이 함께여도 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-005": {
+      "hash": "sha256:0fbc7976196becafc7149af5f90d1c83ee72adb6c81289ba85bc5b987206023f",
+      "time_unit": "step",
+      "description": "200 km/h 에서 탑승자 없음이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-006": {
+      "hash": "sha256:c6d48c19a4ca9472e9bd7bda2c05004a4e302db2b1d551bae3305807745dec8d",
+      "time_unit": "step",
+      "description": "200 km/h 에서 착용이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-007": {
+      "hash": "sha256:89e5e1c1a2a62a80d0415e2d937a644254ff5cdf049527b25867459656ca6ede",
+      "time_unit": "step",
+      "description": "속도 조건 경계 바로 아래 14 km/h 에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-008": {
+      "hash": "sha256:f20dae0d43741b5e76bf7979224d79a07661c9e2e3de36105488e431bc6da0a5",
+      "time_unit": "step",
+      "description": "15 km/h 경계에서 착용이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-3-001": {
+      "hash": "sha256:9982d66ef8019bbdae65939c44257fa8c04027c421f7bf6e238851f73d10b4ee",
+      "time_unit": "step",
+      "description": "초기화 직후 warning_cmd 가 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T182623Z-7e52",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:26:25.867Z"
+      }
+    },
+    "TC-SW-SBR-01-4-001": {
+      "hash": "sha256:26cc9ad7feb48713fb21de0c9f69761b26ddd9157672cd89c4fffa1c7d37029a",
+      "time_unit": "step",
+      "description": "수용 기준 순서: 미착용 TRUE 다음 착용 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-4-002": {
+      "hash": "sha256:598a868012dc8c789780a29487949ded5772e019941580434959c70c2787b8e1",
+      "time_unit": "step",
+      "description": "순서를 뒤집은 경우 착용 FALSE 다음 미착용 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-4-003": {
+      "hash": "sha256:67ce2b6eab637e7fce0e520e7ab86055ee489460704ee9ce2e38af096992b676",
+      "time_unit": "step",
+      "description": "속도만 바뀌는 경우 30 TRUE, 14 FALSE, 15 TRUE 로 매회 다시 정함",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-4-004": {
+      "hash": "sha256:5503b46bd85b0b1810109fe810daf86de47c000e78c6663ffb8d3aa7de5345bf",
+      "time_unit": "step",
+      "description": "탑승자가 내리면 TRUE 다음 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-INT-02-SBR-01-5-001": {
+      "hash": "sha256:93729d00b171549e1ab0bb5ba999d6f1acc91365e5e1df88f2d65dc4bf632e54",
+      "time_unit": "step",
+      "description": "상한 경계 바로 위(201 km/h)에서 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-5-002": {
+      "hash": "sha256:72f00fe60d8e083c89e2afd2e17a8b3034e43b54bd5ff095d452d8d8f8b44809",
+      "time_unit": "step",
+      "description": "uint8_t 최대값(255 km/h)에서 경고 꺼짐",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-5-003": {
+      "hash": "sha256:3cbc6062a611dd68fcf72c49ad0f3514bd962c5fb6452e0800103a9b7c2930c0",
+      "time_unit": "step",
+      "description": "경계 전후 연속 실행: 200 TRUE, 201 FALSE, 200 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-02-SBR-01-5-004": {
+      "hash": "sha256:bbac69ab9702721c1b3bedb7ad1aed93e3bde301dfd42d9a0568e3a87f81861e",
+      "time_unit": "step",
+      "description": "경고 TRUE 상태에서 범위 밖 속도(255)가 되면 이전 TRUE 가 남지 않고 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185742Z-0038",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:57:48.373Z"
+      }
+    },
+    "TC-INT-03-SBR-01-5-001": {
+      "hash": "sha256:4e5b835860b8b5d2b6e8d97762d0dfe3cd092457b83ccaa74b40580586dcff44",
+      "time_unit": "step",
+      "description": "범위 밖 바로 위 201 km/h 이면 FALSE (사전에 경고를 켠 뒤)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-5-002": {
+      "hash": "sha256:4004b38a996224325459793726e8a746484755cda7ee61cd11e0f460a3867eb4",
+      "time_unit": "step",
+      "description": "uint8_t 최대 255 km/h 이면 FALSE (사전에 경고를 켠 뒤)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-INT-03-SBR-01-5-003": {
+      "hash": "sha256:c90834aafa0bb490d68236c0b1148d854ae3a0d9ddc5b37ca99412bd2ae8c0f4",
+      "time_unit": "step",
+      "description": "200 TRUE, 201 FALSE, 다시 200 TRUE (경계 전후, 이전 결과에 묶이지 않음)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185933Z-85c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:59:40.207Z"
+      }
+    },
+    "TC-SW-SBR-01-5-001": {
+      "hash": "sha256:20bab4ff0207cdb7a4b6c420d964397a6c186dc1e058ed24ef1643489e379a56",
+      "time_unit": "step",
+      "description": "201 km/h(상한 바로 위)에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-5-002": {
+      "hash": "sha256:af2cff2d3f1e719db9f1430f12bf17aef255d0a24639930d7d79c8f67180f814",
+      "time_unit": "step",
+      "description": "255 km/h(자료형 최대)에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-5-003": {
+      "hash": "sha256:1d2cc560418dd9a4b4769c22bdbe62406ee50e84ea263be9a6e7fe256a5a674f",
+      "time_unit": "step",
+      "description": "범위 밖 구간 대표값 230 km/h 에서 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 230,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-5-004": {
+      "hash": "sha256:abcfdd591878fe3c389e883ed83a27b3ac9599f1cdb249e84a679ab5078d0dea",
+      "time_unit": "step",
+      "description": "상한 경계 전후 200 TRUE, 201 FALSE, 200 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 201,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-5-005": {
+      "hash": "sha256:918efec1071bbab0c556cdad4e0a84d07929c8d1c482c64dcde33034781bd012",
+      "time_unit": "step",
+      "description": "경고 중 범위 밖 속도 입력 시 안전 쪽 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 255,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-5-006": {
+      "hash": "sha256:7274c30f31c01f97b7049bc23de1e9b22e3b9682a050f570cd5d490caa9fbdb1",
+      "time_unit": "step",
+      "description": "30 km/h 경고 TRUE 에서 255 km/h 로 바뀌면 FALSE 로 내려간다",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "init": 1
+          },
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 30
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 255
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T180311Z-5b37",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:05:05.797Z"
+      }
+    },
+    "TC-INT-01-SBR-01-1-001": {
+      "hash": "sha256:03794b1c5ed552ed44a62a31d3783118cb83adaa6b6df730e0d357b1c60ec392",
+      "time_unit": "step",
+      "description": "하한 15 km/h 바로 아래(14) 에서 경고 조건 불성립 확인",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-1-002": {
+      "hash": "sha256:e919d38bdf053b0eaccbf357745bfb0a376167131d9a4d0093fec91fe9bed1e9",
+      "time_unit": "step",
+      "description": "하한 경계 15 km/h 에서 경고 성립 확인",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-1-003": {
+      "hash": "sha256:d335653340b2a122aa3969de5b824b56dc654370a0ed04abbfdd2666305a812f",
+      "time_unit": "step",
+      "description": "하한 바로 위 16 km/h 에서 경고 성립 확인",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 16,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-1-004": {
+      "hash": "sha256:28137898a2a50171882e2b094d6286a5aabb8f8292c0dbf016e85e87c0d281f9",
+      "time_unit": "step",
+      "description": "상한 경계 200 km/h 에서 경고 성립 확인",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-1-005": {
+      "hash": "sha256:9143bb2a5b522bab0212af8c35045814013fb53ddee0621f04438ef16d546e81",
+      "time_unit": "step",
+      "description": "속도 구간별 대표값(15 미만 FALSE, 15~200 TRUE)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 0,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 1,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "vehicle_speed": 100,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "vehicle_speed": 199,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-2-001": {
+      "hash": "sha256:cfc9d6bf56568056fce3003ff3373ad98767b5c6a9c7e8b138dec75fe9f91ff9",
+      "time_unit": "step",
+      "description": "비탑승이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-2-002": {
+      "hash": "sha256:f9b98ad5aec2a51dbfd7a7795caf638bcf52f78ebf380bab743816c66bfe1cb5",
+      "time_unit": "step",
+      "description": "착용이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-2-003": {
+      "hash": "sha256:80fdef2a1fc1c0520f00607aeeca13946c7ef6c1737a5e4c7d96e70cd7c43628",
+      "time_unit": "step",
+      "description": "0 km/h 이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 0,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-2-004": {
+      "hash": "sha256:98301274ec414f993965210fca4f9ed6f86f331a328badbd881c53aaf0cfe861",
+      "time_unit": "step",
+      "description": "15~200 구간의 경계 속도에서 비탑승·착용 조합은 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 50,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 200,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-2-005": {
+      "hash": "sha256:9202c45d23c59d4843ee3ae7e2c95059c478fb549a5183918918908736a1ce3d",
+      "time_unit": "step",
+      "description": "15 미만(14, 1) 에서 모든 탑승·착용 조합이 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 14,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "vehicle_speed": 1,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-4-001": {
+      "hash": "sha256:53112e6df5cd8cd58b44a9e922e0d870f14f70a857b832189142bc16646c8ceb",
+      "time_unit": "step",
+      "description": "회차마다 새로 판정(TRUE 후 FALSE)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-4-002": {
+      "hash": "sha256:5ca778c850cacf3d72225def726762b2d1aaa7536a82902f26b15d0dcb6fdce0",
+      "time_unit": "step",
+      "description": "상태가 뒤바뀐 순서(FALSE 후 TRUE)에서 이전 결과가 남지 않음",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-INT-01-SBR-01-4-003": {
+      "hash": "sha256:b060b8962db1b43def4fb0ffd2c51724611a28816dc25a1b8497bff2c8dfb363",
+      "time_unit": "step",
+      "description": "세 입력이 번갈아 바뀌는 여러 회차에서 매 회차 재판정",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 4,
+          "inputs": {
+            "vehicle_speed": 5,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        },
+        {
+          "t_ms": 5,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_result": 1
+          }
+        },
+        {
+          "t_ms": 6,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 1
+          },
+          "outputs": {
+            "warning_result": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185550Z-d5c8",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:55:55.315Z"
+      }
+    },
+    "TC-SBR-01-5-003": {
+      "hash": "sha256:8fe68805cc76927abd6dd9d3d9799029c1421fccf3f91071fe1e06877f180ce4",
+      "time_unit": "step",
+      "description": "범위 밖 구간 대표값 230 km/h 이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 230
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SBR-01-5-004": {
+      "hash": "sha256:d519f8256176aa7e4296ef5317ed5582a0312badbc440db8dbb04547e5da6128",
+      "time_unit": "step",
+      "description": "상한 경계 전후 순서: 200 TRUE, 201 FALSE, 200 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 200
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 201
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0,
+            "vehicle_speed": 200
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T185337Z-720a",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:53:54.868Z"
+      }
+    },
+    "TC-SW-SBR-01-2-009": {
+      "hash": "sha256:8c2b0c24a84229214eca3ecfeb3410db7e98287c49ed9b3ce4208c401fa4d351",
+      "time_unit": "step",
+      "description": "15 km/h 경계에서 탑승자 없음이면 FALSE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 15,
+            "passenger_occupied": 0,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-3-002": {
+      "hash": "sha256:f7baf1357fdfad1497db80dc7b6ea63ad11ae8c8e8e67b5bb8b251fbf9eb12e1",
+      "time_unit": "step",
+      "description": "경고가 켜진 뒤 재초기화하면 FALSE 로 돌아감",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {},
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T182623Z-7e52",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T18:26:25.867Z"
+      }
+    },
+    "TC-SW-SBR-01-4-005": {
+      "hash": "sha256:cf9a440d8465b0b964ed9357099e997c42be4d558225925e4eeb31829bcc6717",
+      "time_unit": "step",
+      "description": "같은 입력 되풀이 시 매회 같은 결과",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        },
+        {
+          "t_ms": 3,
+          "inputs": {
+            "vehicle_speed": 30,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-1-006": {
+      "hash": "sha256:004bc360fc324bbc3492f754db8c25ce84db0cf99ab0ce421298b42815b06b78",
+      "time_unit": "step",
+      "description": "상한 바로 아래 199 km/h 에서 TRUE",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 199,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 1
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    },
+    "TC-SW-SBR-01-2-010": {
+      "hash": "sha256:9d5d418fd6eff187d69ade3bec46b69fba8d4e2e6cd9ba1ea7a83ce94ee883fd",
+      "time_unit": "step",
+      "description": "이전 기준 10 km/h 에서 탑승 미착용이어도 FALSE (15 미만)",
+      "steps": [
+        {
+          "t_ms": 1,
+          "inputs": {},
+          "outputs": {}
+        },
+        {
+          "t_ms": 2,
+          "inputs": {
+            "vehicle_speed": 10,
+            "passenger_occupied": 1,
+            "seatbelt_buckled": 0
+          },
+          "outputs": {
+            "warning_cmd": 0
+          }
+        }
+      ],
+      "from": {
+        "by": "test-agent",
+        "generation_id": "GEN-20261126T190126Z-ceef",
+        "provider": "anthropic",
+        "model": "claude-sonnet-5-5",
+        "at": "2026-11-26T19:01:31.676Z"
+      }
+    }
+  }
+}

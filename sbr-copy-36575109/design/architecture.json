@@ -1,0 +1,351 @@
+{
+ "schema": "ears-design-working/v1",
+ "note": "작업 중인 설계(승인 전). 승인한 설계는 design/baseline/DBL-*.design.json 이다",
+ "updated_at": "2026-11-26T21:38:59.944Z",
+ "updated_by": null,
+ "design": {
+  "schema": "ears-design/v1",
+  "requirements_baseline": {
+   "id": "BL-002",
+   "hash": "sha256:2e7f097d4e3f0d13b3d5ffb9e431cec56f5a15c932d9bc75b218ce1f472b28ec"
+  },
+  "architecture_baseline": {
+   "id": "ABL-003",
+   "hash": "sha256:804ace69b39ed4398c4726ad6caae1b048aed347eb9037879e1a1f007ac05e8f"
+  },
+  "components": [
+   {
+    "id": "CMP-INPUT",
+    "name": "입력 신호 수집",
+    "description": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 판단 1회 실행 단위의 입력 값 한 벌로 묶어 판정 구성요소에 넘긴다. 판정 규칙은 갖지 않는다."
+   },
+   {
+    "id": "CMP-JUDGE",
+    "name": "경고 판정",
+    "description": "입력 3개의 값만으로 경고 여부를 정한다. 내부 상태를 갖지 않고 이전 실행 결과를 쓰지 않는다. 판정 규칙(탑승·미착용·속도 범위 조건, 범위 초과 시 FALSE)을 한곳에 둔다."
+   },
+   {
+    "id": "CMP-OUTPUT",
+    "name": "경고 명령 출력",
+    "description": "판정 결과를 warning_cmd 로 출력한다. 초기화될 때 warning_cmd 를 FALSE 로 설정한다."
+   }
+  ],
+  "units": [
+   {
+    "id": "U-01",
+    "name": "입력 신호 취득",
+    "component": "CMP-INPUT",
+    "responsibility": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 한 번의 판단 실행에서 한 번에 취득해 같은 시점의 값으로 U-02 에 전달한다. 값은 변환·제한 없이 그대로 전달한다.",
+    "requirements": [
+     "REQ-SBR-01-4"
+    ],
+    "design_items": [
+     "SWD-SBR-006"
+    ],
+    "functions": [
+     "sbr_acquire_inputs"
+    ],
+    "acceptance": [
+     "한 실행에서 취득한 세 입력값은 같은 실행의 값으로 U-02 에 전달된다",
+     "vehicle_speed 는 값을 바꾸지 않고 전달된다(201, 255 도 그대로 전달되어 U-02 가 범위 밖으로 판단한다)"
+    ]
+   },
+   {
+    "id": "U-02",
+    "name": "경고 조건 판정",
+    "component": "CMP-JUDGE",
+    "responsibility": "현재 실행의 세 입력값만으로 경고 여부(warning_result)를 계산한다. vehicle_speed 가 15 이상 200 이하이고 탑승·미착용이면 TRUE, 그 밖에는 FALSE 다. 내부 상태를 갖지 않는다.",
+    "requirements": [
+     "REQ-SBR-01-1",
+     "REQ-SBR-01-2",
+     "REQ-SBR-01-5",
+     "REQ-SBR-01-4"
+    ],
+    "design_items": [
+     "SWD-SBR-001",
+     "SWD-SBR-002",
+     "SWD-SBR-004",
+     "SWD-SBR-005"
+    ],
+    "functions": [
+     "sbr_speed_reached",
+     "sbr_speed_in_range",
+     "sbr_passenger_unbelted",
+     "sbr_judge_warning"
+    ],
+    "acceptance": [
+     "passenger_occupied = TRUE, seatbelt_buckled = FALSE 이고 vehicle_speed = 14 km/h 이면 warning_result = FALSE",
+     "passenger_occupied = TRUE, seatbelt_buckled = FALSE 이고 vehicle_speed = 15, 16, 200 km/h 이면 각각 warning_result = TRUE",
+     "passenger_occupied = FALSE 이거나 seatbelt_buckled = TRUE 이면 vehicle_speed = 50 km/h 에서 warning_result = FALSE",
+     "passenger_occupied = TRUE, seatbelt_buckled = FALSE 이고 vehicle_speed = 201, 255 km/h 이면 warning_result = FALSE",
+     "이전 실행의 결과와 무관하게 현재 입력만으로 warning_result 가 정해진다"
+    ]
+   },
+   {
+    "id": "U-03",
+    "name": "경고 명령 출력 및 초기화",
+    "component": "CMP-OUTPUT",
+    "responsibility": "warning_cmd 를 소유한다. 초기화 시 FALSE 로 설정하고, 실행마다 U-02 의 warning_result 로 warning_cmd 를 다시 정해 출력한다.",
+    "requirements": [
+     "REQ-SBR-01-3",
+     "REQ-SBR-01-4"
+    ],
+    "design_items": [
+     "SWD-SBR-003",
+     "SWD-SBR-007"
+    ],
+    "functions": [
+     "sbr_init_output",
+     "sbr_output_warning"
+    ],
+    "acceptance": [
+     "초기화 직후 warning_cmd = FALSE",
+     "warning_result = TRUE 를 받은 실행의 warning_cmd = TRUE, 이어서 warning_result = FALSE 를 받은 실행의 warning_cmd = FALSE"
+    ]
+   }
+  ],
+  "signals": [
+   {
+    "name": "passenger_occupied",
+    "source": "requirements",
+    "category": "interface",
+    "type": "bool",
+    "unit": "",
+    "min": "",
+    "max": "",
+    "initial": "",
+    "description": "동승석 탑승 여부 (TRUE = 탑승자가 있음). 외부 입력을 U-01 이 취득해 U-02 가 읽는다.",
+    "transfer": "",
+    "display_name": "동승석 탑승 여부",
+    "enum": [
+     {
+      "value": "FALSE",
+      "meaning": "탑승자 없음"
+     },
+     {
+      "value": "TRUE",
+      "meaning": "탑승자 있음"
+     }
+    ]
+   },
+   {
+    "name": "seatbelt_buckled",
+    "source": "requirements",
+    "category": "interface",
+    "type": "bool",
+    "unit": "",
+    "min": "",
+    "max": "",
+    "initial": "",
+    "description": "안전벨트 착용 여부 (TRUE = 안전벨트를 맴). 외부 입력을 U-01 이 취득해 U-02 가 읽는다.",
+    "transfer": "",
+    "display_name": "안전벨트 착용 여부",
+    "enum": [
+     {
+      "value": "FALSE",
+      "meaning": "미착용"
+     },
+     {
+      "value": "TRUE",
+      "meaning": "착용"
+     }
+    ]
+   },
+   {
+    "name": "vehicle_speed",
+    "source": "requirements",
+    "category": "interface",
+    "type": "uint8_t",
+    "unit": "km/h",
+    "min": "0",
+    "max": "200",
+    "initial": "",
+    "description": "차량 속도. 외부 입력을 U-01 이 취득해 U-02 가 읽는다. REQ-SBR-01-5 의 201·255 km/h 입력을 받을 수 있도록 표현 범위는 0~255 로 한다.",
+    "transfer": "",
+    "display_name": "차량 속도",
+    "raw_min": "0",
+    "raw_max": "255",
+    "scaling": "1",
+    "offset": "0",
+    "resolution": "1",
+    "validity": "0~200 km/h 가 유효 범위이고 201 km/h 이상은 범위 밖이다(REQ-SBR-01-5)"
+   },
+   {
+    "name": "warning_result",
+    "source": "design",
+    "category": "interface",
+    "type": "bool",
+    "unit": "",
+    "min": "",
+    "max": "",
+    "initial": "",
+    "description": "U-02 의 판정 결과(TRUE = 경고 조건 성립). 판정(U-02)과 출력·초기화(U-03)를 나눈 아키텍처 구성 때문에 생긴 유닛 사이 값이다. 실행마다 새로 계산하며 기억하지 않는다.",
+    "transfer": "",
+    "display_name": "경고 판정 결과",
+    "enum": [
+     {
+      "value": "FALSE",
+      "meaning": "경고 조건 불성립"
+     },
+     {
+      "value": "TRUE",
+      "meaning": "경고 조건 성립"
+     }
+    ]
+   },
+   {
+    "name": "warning_cmd",
+    "source": "requirements",
+    "category": "interface",
+    "type": "bool",
+    "unit": "",
+    "min": "",
+    "max": "",
+    "initial": "FALSE",
+    "description": "경고 명령 (TRUE = 경고를 켬). 경고등을 켜는 명령이며 경고등 자체가 아니다. U-03 이 소유하고 외부가 읽는다.",
+    "transfer": "",
+    "display_name": "경고 명령",
+    "enum": [
+     {
+      "value": "FALSE",
+      "meaning": "경고 끔"
+     },
+     {
+      "value": "TRUE",
+      "meaning": "경고 켬"
+     }
+    ]
+   },
+   {
+    "name": "SBR_WARN_SPEED_KMH",
+    "source": "design",
+    "category": "constant",
+    "type": "uint8_t",
+    "unit": "km/h",
+    "min": "",
+    "max": "",
+    "initial": "15",
+    "description": "경고 기준 속도. REQ-SBR-01-1·-2 v2 문장의 15 km/h 값이며 '이상'(>=)으로 비교한다.",
+    "transfer": "",
+    "display_name": "경고 기준 속도"
+   },
+   {
+    "name": "SBR_SPEED_MAX_KMH",
+    "source": "design",
+    "category": "constant",
+    "type": "uint8_t",
+    "unit": "km/h",
+    "min": "",
+    "max": "",
+    "initial": "200",
+    "description": "속도 유효 범위의 최대값. REQ-SBR-01-1·-2·-5 문장의 200 km/h 값이며 '이하'(<=)이면 범위 안이다.",
+    "transfer": "",
+    "display_name": "속도 유효 범위 최대값"
+   }
+  ],
+  "connections": [
+   {
+    "signal": "passenger_occupied",
+    "owner": "U-01",
+    "accesses": [
+     {
+      "by": "EXT",
+      "mode": "WRITE"
+     },
+     {
+      "by": "U-01",
+      "mode": "READ_WRITE"
+     },
+     {
+      "by": "U-02",
+      "mode": "READ"
+     }
+    ]
+   },
+   {
+    "signal": "seatbelt_buckled",
+    "owner": "U-01",
+    "accesses": [
+     {
+      "by": "EXT",
+      "mode": "WRITE"
+     },
+     {
+      "by": "U-01",
+      "mode": "READ_WRITE"
+     },
+     {
+      "by": "U-02",
+      "mode": "READ"
+     }
+    ]
+   },
+   {
+    "signal": "vehicle_speed",
+    "owner": "U-01",
+    "accesses": [
+     {
+      "by": "EXT",
+      "mode": "WRITE"
+     },
+     {
+      "by": "U-01",
+      "mode": "READ_WRITE"
+     },
+     {
+      "by": "U-02",
+      "mode": "READ"
+     }
+    ]
+   },
+   {
+    "signal": "warning_result",
+    "owner": "U-02",
+    "accesses": [
+     {
+      "by": "U-02",
+      "mode": "WRITE"
+     },
+     {
+      "by": "U-03",
+      "mode": "READ"
+     }
+    ]
+   },
+   {
+    "signal": "warning_cmd",
+    "owner": "U-03",
+    "accesses": [
+     {
+      "by": "U-03",
+      "mode": "WRITE"
+     },
+     {
+      "by": "EXT",
+      "mode": "READ"
+     }
+    ]
+   },
+   {
+    "signal": "SBR_WARN_SPEED_KMH",
+    "owner": "U-02",
+    "accesses": [
+     {
+      "by": "U-02",
+      "mode": "READ"
+     }
+    ]
+   },
+   {
+    "signal": "SBR_SPEED_MAX_KMH",
+    "owner": "U-02",
+    "accesses": [
+     {
+      "by": "U-02",
+      "mode": "READ"
+     }
+    ]
+   }
+  ]
+ }
+}

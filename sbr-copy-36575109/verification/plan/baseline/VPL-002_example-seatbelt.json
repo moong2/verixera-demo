@@ -1,0 +1,930 @@
+{
+  "schema": "ears-verification-plan-baseline/v1",
+  "plan_baseline_id": "VPL-002",
+  "project": "example-seatbelt",
+  "created_at": "2026-11-26T18:50:08.580Z",
+  "approver": "HJ",
+  "change_reason": null,
+  "previous_plan_baseline": {
+    "id": "VPL-001",
+    "hash": "sha256:1f8242c1f1ae089809a5ca068710001387db7aeeffc3907432695ddfd61039ed"
+  },
+  "design_baseline": {
+    "id": "DBL-002",
+    "hash": "sha256:1f929c7e9953cc9534d18fae606bd0963b51c85738904260d8b1523c2de1086b"
+  },
+  "requirements_baseline": {
+    "id": "BL-002",
+    "hash": "sha256:2e7f097d4e3f0d13b3d5ffb9e431cec56f5a15c932d9bc75b218ce1f472b28ec"
+  },
+  "architecture_baseline": {
+    "id": "ABL-002",
+    "hash": "sha256:61af3d3c2e7e2424eb7fde374de88aef9814569e29a83a23a786a345f01fee41"
+  },
+  "hash_algorithm": "sha256",
+  "hash_scope": "plan_hash = sha256(정규화 JSON{schema, plan_baseline_id, design_baseline, requirements_baseline, architecture_baseline|null, previous_plan_baseline|null, plan, rule_profile})",
+  "summary": {
+    "unit": 3,
+    "integration": 3,
+    "software": 1
+  },
+  "open_items": {
+    "unsupported": [
+      "resource_usage",
+      "target_timing"
+    ],
+    "warnings": []
+  },
+  "plan": {
+    "design_baseline": {
+      "id": "DBL-002",
+      "hash": "sha256:1f929c7e9953cc9534d18fae606bd0963b51c85738904260d8b1523c2de1086b"
+    },
+    "targets": [
+      {
+        "id": "U-01",
+        "level": "unit",
+        "scope": {
+          "units": [
+            "U-01"
+          ],
+          "components": []
+        },
+        "title": "U-01 입력 신호 취득",
+        "objective": "유닛 책임 확인: passenger_occupied, seatbelt_buckled, vehicle_speed 를 한 번의 판단 실행에서 한 번에 취득해 같은 시점의 값으로 U-02 에 전달한다. 값은 변환·제한 없이 그대로 전달한다.",
+        "methods": [
+          "requirements_based",
+          "interface_test"
+        ],
+        "techniques": [
+          "requirements_analysis",
+          "equivalence_classes",
+          "boundary_values",
+          "error_guessing"
+        ],
+        "coverage": [
+          {
+            "metric": "statement",
+            "target": 100
+          },
+          {
+            "metric": "branch",
+            "target": 100
+          }
+        ],
+        "environment": "host-c",
+        "harness": "unit",
+        "entry": "유닛 코드가 빌드되고 승인 설계(DBL)의 인터페이스와 맞을 때",
+        "exit": "할당 요구사항의 시험이 모두 통과하고 커버리지 목표를 채우거나 미달 항목이 정당화될 때",
+        "execution_order": []
+      },
+      {
+        "id": "U-02",
+        "level": "unit",
+        "scope": {
+          "units": [
+            "U-02"
+          ],
+          "components": []
+        },
+        "title": "U-02 경고 조건 판정",
+        "objective": "유닛 책임 확인: 현재 실행의 세 입력값만으로 경고 여부(warning_result)를 계산한다. vehicle_speed 가 10 이상 200 이하이고 탑승·미착용이면 TRUE, 그 밖에는 FALSE 다. 내부 상태를 갖지 않는다.",
+        "methods": [
+          "requirements_based",
+          "interface_test"
+        ],
+        "techniques": [
+          "requirements_analysis",
+          "equivalence_classes",
+          "boundary_values",
+          "error_guessing"
+        ],
+        "coverage": [
+          {
+            "metric": "statement",
+            "target": 100
+          },
+          {
+            "metric": "branch",
+            "target": 100
+          }
+        ],
+        "environment": "host-c",
+        "harness": "unit",
+        "entry": "유닛 코드가 빌드되고 승인 설계(DBL)의 인터페이스와 맞을 때",
+        "exit": "할당 요구사항의 시험이 모두 통과하고 커버리지 목표를 채우거나 미달 항목이 정당화될 때",
+        "execution_order": []
+      },
+      {
+        "id": "U-03",
+        "level": "unit",
+        "scope": {
+          "units": [
+            "U-03"
+          ],
+          "components": []
+        },
+        "title": "U-03 경고 명령 출력 및 초기화",
+        "objective": "유닛 책임 확인: warning_cmd 를 소유한다. 초기화 시 FALSE 로 설정하고, 실행마다 U-02 의 warning_result 로 warning_cmd 를 다시 정해 출력한다.",
+        "methods": [
+          "requirements_based",
+          "interface_test"
+        ],
+        "techniques": [
+          "requirements_analysis",
+          "equivalence_classes",
+          "boundary_values",
+          "error_guessing"
+        ],
+        "coverage": [
+          {
+            "metric": "statement",
+            "target": 100
+          },
+          {
+            "metric": "branch",
+            "target": 100
+          }
+        ],
+        "environment": "host-c",
+        "harness": "unit",
+        "entry": "유닛 코드가 빌드되고 승인 설계(DBL)의 인터페이스와 맞을 때",
+        "exit": "할당 요구사항의 시험이 모두 통과하고 커버리지 목표를 채우거나 미달 항목이 정당화될 때",
+        "execution_order": []
+      },
+      {
+        "id": "INT-01",
+        "level": "integration",
+        "scope": {
+          "units": [
+            "U-01",
+            "U-02"
+          ],
+          "components": []
+        },
+        "title": "U-01·U-02 사이 신호 3개",
+        "objective": "U-01 → U-02 사이 인터페이스(passenger_occupied, seatbelt_buckled, vehicle_speed)가 설계대로 전달·처리되는지 확인",
+        "methods": [
+          "requirements_based",
+          "interface_test"
+        ],
+        "techniques": [
+          "requirements_analysis",
+          "equivalence_classes",
+          "boundary_values",
+          "error_guessing"
+        ],
+        "coverage": [
+          {
+            "metric": "function",
+            "target": 100
+          },
+          {
+            "metric": "call",
+            "target": 100
+          },
+          {
+            "metric": "interface",
+            "target": 100
+          }
+        ],
+        "environment": "host-c",
+        "harness": "integration",
+        "entry": "범위 안 유닛의 단위 검증 종료 기준을 채웠을 때",
+        "exit": "범위의 통합 시험이 모두 통과하고 함수·호출·인터페이스 커버리지 목표를 채우거나 미달이 정당화될 때",
+        "execution_order": [
+          "U-01",
+          "U-02"
+        ]
+      },
+      {
+        "id": "INT-02",
+        "level": "integration",
+        "scope": {
+          "units": [
+            "U-02",
+            "U-03"
+          ],
+          "components": []
+        },
+        "title": "U-02·U-03 사이 신호 1개",
+        "objective": "U-02 → U-03 사이 인터페이스(warning_result)가 설계대로 전달·처리되는지 확인",
+        "methods": [
+          "requirements_based",
+          "interface_test"
+        ],
+        "techniques": [
+          "requirements_analysis",
+          "equivalence_classes",
+          "boundary_values",
+          "error_guessing"
+        ],
+        "coverage": [
+          {
+            "metric": "function",
+            "target": 100
+          },
+          {
+            "metric": "call",
+            "target": 100
+          },
+          {
+            "metric": "interface",
+            "target": 100
+          }
+        ],
+        "environment": "host-c",
+        "harness": "integration",
+        "entry": "범위 안 유닛의 단위 검증 종료 기준을 채웠을 때",
+        "exit": "범위의 통합 시험이 모두 통과하고 함수·호출·인터페이스 커버리지 목표를 채우거나 미달이 정당화될 때",
+        "execution_order": [
+          "U-02",
+          "U-03"
+        ]
+      },
+      {
+        "id": "INT-03",
+        "level": "integration",
+        "scope": {
+          "units": [
+            "U-01",
+            "U-02",
+            "U-03"
+          ],
+          "components": []
+        },
+        "title": "생산→소비 사슬 U-01 → U-02 → U-03",
+        "objective": "U-01 → U-02 → U-03 사이 인터페이스(passenger_occupied, seatbelt_buckled, vehicle_speed, warning_result)가 설계대로 전달·처리되는지 확인",
+        "methods": [
+          "requirements_based",
+          "interface_test"
+        ],
+        "techniques": [
+          "requirements_analysis",
+          "equivalence_classes",
+          "boundary_values",
+          "error_guessing"
+        ],
+        "coverage": [
+          {
+            "metric": "function",
+            "target": 100
+          },
+          {
+            "metric": "call",
+            "target": 100
+          },
+          {
+            "metric": "interface",
+            "target": 100
+          }
+        ],
+        "environment": "host-c",
+        "harness": "integration",
+        "entry": "범위 안 유닛의 단위 검증 종료 기준을 채웠을 때",
+        "exit": "범위의 통합 시험이 모두 통과하고 함수·호출·인터페이스 커버리지 목표를 채우거나 미달이 정당화될 때",
+        "execution_order": [
+          "U-01",
+          "U-02",
+          "U-03"
+        ]
+      },
+      {
+        "id": "SW",
+        "level": "software",
+        "scope": {
+          "units": [],
+          "components": [
+            "CMP-INPUT",
+            "CMP-JUDGE",
+            "CMP-OUTPUT"
+          ]
+        },
+        "title": "SW 전체",
+        "objective": "외부 경계 입력·출력만으로 SW 요구사항 충족 확인",
+        "methods": [
+          "requirements_based"
+        ],
+        "techniques": [
+          "requirements_analysis",
+          "equivalence_classes",
+          "boundary_values"
+        ],
+        "coverage": [
+          {
+            "metric": "requirement",
+            "target": 100
+          }
+        ],
+        "environment": "host-c",
+        "harness": "software",
+        "entry": "단위·통합 검증의 종료 기준을 채웠을 때",
+        "exit": "모든 SW 요구사항의 시험이 통과할 때",
+        "execution_order": []
+      }
+    ],
+    "unsupported": [
+      {
+        "activity": "resource_usage",
+        "reason": "VE-01: Host C 환경에서 확인할 수 없음 — 추가 검증 필요"
+      },
+      {
+        "activity": "target_timing",
+        "reason": "VE-02: Host C 환경에서 확인할 수 없음 — 추가 검증 필요"
+      }
+    ],
+    "notes": ""
+  },
+  "rule_profile": {
+    "snapshot": {
+      "settings": {
+        "domain": "automotive",
+        "level": "QM",
+        "level_status": "assigned",
+        "environment": "host-c"
+      },
+      "rules": [
+        {
+          "rule_id": "VC-01",
+          "rule_version": "1.0",
+          "name": "유닛마다 단위 검증 대상",
+          "layer": "common",
+          "level": "UNIT",
+          "category": "PLAN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "check_method": "FIXED",
+          "fixed_check": "unit-targets-complete",
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": false,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "승인한 설계(DBL)의 모든 유닛은 단위 검증 대상으로 계획에 있어야 한다.",
+          "file": "common/plan.json"
+        },
+        {
+          "rule_id": "VC-02",
+          "rule_version": "1.0",
+          "name": "SW 수준 검증 대상",
+          "layer": "common",
+          "level": "SOFTWARE",
+          "category": "PLAN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "check_method": "FIXED",
+          "fixed_check": "software-target",
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": true,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "SW 전체를 외부 경계 입출력만으로 확인하는 SW 수준 검증 대상을 둔다.",
+          "file": "common/plan.json"
+        },
+        {
+          "rule_id": "VC-03",
+          "rule_version": "1.0",
+          "name": "검증 목적과 종료 기준",
+          "layer": "common",
+          "level": "ALL",
+          "category": "PLAN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "check_method": "FIXED",
+          "fixed_check": "objective-and-exit",
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": false,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "검증 대상마다 무엇을 확인하는지(목적)와 언제 끝난 것으로 보는지(종료 기준)를 적는다.",
+          "file": "common/plan.json"
+        },
+        {
+          "rule_id": "VC-04",
+          "rule_version": "1.0",
+          "name": "커버리지 항목과 목표",
+          "layer": "common",
+          "level": "ALL",
+          "category": "COVERAGE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "check_method": "FIXED",
+          "fixed_check": "coverage-defined",
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": true,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "검증 대상마다 측정할 커버리지 항목과 목표값을 정한다. 수준이 다른 결과를 합칠 때는 백분율 평균이 아니라 실행 항목의 합집합으로 계산한다.",
+          "file": "common/plan.json"
+        },
+        {
+          "rule_id": "VC-05",
+          "rule_version": "1.0",
+          "name": "기대값은 승인 명세에서",
+          "layer": "common",
+          "level": "ALL",
+          "category": "METHOD",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": false,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책(시험 독립성)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "시험의 기대값(Oracle)은 승인한 요구사항·설계에서 정하고 구현 코드에서 가져오지 않는다. 커버리지를 채우는 시험도 기존 기대값을 바꾸지 않는다.",
+          "file": "common/plan.json"
+        },
+        {
+          "rule_id": "VA-01",
+          "rule_version": "1.0",
+          "name": "단위 검증 — 요구사항 기반·인터페이스 시험",
+          "layer": "domain",
+          "level": "UNIT",
+          "category": "METHOD",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": true,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "ISO 26262-6:2018 9.4.2 참고(조항·표 미대조)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "단위 검증은 유닛에 할당된 요구사항을 근거로 한 시험과 유닛 인터페이스 시험을 포함한다.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "VA-02",
+          "rule_version": "1.0",
+          "name": "단위 시험 도출 — 동등분할·경계값·오류 추정",
+          "layer": "domain",
+          "level": "UNIT",
+          "category": "TECHNIQUE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": true,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "ISO 26262-6:2018 9.4.3 참고(조항·표 미대조)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "단위 시험은 요구사항 분석, 동등분할, 경계값 분석, 오류 추정으로 도출한다. 경계값은 신호 사전의 해상도 단위로 고른다.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "VA-03",
+          "rule_version": "1.0",
+          "name": "통합 검증 — 인터페이스·고장 주입",
+          "layer": "domain",
+          "level": "INTEGRATION",
+          "category": "METHOD",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "unsupported_activity": null,
+          "coverage": [],
+          "deviation_allowed": true,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "ISO 26262-6:2018 10.4.2 참고(조항·표 미대조)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "통합 검증은 요구사항 기반 시험과 유닛·구성요소 사이 인터페이스 시험을 포함하고, 필요하면 고장 주입 시나리오를 둔다. 정상 시험에서 내부 연결 신호는 관측만 하고 덮어쓰지 않는다.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "VA-04",
+          "rule_version": "1.0",
+          "name": "통합 커버리지 — 함수·호출",
+          "layer": "domain",
+          "level": "INTEGRATION",
+          "category": "COVERAGE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "unsupported_activity": null,
+          "coverage": [
+            {
+              "metric": "function",
+              "target": 100
+            },
+            {
+              "metric": "call",
+              "target": 100
+            }
+          ],
+          "deviation_allowed": true,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "ISO 26262-6:2018 10.4.6 참고(조항·표 미대조)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "통합 검증에서는 범위 안 함수의 실행(함수 커버리지)과 호출 위치의 실행(호출 커버리지)을 측정한다.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "VE-01",
+          "rule_version": "1.0",
+          "name": "자원 사용 검증 미지원",
+          "layer": "environment",
+          "level": "SOFTWARE",
+          "category": "ENVIRONMENT",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "check_method": "FIXED",
+          "fixed_check": "unsupported-declared",
+          "unsupported_activity": "resource_usage",
+          "coverage": [],
+          "deviation_allowed": false,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "CPU 부하·스택·메모리 사용은 Host 에서 확인할 수 없다. 계획에 '미지원(추가 검증 필요)'으로 남기고 통과로 치지 않는다.",
+          "file": "environment/host-c.json"
+        },
+        {
+          "rule_id": "VE-02",
+          "rule_version": "1.0",
+          "name": "타깃 실행 시간 검증 미지원",
+          "layer": "environment",
+          "level": "SOFTWARE",
+          "category": "ENVIRONMENT",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "check_method": "FIXED",
+          "fixed_check": "unsupported-declared",
+          "unsupported_activity": "target_timing",
+          "coverage": [],
+          "deviation_allowed": false,
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "타깃의 실행 시간·주기 준수는 Host 에서 확인할 수 없다. 시나리오는 Cycle 로만 실행하고, 실제 시간 검증은 '미지원(추가 검증 필요)'으로 남긴다.",
+          "file": "environment/host-c.json"
+        }
+      ],
+      "held": [],
+      "conflicts": [],
+      "files": [
+        {
+          "file": "common/plan.json",
+          "id": "verification-plan",
+          "version": "1.0"
+        },
+        {
+          "file": "domain/automotive.json",
+          "id": "automotive",
+          "version": "1.0"
+        },
+        {
+          "file": "assurance/iso26262.json",
+          "id": "iso26262-2018",
+          "version": "1.0"
+        },
+        {
+          "file": "environment/host-c.json",
+          "id": "host-c",
+          "version": "1.0"
+        }
+      ]
+    },
+    "snapshot_hash": "sha256:2cfb8f56e3dad9b1dac783cc0200c7087b2b9b92c27186e0831b4ea591e6ee17",
+    "approval": "not_enforced",
+    "blocking": [],
+    "warnings": [
+      "VA-04 통합 커버리지 — 함수·호출: 미평가 (ADVISORY)"
+    ],
+    "rules": [
+      {
+        "rule_id": "VC-01",
+        "rule_version": "1.0",
+        "name": "유닛마다 단위 검증 대상",
+        "layer": "common",
+        "level": "UNIT",
+        "category": "PLAN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "check_method": "FIXED",
+        "fixed_check": "unit-targets-complete",
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": false,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "승인한 설계(DBL)의 모든 유닛은 단위 검증 대상으로 계획에 있어야 한다.",
+        "file": "common/plan.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "decided_by": null
+      },
+      {
+        "rule_id": "VC-02",
+        "rule_version": "1.0",
+        "name": "SW 수준 검증 대상",
+        "layer": "common",
+        "level": "SOFTWARE",
+        "category": "PLAN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "check_method": "FIXED",
+        "fixed_check": "software-target",
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": true,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "SW 전체를 외부 경계 입출력만으로 확인하는 SW 수준 검증 대상을 둔다.",
+        "file": "common/plan.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "decided_by": null
+      },
+      {
+        "rule_id": "VC-03",
+        "rule_version": "1.0",
+        "name": "검증 목적과 종료 기준",
+        "layer": "common",
+        "level": "ALL",
+        "category": "PLAN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "check_method": "FIXED",
+        "fixed_check": "objective-and-exit",
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": false,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "검증 대상마다 무엇을 확인하는지(목적)와 언제 끝난 것으로 보는지(종료 기준)를 적는다.",
+        "file": "common/plan.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "decided_by": null
+      },
+      {
+        "rule_id": "VC-04",
+        "rule_version": "1.0",
+        "name": "커버리지 항목과 목표",
+        "layer": "common",
+        "level": "ALL",
+        "category": "COVERAGE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "check_method": "FIXED",
+        "fixed_check": "coverage-defined",
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": true,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "검증 대상마다 측정할 커버리지 항목과 목표값을 정한다. 수준이 다른 결과를 합칠 때는 백분율 평균이 아니라 실행 항목의 합집합으로 계산한다.",
+        "file": "common/plan.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "decided_by": null
+      },
+      {
+        "rule_id": "VC-05",
+        "rule_version": "1.0",
+        "name": "기대값은 승인 명세에서",
+        "layer": "common",
+        "level": "ALL",
+        "category": "METHOD",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": false,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책(시험 독립성)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "시험의 기대값(Oracle)은 승인한 요구사항·설계에서 정하고 구현 코드에서 가져오지 않는다. 커버리지를 채우는 시험도 기존 기대값을 바꾸지 않는다.",
+        "file": "common/plan.json",
+        "status": "SATISFIED",
+        "reason": "사람이 확인함",
+        "fixed_result": null,
+        "decided_by": "HJ"
+      },
+      {
+        "rule_id": "VA-01",
+        "rule_version": "1.0",
+        "name": "단위 검증 — 요구사항 기반·인터페이스 시험",
+        "layer": "domain",
+        "level": "UNIT",
+        "category": "METHOD",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": true,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "ISO 26262-6:2018 9.4.2 참고(조항·표 미대조)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "단위 검증은 유닛에 할당된 요구사항을 근거로 한 시험과 유닛 인터페이스 시험을 포함한다.",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "사람이 확인함",
+        "fixed_result": null,
+        "decided_by": "HJ"
+      },
+      {
+        "rule_id": "VA-02",
+        "rule_version": "1.0",
+        "name": "단위 시험 도출 — 동등분할·경계값·오류 추정",
+        "layer": "domain",
+        "level": "UNIT",
+        "category": "TECHNIQUE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": true,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "ISO 26262-6:2018 9.4.3 참고(조항·표 미대조)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "단위 시험은 요구사항 분석, 동등분할, 경계값 분석, 오류 추정으로 도출한다. 경계값은 신호 사전의 해상도 단위로 고른다.",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "사람이 확인함",
+        "fixed_result": null,
+        "decided_by": "HJ"
+      },
+      {
+        "rule_id": "VA-03",
+        "rule_version": "1.0",
+        "name": "통합 검증 — 인터페이스·고장 주입",
+        "layer": "domain",
+        "level": "INTEGRATION",
+        "category": "METHOD",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "unsupported_activity": null,
+        "coverage": [],
+        "deviation_allowed": true,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "ISO 26262-6:2018 10.4.2 참고(조항·표 미대조)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "통합 검증은 요구사항 기반 시험과 유닛·구성요소 사이 인터페이스 시험을 포함하고, 필요하면 고장 주입 시나리오를 둔다. 정상 시험에서 내부 연결 신호는 관측만 하고 덮어쓰지 않는다.",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "사람이 확인함",
+        "fixed_result": null,
+        "decided_by": "HJ"
+      },
+      {
+        "rule_id": "VA-04",
+        "rule_version": "1.0",
+        "name": "통합 커버리지 — 함수·호출",
+        "layer": "domain",
+        "level": "INTEGRATION",
+        "category": "COVERAGE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "unsupported_activity": null,
+        "coverage": [
+          {
+            "metric": "function",
+            "target": 100
+          },
+          {
+            "metric": "call",
+            "target": 100
+          }
+        ],
+        "deviation_allowed": true,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "ISO 26262-6:2018 10.4.6 참고(조항·표 미대조)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "통합 검증에서는 범위 안 함수의 실행(함수 커버리지)과 호출 위치의 실행(호출 커버리지)을 측정한다.",
+        "file": "domain/automotive.json",
+        "status": "NOT_ASSESSED",
+        "reason": "",
+        "fixed_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "VE-01",
+        "rule_version": "1.0",
+        "name": "자원 사용 검증 미지원",
+        "layer": "environment",
+        "level": "SOFTWARE",
+        "category": "ENVIRONMENT",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "check_method": "FIXED",
+        "fixed_check": "unsupported-declared",
+        "unsupported_activity": "resource_usage",
+        "coverage": [],
+        "deviation_allowed": false,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "CPU 부하·스택·메모리 사용은 Host 에서 확인할 수 없다. 계획에 '미지원(추가 검증 필요)'으로 남기고 통과로 치지 않는다.",
+        "file": "environment/host-c.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "decided_by": null
+      },
+      {
+        "rule_id": "VE-02",
+        "rule_version": "1.0",
+        "name": "타깃 실행 시간 검증 미지원",
+        "layer": "environment",
+        "level": "SOFTWARE",
+        "category": "ENVIRONMENT",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "check_method": "FIXED",
+        "fixed_check": "unsupported-declared",
+        "unsupported_activity": "target_timing",
+        "coverage": [],
+        "deviation_allowed": false,
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "타깃의 실행 시간·주기 준수는 Host 에서 확인할 수 없다. 시나리오는 Cycle 로만 실행하고, 실제 시간 검증은 '미지원(추가 검증 필요)'으로 남긴다.",
+        "file": "environment/host-c.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "decided_by": null
+      }
+    ],
+    "note": "규칙 유형이 DESIGN_POLICY 인 규칙의 충족은 VeriXera·조직의 자체 정책 충족이며 표준 적합 주장이 아니다."
+  },
+  "plan_hash": "sha256:4400a679ebb77ac06f6102de231a9f6e307ac35b3ea7619c16afa3cff18028bc"
+}

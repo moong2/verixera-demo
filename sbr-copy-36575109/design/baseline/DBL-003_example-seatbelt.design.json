@@ -1,0 +1,1645 @@
+{
+  "schema": "ears-design-baseline/v1",
+  "design_baseline_id": "DBL-003",
+  "project": "example-seatbelt",
+  "created_at": "2026-11-26T21:41:20.086Z",
+  "approver": "HJ",
+  "change_reason": null,
+  "previous_design_baseline": {
+    "id": "DBL-002",
+    "hash": "sha256:1f929c7e9953cc9534d18fae606bd0963b51c85738904260d8b1523c2de1086b"
+  },
+  "requirements_baseline": {
+    "id": "BL-002",
+    "hash": "sha256:2e7f097d4e3f0d13b3d5ffb9e431cec56f5a15c932d9bc75b218ce1f472b28ec"
+  },
+  "hash_algorithm": "sha256",
+  "hash_scope": "design_hash = sha256(정규화 JSON{schema, design_baseline_id, requirements_baseline{id, hash}, previous_design_baseline{id, hash}|null, design, design_documents(있으면), confirmed_recommendations(있으면), rule_profile(있으면)})",
+  "summary": {
+    "components": 3,
+    "units": 3,
+    "functions": 7,
+    "design_signals": 7,
+    "connections": 7
+  },
+  "open_items": {
+    "unallocated_requirements": [],
+    "warnings": [
+      "연결 passenger_occupied: 여러 곳에서 씁니다(EXT, U-01) — 쓰는 순서와 초기화를 설계에 적어야 합니다",
+      "연결 seatbelt_buckled: 여러 곳에서 씁니다(EXT, U-01) — 쓰는 순서와 초기화를 설계에 적어야 합니다",
+      "연결 vehicle_speed: 여러 곳에서 씁니다(EXT, U-01) — 쓰는 순서와 초기화를 설계에 적어야 합니다",
+      "vehicle_speed: 원시값 255 × 1 + 0 = 255 인데 물리 최대는 200 입니다"
+    ]
+  },
+  "design": {
+    "schema": "ears-design/v1",
+    "requirements_baseline": {
+      "id": "BL-002",
+      "hash": "sha256:2e7f097d4e3f0d13b3d5ffb9e431cec56f5a15c932d9bc75b218ce1f472b28ec"
+    },
+    "architecture_baseline": {
+      "id": "ABL-003",
+      "hash": "sha256:804ace69b39ed4398c4726ad6caae1b048aed347eb9037879e1a1f007ac05e8f"
+    },
+    "components": [
+      {
+        "id": "CMP-INPUT",
+        "name": "입력 신호 수집",
+        "description": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 판단 1회 실행 단위의 입력 값 한 벌로 묶어 판정 구성요소에 넘긴다. 판정 규칙은 갖지 않는다."
+      },
+      {
+        "id": "CMP-JUDGE",
+        "name": "경고 판정",
+        "description": "입력 3개의 값만으로 경고 여부를 정한다. 내부 상태를 갖지 않고 이전 실행 결과를 쓰지 않는다. 판정 규칙(탑승·미착용·속도 범위 조건, 범위 초과 시 FALSE)을 한곳에 둔다."
+      },
+      {
+        "id": "CMP-OUTPUT",
+        "name": "경고 명령 출력",
+        "description": "판정 결과를 warning_cmd 로 출력한다. 초기화될 때 warning_cmd 를 FALSE 로 설정한다."
+      }
+    ],
+    "units": [
+      {
+        "id": "U-01",
+        "name": "입력 신호 취득",
+        "component": "CMP-INPUT",
+        "responsibility": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 한 번의 판단 실행에서 한 번에 취득해 같은 시점의 값으로 U-02 에 전달한다. 값은 변환·제한 없이 그대로 전달한다.",
+        "requirements": [
+          "REQ-SBR-01-4"
+        ],
+        "design_items": [
+          "SWD-SBR-006"
+        ],
+        "functions": [
+          "sbr_acquire_inputs"
+        ],
+        "acceptance": [
+          "한 실행에서 취득한 세 입력값은 같은 실행의 값으로 U-02 에 전달된다",
+          "vehicle_speed 는 값을 바꾸지 않고 전달된다(201, 255 도 그대로 전달되어 U-02 가 범위 밖으로 판단한다)"
+        ]
+      },
+      {
+        "id": "U-02",
+        "name": "경고 조건 판정",
+        "component": "CMP-JUDGE",
+        "responsibility": "현재 실행의 세 입력값만으로 경고 여부(warning_result)를 계산한다. vehicle_speed 가 15 이상 200 이하이고 탑승·미착용이면 TRUE, 그 밖에는 FALSE 다. 내부 상태를 갖지 않는다.",
+        "requirements": [
+          "REQ-SBR-01-1",
+          "REQ-SBR-01-2",
+          "REQ-SBR-01-5",
+          "REQ-SBR-01-4"
+        ],
+        "design_items": [
+          "SWD-SBR-001",
+          "SWD-SBR-002",
+          "SWD-SBR-004",
+          "SWD-SBR-005"
+        ],
+        "functions": [
+          "sbr_speed_reached",
+          "sbr_speed_in_range",
+          "sbr_passenger_unbelted",
+          "sbr_judge_warning"
+        ],
+        "acceptance": [
+          "passenger_occupied = TRUE, seatbelt_buckled = FALSE 이고 vehicle_speed = 14 km/h 이면 warning_result = FALSE",
+          "passenger_occupied = TRUE, seatbelt_buckled = FALSE 이고 vehicle_speed = 15, 16, 200 km/h 이면 각각 warning_result = TRUE",
+          "passenger_occupied = FALSE 이거나 seatbelt_buckled = TRUE 이면 vehicle_speed = 50 km/h 에서 warning_result = FALSE",
+          "passenger_occupied = TRUE, seatbelt_buckled = FALSE 이고 vehicle_speed = 201, 255 km/h 이면 warning_result = FALSE",
+          "이전 실행의 결과와 무관하게 현재 입력만으로 warning_result 가 정해진다"
+        ]
+      },
+      {
+        "id": "U-03",
+        "name": "경고 명령 출력 및 초기화",
+        "component": "CMP-OUTPUT",
+        "responsibility": "warning_cmd 를 소유한다. 초기화 시 FALSE 로 설정하고, 실행마다 U-02 의 warning_result 로 warning_cmd 를 다시 정해 출력한다.",
+        "requirements": [
+          "REQ-SBR-01-3",
+          "REQ-SBR-01-4"
+        ],
+        "design_items": [
+          "SWD-SBR-003",
+          "SWD-SBR-007"
+        ],
+        "functions": [
+          "sbr_init_output",
+          "sbr_output_warning"
+        ],
+        "acceptance": [
+          "초기화 직후 warning_cmd = FALSE",
+          "warning_result = TRUE 를 받은 실행의 warning_cmd = TRUE, 이어서 warning_result = FALSE 를 받은 실행의 warning_cmd = FALSE"
+        ]
+      }
+    ],
+    "signals": [
+      {
+        "name": "passenger_occupied",
+        "source": "requirements",
+        "category": "interface",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "",
+        "description": "동승석 탑승 여부 (TRUE = 탑승자가 있음). 외부 입력을 U-01 이 취득해 U-02 가 읽는다.",
+        "transfer": "",
+        "display_name": "동승석 탑승 여부",
+        "enum": [
+          {
+            "value": "FALSE",
+            "meaning": "탑승자 없음"
+          },
+          {
+            "value": "TRUE",
+            "meaning": "탑승자 있음"
+          }
+        ]
+      },
+      {
+        "name": "seatbelt_buckled",
+        "source": "requirements",
+        "category": "interface",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "",
+        "description": "안전벨트 착용 여부 (TRUE = 안전벨트를 맴). 외부 입력을 U-01 이 취득해 U-02 가 읽는다.",
+        "transfer": "",
+        "display_name": "안전벨트 착용 여부",
+        "enum": [
+          {
+            "value": "FALSE",
+            "meaning": "미착용"
+          },
+          {
+            "value": "TRUE",
+            "meaning": "착용"
+          }
+        ]
+      },
+      {
+        "name": "vehicle_speed",
+        "source": "requirements",
+        "category": "interface",
+        "type": "uint8_t",
+        "unit": "km/h",
+        "min": "0",
+        "max": "200",
+        "initial": "",
+        "description": "차량 속도. 외부 입력을 U-01 이 취득해 U-02 가 읽는다. REQ-SBR-01-5 의 201·255 km/h 입력을 받을 수 있도록 표현 범위는 0~255 로 한다.",
+        "transfer": "",
+        "display_name": "차량 속도",
+        "raw_min": "0",
+        "raw_max": "255",
+        "scaling": "1",
+        "offset": "0",
+        "resolution": "1",
+        "validity": "0~200 km/h 가 유효 범위이고 201 km/h 이상은 범위 밖이다(REQ-SBR-01-5)"
+      },
+      {
+        "name": "warning_result",
+        "source": "design",
+        "category": "interface",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "",
+        "description": "U-02 의 판정 결과(TRUE = 경고 조건 성립). 판정(U-02)과 출력·초기화(U-03)를 나눈 아키텍처 구성 때문에 생긴 유닛 사이 값이다. 실행마다 새로 계산하며 기억하지 않는다.",
+        "transfer": "",
+        "display_name": "경고 판정 결과",
+        "enum": [
+          {
+            "value": "FALSE",
+            "meaning": "경고 조건 불성립"
+          },
+          {
+            "value": "TRUE",
+            "meaning": "경고 조건 성립"
+          }
+        ]
+      },
+      {
+        "name": "warning_cmd",
+        "source": "requirements",
+        "category": "interface",
+        "type": "bool",
+        "unit": "",
+        "min": "",
+        "max": "",
+        "initial": "FALSE",
+        "description": "경고 명령 (TRUE = 경고를 켬). 경고등을 켜는 명령이며 경고등 자체가 아니다. U-03 이 소유하고 외부가 읽는다.",
+        "transfer": "",
+        "display_name": "경고 명령",
+        "enum": [
+          {
+            "value": "FALSE",
+            "meaning": "경고 끔"
+          },
+          {
+            "value": "TRUE",
+            "meaning": "경고 켬"
+          }
+        ]
+      },
+      {
+        "name": "SBR_WARN_SPEED_KMH",
+        "source": "design",
+        "category": "constant",
+        "type": "uint8_t",
+        "unit": "km/h",
+        "min": "",
+        "max": "",
+        "initial": "15",
+        "description": "경고 기준 속도. REQ-SBR-01-1·-2 v2 문장의 15 km/h 값이며 '이상'(>=)으로 비교한다.",
+        "transfer": "",
+        "display_name": "경고 기준 속도"
+      },
+      {
+        "name": "SBR_SPEED_MAX_KMH",
+        "source": "design",
+        "category": "constant",
+        "type": "uint8_t",
+        "unit": "km/h",
+        "min": "",
+        "max": "",
+        "initial": "200",
+        "description": "속도 유효 범위의 최대값. REQ-SBR-01-1·-2·-5 문장의 200 km/h 값이며 '이하'(<=)이면 범위 안이다.",
+        "transfer": "",
+        "display_name": "속도 유효 범위 최대값"
+      }
+    ],
+    "connections": [
+      {
+        "signal": "passenger_occupied",
+        "owner": "U-01",
+        "accesses": [
+          {
+            "by": "EXT",
+            "mode": "WRITE"
+          },
+          {
+            "by": "U-01",
+            "mode": "READ_WRITE"
+          },
+          {
+            "by": "U-02",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "seatbelt_buckled",
+        "owner": "U-01",
+        "accesses": [
+          {
+            "by": "EXT",
+            "mode": "WRITE"
+          },
+          {
+            "by": "U-01",
+            "mode": "READ_WRITE"
+          },
+          {
+            "by": "U-02",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "vehicle_speed",
+        "owner": "U-01",
+        "accesses": [
+          {
+            "by": "EXT",
+            "mode": "WRITE"
+          },
+          {
+            "by": "U-01",
+            "mode": "READ_WRITE"
+          },
+          {
+            "by": "U-02",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "warning_result",
+        "owner": "U-02",
+        "accesses": [
+          {
+            "by": "U-02",
+            "mode": "WRITE"
+          },
+          {
+            "by": "U-03",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "warning_cmd",
+        "owner": "U-03",
+        "accesses": [
+          {
+            "by": "U-03",
+            "mode": "WRITE"
+          },
+          {
+            "by": "EXT",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "SBR_WARN_SPEED_KMH",
+        "owner": "U-02",
+        "accesses": [
+          {
+            "by": "U-02",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "SBR_SPEED_MAX_KMH",
+        "owner": "U-02",
+        "accesses": [
+          {
+            "by": "U-02",
+            "mode": "READ"
+          }
+        ]
+      }
+    ]
+  },
+  "design_documents": [
+    {
+      "path": "docs/design/seatbelt_reminder.md",
+      "content": "# 동승석 안전벨트 경고(SBR) 상세 설계 (교육용 예시)\n\n교육용으로 단순화한 예제다. 실제 양산 명세나 법규 충족을 뜻하지 않는다.\n범위에서 뺀 것: 물리 응답시간, 센서 고장 대응, 경고음 패턴. 범위 밖 속도(200 km/h 초과)는 경고를 끈다(REQ-SBR-01-5).\n호출 주기는 요구사항에 없어 정하지 않았다. 한 번의 실행 안에서 U-01 → U-02 → U-03 순서로 모두 끝낸다.\n\n## 인터페이스\n\n@signal vehicle_speed@v1 → input->vehicle_speed\n@signal passenger_occupied@v1 → input->passenger_occupied\n@signal seatbelt_buckled@v1 → input->seatbelt_buckled\n@signal warning_cmd@v1 → state->warning_cmd\n\n함수 목록(헤더 `src/seatbelt_reminder.h`):\n\n| 함수 | 입력 | 출력 |\n|---|---|---|\n| `void sbr_acquire_inputs(sbr_input_t *input, uint8_t vehicle_speed, bool passenger_occupied, bool seatbelt_buckled)` | 외부에서 읽은 세 값 | `*input` 에 세 값을 그대로 채운다 |\n| `bool sbr_speed_reached(uint8_t vehicle_speed)` | 속도(km/h) | 15 km/h 이상이면 true |\n| `bool sbr_speed_in_range(uint8_t vehicle_speed)` | 속도(km/h) | 200 km/h 이하이면 true |\n| `bool sbr_passenger_unbelted(bool passenger_occupied, bool seatbelt_buckled)` | 탑승, 착용 | 탑승 AND 미착용이면 true |\n| `bool sbr_judge_warning(const sbr_input_t *input)` | `sbr_input_t` | `warning_result` |\n| `void sbr_init_output(sbr_state_t *state)` | 상태 | `state->warning_cmd` = false |\n| `void sbr_output_warning(sbr_state_t *state, bool warning_result)` | 상태, `warning_result` | `state->warning_cmd` = `warning_result` |\n\n- 입력 `sbr_input_t`(U-01 소유): `vehicle_speed`(`uint8_t`, 1 km/h/LSB, 유효 범위 0~200 km/h, 201~255 는 범위 밖), `passenger_occupied`(`bool`), `seatbelt_buckled`(`bool`). U-01 은 외부 값을 읽어 `sbr_input_t` 에 쓰고(READ_WRITE), U-02 는 이를 읽기만 한다.\n- 유닛 사이 값 `warning_result`(`bool`): `sbr_judge_warning` 의 반환값이다. U-02 가 만들고 U-03 이 읽는다. 기억하지 않는다.\n- 출력 `sbr_state_t.warning_cmd`(`bool`, U-03 소유, 초기값 FALSE): 경고 명령이며 경고등 자체가 아니다. 전역 변수를 만들지 않기 위해 상태 `sbr_state_t` 는 호출하는 쪽이 갖고, U-03 함수가 포인터로 받아 `warning_cmd` 를 쓴다.\n- 상수 `SBR_WARN_SPEED_KMH` = 15 km/h, `SBR_SPEED_MAX_KMH` = 200 km/h (모두 U-02 가 읽는다)\n- 내부 상태(모드·타이머·카운터·래치)는 없다. 상태성 값은 `warning_cmd` 하나이며 U-03 이 소유한다.\n\n## Unit 구성\n\n| Unit | 구성요소 | 이름 | 함수 | 설계 항목 |\n|---|---|---|---|---|\n| U-01 | CMP-INPUT | 입력 신호 취득 | `sbr_acquire_inputs` | SWD-SBR-006 |\n| U-02 | CMP-JUDGE | 경고 조건 판정 | `sbr_speed_reached`, `sbr_speed_in_range`, `sbr_passenger_unbelted`, `sbr_judge_warning` | SWD-SBR-001, 002, 004, 005 |\n| U-03 | CMP-OUTPUT | 경고 명령 출력 및 초기화 | `sbr_init_output`, `sbr_output_warning` | SWD-SBR-003, SWD-SBR-007 |\n\n## SWD-SBR-006 입력 신호 취득 (U-01)\n\n@design SWD-SBR-006\n@satisfies REQ-SBR-01-4@v1\n\n`sbr_acquire_inputs` 는 한 번의 실행에서 `vehicle_speed`, `passenger_occupied`, `seatbelt_buckled` 를 한 번에 받아 `sbr_input_t` 에 채운다. 세 값은 모두 같은 실행의 값이다. 값을 바꾸거나 제한하지 않는다. 201~255 km/h 도 그대로 전달해 U-02 가 범위 밖으로 판단하게 한다.\n\n## SWD-SBR-001 속도 판단 (U-02)\n\n@design SWD-SBR-001\n@satisfies REQ-SBR-01-1@v2, REQ-SBR-01-2@v2\n\n`sbr_speed_reached`: `vehicle_speed >= SBR_WARN_SPEED_KMH`(15 km/h) 이면 TRUE, 아니면 FALSE 를 돌려준다. 비교는 '이상'(>=)이다. '초과'(>)가 아니다. 경계 예시: 14 km/h → FALSE, 15 km/h → TRUE, 16 km/h → TRUE.\n\n## SWD-SBR-002 탑승·벨트 판단 (U-02)\n\n@design SWD-SBR-002\n@satisfies REQ-SBR-01-1@v2, REQ-SBR-01-2@v2\n\n`sbr_passenger_unbelted`: `passenger_occupied = TRUE` AND `seatbelt_buckled = FALSE` 이면 TRUE, 아니면 FALSE 를 돌려준다.\n\n## SWD-SBR-005 속도 유효 범위 판단 (U-02)\n\n@design SWD-SBR-005\n@satisfies REQ-SBR-01-1@v2, REQ-SBR-01-2@v2, REQ-SBR-01-5@v1\n\n`sbr_speed_in_range`: `vehicle_speed <= SBR_SPEED_MAX_KMH` 이면 TRUE(유효 범위 안), 초과이면 FALSE 를 돌려준다. `uint8_t` 라 0 미만은 들어올 수 없다.\n\n## SWD-SBR-004 최종 경고 판단 (U-02)\n\n@design SWD-SBR-004\n@satisfies REQ-SBR-01-1@v2, REQ-SBR-01-2@v2, REQ-SBR-01-4@v1, REQ-SBR-01-5@v1\n\n`sbr_judge_warning` 은 실행할 때마다 그 실행의 입력으로 `sbr_speed_in_range` AND `sbr_speed_reached` AND `sbr_passenger_unbelted` 를 계산해 `warning_result` 로 돌려준다. 이전 실행의 결과를 기억하지 않는다. `warning_cmd` 는 직접 쓰지 않는다.\n\n| 조건 | warning_result |\n|---|---|\n| 속도 > 200 | FALSE |\n| 속도 < 15 | FALSE |\n| 15 ≤ 속도 ≤ 200, 탑승 TRUE, 착용 FALSE | TRUE |\n| 15 ≤ 속도 ≤ 200, 그 밖의 탑승·착용 조합 | FALSE |\n\n## SWD-SBR-003 초기화 (U-03)\n\n@design SWD-SBR-003\n@satisfies REQ-SBR-01-3@v1\n\n`sbr_init_output` 은 `warning_cmd` 를 FALSE 로 설정한다.\n\n## SWD-SBR-007 경고 명령 출력 (U-03)\n\n@design SWD-SBR-007\n@satisfies REQ-SBR-01-4@v1\n\n`sbr_output_warning` 은 실행할 때마다 받은 `warning_result` 를 `warning_cmd` 에 넣어 출력한다. 이전 `warning_cmd` 값에 의존하지 않는다.\n"
+    }
+  ],
+  "confirmed_recommendations": [
+    {
+      "target": "interface:warning_result",
+      "attr": "전달 방식",
+      "value": "sbr_judge_warning 의 반환값을 sbr_output_warning 의 인자로 전달(전역 변수 없음)",
+      "unit": ""
+    },
+    {
+      "target": "signal:vehicle_speed",
+      "attr": "offset",
+      "value": "0",
+      "unit": ""
+    },
+    {
+      "target": "signal:vehicle_speed",
+      "attr": "raw_max",
+      "value": "255",
+      "unit": ""
+    },
+    {
+      "target": "signal:vehicle_speed",
+      "attr": "raw_min",
+      "value": "0",
+      "unit": ""
+    },
+    {
+      "target": "signal:vehicle_speed",
+      "attr": "scaling",
+      "value": "1",
+      "unit": ""
+    },
+    {
+      "target": "signal:vehicle_speed",
+      "attr": "type",
+      "value": "uint8_t",
+      "unit": "km/h"
+    },
+    {
+      "target": "signal:warning_cmd",
+      "attr": "initial",
+      "value": "FALSE",
+      "unit": ""
+    }
+  ],
+  "rule_profile": {
+    "snapshot": {
+      "settings": {
+        "domain": "automotive",
+        "subdomain": "automotive",
+        "standards": [
+          "ISO 26262:2018",
+          "Automotive SPICE 4.0"
+        ],
+        "environment": "embedded-c",
+        "level": "QM",
+        "level_status": "assigned",
+        "allow_conditional": true
+      },
+      "rules": [
+        {
+          "rule_id": "DEC-01",
+          "rule_version": "1.0",
+          "name": "책임이 다르면 분할 검토",
+          "layer": "common",
+          "purpose": "DECOMPOSITION",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "서로 다른 기능적 책임(예: 신호 처리, 판단, 출력)은 다른 유닛으로 나누는 것을 검토한다.",
+          "file": "common/decomposition.json"
+        },
+        {
+          "rule_id": "DEC-02",
+          "rule_version": "1.0",
+          "name": "실행 주기가 다르면 실행 구조 분리 검토",
+          "layer": "common",
+          "purpose": "DECOMPOSITION",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "요구사항이 말하는 실행 주기·이벤트·마감 시간이 다르면 실행 구조(유닛·태스크)를 나누는 것을 검토한다. 요구사항에 주기가 없으면 지어내지 않는다.",
+          "file": "common/decomposition.json"
+        },
+        {
+          "rule_id": "DEC-03",
+          "rule_version": "1.0",
+          "name": "고장 대응·안전 기능은 별도 요소 또는 격리 검토",
+          "layer": "common",
+          "purpose": "DECOMPOSITION",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "독립적인 고장 대응·안전 기능은 별도 유닛으로 두거나 격리가 필요한지 검토한다.",
+          "file": "common/decomposition.json"
+        },
+        {
+          "rule_id": "DEC-04",
+          "rule_version": "1.0",
+          "name": "내부 상태를 밀접하게 공유하면 통합 유지 검토",
+          "layer": "common",
+          "purpose": "DECOMPOSITION",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "같은 내부 상태를 함께 읽고 쓰는 동작은 한 유닛에 두는 것을 검토한다(상태를 유닛 사이 신호로 흩뜨리지 않는다).",
+          "file": "common/decomposition.json"
+        },
+        {
+          "rule_id": "DEC-05",
+          "rule_version": "1.0",
+          "name": "하나의 기능을 이루는 여러 함수는 한 유닛",
+          "layer": "common",
+          "purpose": "DECOMPOSITION",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "DETAILED",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "standard": "Automotive SPICE 4.0",
+            "clause": "SWE.3.BP1 Note 1 (p.49)",
+            "url": "https://vda-qmc.de/wp-content/uploads/2023/12/Automotive-SPICE-PAM-v40.pdf",
+            "review_status": "SOURCE_CHECKED",
+            "checked_by": "사용자 조사(2026-11-26)",
+            "note": "유닛 경계는 코드·파일 구조와 독립, 응용 도메인의 의미로 정하며 여러 함수로 구현 가능 — 원문 확인은 사용자, 자체 규칙의 의미 검토는 미완"
+          },
+          "interpretation_status": "PENDING",
+          "text": "여러 하위 함수가 하나의 기능을 완성하면 같은 유닛으로 묶을 수 있다. 유닛 경계는 파일이나 함수 개수가 아니라 기능의 의미로 정한다.",
+          "file": "common/decomposition.json"
+        },
+        {
+          "rule_id": "DEC-06",
+          "rule_version": "1.0",
+          "name": "독립 시험이 어려우면 경계 재설계",
+          "layer": "common",
+          "purpose": "DECOMPOSITION",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "INTERFACE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "유닛을 따로 떼어 입력을 넣고 출력을 볼 수 없으면 경계와 인터페이스를 다시 설계한다.",
+          "file": "common/decomposition.json"
+        },
+        {
+          "rule_id": "DEC-07",
+          "rule_version": "1.0",
+          "name": "분할로 인터페이스가 과도해지면 통합 검토",
+          "layer": "common",
+          "purpose": "DECOMPOSITION",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "나눈 결과 유닛 사이 신호가 지나치게 많아지면 통합하거나 구조를 바꾸는 것을 검토한다. 안전등급이 높다고 무조건 더 잘게 나누지 않는다.",
+          "file": "common/decomposition.json"
+        },
+        {
+          "rule_id": "COM-01",
+          "rule_version": "1.0",
+          "name": "요구사항 할당 완전성",
+          "layer": "common",
+          "purpose": "REVIEW",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "FIXED",
+          "fixed_check": "allocation-complete",
+          "deviation_allowed": false,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책(EN 50716 §7.3.4 요구사항 할당은 사용자가 원문 확인 — 의미 검토 전)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "모든 잎 요구사항이 하나 이상의 유닛에 할당되어야 한다.",
+          "file": "common/review.json"
+        },
+        {
+          "rule_id": "COM-02",
+          "rule_version": "1.0",
+          "name": "유닛 책임 정의",
+          "layer": "common",
+          "purpose": "REVIEW",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "FIXED",
+          "fixed_check": "responsibility-defined",
+          "deviation_allowed": false,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "모든 유닛에 책임(무엇을 하는지)이 적혀 있어야 한다.",
+          "file": "common/review.json"
+        },
+        {
+          "rule_id": "COM-03",
+          "rule_version": "1.0",
+          "name": "유닛 구현 함수 지정",
+          "layer": "common",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "design_stage": "DETAILED",
+          "check_method": "FIXED",
+          "fixed_check": "unit-has-function",
+          "deviation_allowed": true,
+          "required_for": [
+            "code"
+          ],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "유닛마다 구현할 함수가 정해져 있어야 코드 에이전트가 유닛 경계를 지킨다.",
+          "file": "common/review.json"
+        },
+        {
+          "rule_id": "COM-04",
+          "rule_version": "1.0",
+          "name": "유닛 독립 시험 가능성(관측 가능한 출력)",
+          "layer": "common",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "design_stage": "INTERFACE",
+          "check_method": "FIXED",
+          "fixed_check": "unit-testable",
+          "deviation_allowed": true,
+          "required_for": [
+            "test"
+          ],
+          "source": {
+            "standard": "ECSS-E-ST-40C Rev.1:2025",
+            "clause": "§5.8.3.4",
+            "url": "https://ecss.nl/standard/ecss-e-st-40c-rev-1-software-30-april-2025/",
+            "review_status": "SOURCE_CHECKED",
+            "checked_by": "사용자 조사(2026-11-26, 공개 텍스트)",
+            "note": "시험 가능성 — 의미 검토 전이라 자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "유닛마다 경계 출력(또는 입출력)이 있어 결과를 관측할 수 있어야 한다.",
+          "file": "common/review.json"
+        },
+        {
+          "rule_id": "COM-05",
+          "rule_version": "1.0",
+          "name": "응집도·결합도",
+          "layer": "common",
+          "purpose": "REVIEW",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "유닛 안의 동작은 한 책임으로 묶이고(응집), 유닛 사이 의존은 적어야 한다(결합).",
+          "file": "common/review.json"
+        },
+        {
+          "rule_id": "COM-06",
+          "rule_version": "1.0",
+          "name": "복잡도 관리",
+          "layer": "common",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "DETAILED",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책. 실제 복잡도 수치는 코드 정적 분석에서 확인한다(설계 단계에서 완료로 보지 않음)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "한 유닛에 조건·상태가 지나치게 많이 모이지 않았는지 본다.",
+          "file": "common/review.json"
+        },
+        {
+          "rule_id": "AUTO-01",
+          "rule_version": "1.0",
+          "name": "기능 책임 분리",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "신호 처리, 제어 판단, 출력 처리의 책임이 유닛마다 명확한가.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "AUTO-02",
+          "rule_version": "1.0",
+          "name": "실행 주기",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책. 설계 모델에 주기 정보가 아직 없어 사람이 본다. 실제 타이밍은 타깃에서만 확인 가능 — 설계 단계에서 완료로 보지 않음"
+          },
+          "interpretation_status": "PENDING",
+          "text": "서로 다른 주기·이벤트·마감 시간을 가진 기능의 실행 구조가 적절한가.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "AUTO-03",
+          "rule_version": "1.0",
+          "name": "안전 요구사항 할당",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "FIXED",
+          "fixed_check": "allocation-complete",
+          "deviation_allowed": false,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책. 지금은 요구사항 전체의 할당으로 확인(안전 요구사항 표시는 차후)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "안전 요구사항을 포함한 모든 잎 요구사항이 관련 설계 요소에 연결되었는가.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "AUTO-04",
+          "rule_version": "1.0",
+          "name": "간섭 방지",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "ARCHITECTURE",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "design_stage": "ARCHITECTURE",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책. 설계 모델에 요소별 안전등급이 아직 없어 사람이 본다"
+          },
+          "interpretation_status": "PENDING",
+          "text": "서로 다른 안전등급의 요소 사이 간섭 위험을 고려했는가.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "AUTO-05",
+          "rule_version": "1.0",
+          "name": "신호 인터페이스 정의",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "design_stage": "INTERFACE",
+          "check_method": "FIXED",
+          "fixed_check": "interface-defined",
+          "deviation_allowed": false,
+          "required_for": [
+            "code",
+            "test"
+          ],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "유닛 사이 인터페이스 신호의 자료형·물리 단위가 정의되었는가(범위·초기값·변환 방식은 사람이 확인).",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "AUTO-06",
+          "rule_version": "1.0",
+          "name": "상태 소유권",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "BLOCKING",
+          "design_stage": "DETAILED",
+          "check_method": "FIXED",
+          "fixed_check": "state-owner",
+          "deviation_allowed": false,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "모드·타이머·카운터·래치(상태 변수)의 소유 유닛·초기값·갱신 책임이 명확한가.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "AUTO-07",
+          "rule_version": "1.0",
+          "name": "유닛별 독립 시험",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "REVIEW_REQUIRED",
+          "design_stage": "INTERFACE",
+          "check_method": "FIXED",
+          "fixed_check": "unit-testable",
+          "deviation_allowed": true,
+          "required_for": [
+            "test"
+          ],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책"
+          },
+          "interpretation_status": "PENDING",
+          "text": "설계 유닛마다 입력을 제어하고 출력을 관측할 수 있는가.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "AUTO-08",
+          "rule_version": "1.0",
+          "name": "자원 및 타이밍",
+          "layer": "domain",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "DETAILED",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책. CPU 부하·스택·실행시간은 타깃·정적 분석에서만 확인 가능 — 설계 단계에서 완료로 보지 않음"
+          },
+          "interpretation_status": "PENDING",
+          "text": "CPU 부하, 스택, 실행시간 등 관련 제약을 고려했는가.",
+          "file": "domain/automotive.json"
+        },
+        {
+          "rule_id": "EC-01",
+          "rule_version": "1.0",
+          "name": "구성요소의 소스 묶음",
+          "layer": "environment",
+          "purpose": "DECOMPOSITION",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "DETAILED",
+          "check_method": "AI_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책(권장, 강제 아님)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "구성요소 하나는 보통 .c/.h 한 쌍으로 구현하는 것을 권장한다. 유닛 경계는 파일이 아니라 기능으로 정한다.",
+          "file": "environment/embedded-c.json"
+        },
+        {
+          "rule_id": "EC-02",
+          "rule_version": "1.0",
+          "name": "상태 변수의 파일 범위",
+          "layer": "environment",
+          "purpose": "REVIEW",
+          "activity": "DETAILED_DESIGN",
+          "rule_type": "DESIGN_POLICY",
+          "enforcement": "ADVISORY",
+          "design_stage": "DETAILED",
+          "check_method": "HUMAN_REVIEW",
+          "fixed_check": null,
+          "deviation_allowed": true,
+          "required_for": [],
+          "source": {
+            "review_status": "NOT_CHECKED",
+            "note": "자체 정책. 실제 선언은 코드에서 확인(코딩 규칙 limit_globals)"
+          },
+          "interpretation_status": "PENDING",
+          "text": "유닛이 소유한 상태 변수는 그 유닛 파일 안의 static 으로 두고 다른 유닛은 인터페이스로만 접근한다.",
+          "file": "environment/embedded-c.json"
+        }
+      ],
+      "held": [],
+      "conflicts": [],
+      "unsupported": [],
+      "files": [
+        {
+          "file": "common/decomposition.json",
+          "id": "common-decomposition",
+          "version": "1.0"
+        },
+        {
+          "file": "common/review.json",
+          "id": "common-review",
+          "version": "1.0"
+        },
+        {
+          "file": "domain/automotive.json",
+          "id": "automotive",
+          "version": "1.0"
+        },
+        {
+          "file": "assurance/iso26262.json",
+          "id": "iso26262-2018",
+          "version": "1.0"
+        },
+        {
+          "file": "environment/embedded-c.json",
+          "id": "embedded-c",
+          "version": "1.0"
+        }
+      ]
+    },
+    "snapshot_hash": "sha256:b56d981f7c9d3283a6b708c7df2a67a011cabb71113d5ae83c586439cacd93ee",
+    "approval": "not_enforced",
+    "blocking": [],
+    "warnings": [
+      "COM-05 응집도·결합도: 미평가 (ADVISORY)",
+      "COM-06 복잡도 관리: 미평가 (ADVISORY)",
+      "AUTO-02 실행 주기: 미평가 (ADVISORY)",
+      "AUTO-08 자원 및 타이밍: 미평가 (ADVISORY)",
+      "EC-02 상태 변수의 파일 범위: 미평가 (ADVISORY)"
+    ],
+    "rules": [
+      {
+        "rule_id": "DEC-01",
+        "rule_version": "1.0",
+        "name": "책임이 다르면 분할 검토",
+        "layer": "common",
+        "purpose": "DECOMPOSITION",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "서로 다른 기능적 책임(예: 신호 처리, 판단, 출력)은 다른 유닛으로 나누는 것을 검토한다.",
+        "file": "common/decomposition.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "DEC-02",
+        "rule_version": "1.0",
+        "name": "실행 주기가 다르면 실행 구조 분리 검토",
+        "layer": "common",
+        "purpose": "DECOMPOSITION",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "요구사항이 말하는 실행 주기·이벤트·마감 시간이 다르면 실행 구조(유닛·태스크)를 나누는 것을 검토한다. 요구사항에 주기가 없으면 지어내지 않는다.",
+        "file": "common/decomposition.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "DEC-03",
+        "rule_version": "1.0",
+        "name": "고장 대응·안전 기능은 별도 요소 또는 격리 검토",
+        "layer": "common",
+        "purpose": "DECOMPOSITION",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "독립적인 고장 대응·안전 기능은 별도 유닛으로 두거나 격리가 필요한지 검토한다.",
+        "file": "common/decomposition.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "DEC-04",
+        "rule_version": "1.0",
+        "name": "내부 상태를 밀접하게 공유하면 통합 유지 검토",
+        "layer": "common",
+        "purpose": "DECOMPOSITION",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "같은 내부 상태를 함께 읽고 쓰는 동작은 한 유닛에 두는 것을 검토한다(상태를 유닛 사이 신호로 흩뜨리지 않는다).",
+        "file": "common/decomposition.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "DEC-05",
+        "rule_version": "1.0",
+        "name": "하나의 기능을 이루는 여러 함수는 한 유닛",
+        "layer": "common",
+        "purpose": "DECOMPOSITION",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "DETAILED",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "standard": "Automotive SPICE 4.0",
+          "clause": "SWE.3.BP1 Note 1 (p.49)",
+          "url": "https://vda-qmc.de/wp-content/uploads/2023/12/Automotive-SPICE-PAM-v40.pdf",
+          "review_status": "SOURCE_CHECKED",
+          "checked_by": "사용자 조사(2026-11-26)",
+          "note": "유닛 경계는 코드·파일 구조와 독립, 응용 도메인의 의미로 정하며 여러 함수로 구현 가능 — 원문 확인은 사용자, 자체 규칙의 의미 검토는 미완"
+        },
+        "interpretation_status": "PENDING",
+        "text": "여러 하위 함수가 하나의 기능을 완성하면 같은 유닛으로 묶을 수 있다. 유닛 경계는 파일이나 함수 개수가 아니라 기능의 의미로 정한다.",
+        "file": "common/decomposition.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "DEC-06",
+        "rule_version": "1.0",
+        "name": "독립 시험이 어려우면 경계 재설계",
+        "layer": "common",
+        "purpose": "DECOMPOSITION",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "INTERFACE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "유닛을 따로 떼어 입력을 넣고 출력을 볼 수 없으면 경계와 인터페이스를 다시 설계한다.",
+        "file": "common/decomposition.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "DEC-07",
+        "rule_version": "1.0",
+        "name": "분할로 인터페이스가 과도해지면 통합 검토",
+        "layer": "common",
+        "purpose": "DECOMPOSITION",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "나눈 결과 유닛 사이 신호가 지나치게 많아지면 통합하거나 구조를 바꾸는 것을 검토한다. 안전등급이 높다고 무조건 더 잘게 나누지 않는다.",
+        "file": "common/decomposition.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "COM-01",
+        "rule_version": "1.0",
+        "name": "요구사항 할당 완전성",
+        "layer": "common",
+        "purpose": "REVIEW",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "FIXED",
+        "fixed_check": "allocation-complete",
+        "deviation_allowed": false,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책(EN 50716 §7.3.4 요구사항 할당은 사용자가 원문 확인 — 의미 검토 전)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "모든 잎 요구사항이 하나 이상의 유닛에 할당되어야 한다.",
+        "file": "common/review.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "COM-02",
+        "rule_version": "1.0",
+        "name": "유닛 책임 정의",
+        "layer": "common",
+        "purpose": "REVIEW",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "FIXED",
+        "fixed_check": "responsibility-defined",
+        "deviation_allowed": false,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "모든 유닛에 책임(무엇을 하는지)이 적혀 있어야 한다.",
+        "file": "common/review.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "COM-03",
+        "rule_version": "1.0",
+        "name": "유닛 구현 함수 지정",
+        "layer": "common",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "design_stage": "DETAILED",
+        "check_method": "FIXED",
+        "fixed_check": "unit-has-function",
+        "deviation_allowed": true,
+        "required_for": [
+          "code"
+        ],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "유닛마다 구현할 함수가 정해져 있어야 코드 에이전트가 유닛 경계를 지킨다.",
+        "file": "common/review.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "COM-04",
+        "rule_version": "1.0",
+        "name": "유닛 독립 시험 가능성(관측 가능한 출력)",
+        "layer": "common",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "design_stage": "INTERFACE",
+        "check_method": "FIXED",
+        "fixed_check": "unit-testable",
+        "deviation_allowed": true,
+        "required_for": [
+          "test"
+        ],
+        "source": {
+          "standard": "ECSS-E-ST-40C Rev.1:2025",
+          "clause": "§5.8.3.4",
+          "url": "https://ecss.nl/standard/ecss-e-st-40c-rev-1-software-30-april-2025/",
+          "review_status": "SOURCE_CHECKED",
+          "checked_by": "사용자 조사(2026-11-26, 공개 텍스트)",
+          "note": "시험 가능성 — 의미 검토 전이라 자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "유닛마다 경계 출력(또는 입출력)이 있어 결과를 관측할 수 있어야 한다.",
+        "file": "common/review.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "COM-05",
+        "rule_version": "1.0",
+        "name": "응집도·결합도",
+        "layer": "common",
+        "purpose": "REVIEW",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "유닛 안의 동작은 한 책임으로 묶이고(응집), 유닛 사이 의존은 적어야 한다(결합).",
+        "file": "common/review.json",
+        "status": "NOT_ASSESSED",
+        "reason": "",
+        "fixed_result": null,
+        "ai_result": {
+          "result": "SATISFIED",
+          "evidence": "U-01 은 취득, U-02 는 판정, U-03 은 출력·초기화로 각 유닛이 한 책임으로 묶인다. 유닛 사이 값은 warning_result 와 입력 구조체 하나뿐이고 모두 한 방향이다. U-02 는 warning_cmd 를 직접 쓰지 않는다."
+        },
+        "decided_by": null
+      },
+      {
+        "rule_id": "COM-06",
+        "rule_version": "1.0",
+        "name": "복잡도 관리",
+        "layer": "common",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "DETAILED",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책. 실제 복잡도 수치는 코드 정적 분석에서 확인한다(설계 단계에서 완료로 보지 않음)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "한 유닛에 조건·상태가 지나치게 많이 모이지 않았는지 본다.",
+        "file": "common/review.json",
+        "status": "NOT_ASSESSED",
+        "reason": "",
+        "fixed_result": null,
+        "ai_result": {
+          "result": "SATISFIED",
+          "evidence": "U-02 의 조건은 속도 하한, 속도 상한, 탑승·미착용 세 가지이고 별도 함수로 나뉘어 있다. 내부 상태(모드·타이머·카운터·래치)는 없다."
+        },
+        "decided_by": null
+      },
+      {
+        "rule_id": "AUTO-01",
+        "rule_version": "1.0",
+        "name": "기능 책임 분리",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "신호 처리, 제어 판단, 출력 처리의 책임이 유닛마다 명확한가.",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "신호 처리(U-01, CMP-INPUT), 제어 판단(U-02, CMP-JUDGE), 출력 처리(U-03, CMP-OUTPUT)가 구성요소와 유닛 수준에서 분리되어 있다. U-02는 warning_cmd를 직접 쓰지 않는다(SWD-SBR-004).",
+        "fixed_result": null,
+        "ai_result": {
+          "result": "SATISFIED",
+          "evidence": "신호 처리(CMP-INPUT/U-01), 제어 판단(CMP-JUDGE/U-02), 출력 처리(CMP-OUTPUT/U-03)가 구성요소·유닛 단위로 나뉘어 있다. 판정 규칙은 U-02 한 곳에만 있다."
+        },
+        "decided_by": "HJ",
+        "acknowledged": true,
+        "changed_from_ai": false
+      },
+      {
+        "rule_id": "AUTO-02",
+        "rule_version": "1.0",
+        "name": "실행 주기",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책. 설계 모델에 주기 정보가 아직 없어 사람이 본다. 실제 타이밍은 타깃에서만 확인 가능 — 설계 단계에서 완료로 보지 않음"
+        },
+        "interpretation_status": "PENDING",
+        "text": "서로 다른 주기·이벤트·마감 시간을 가진 기능의 실행 구조가 적절한가.",
+        "file": "domain/automotive.json",
+        "status": "NOT_ASSESSED",
+        "reason": "",
+        "fixed_result": null,
+        "ai_result": {
+          "result": "UNDETERMINED",
+          "evidence": "문서가 호출 주기를 요구사항에 없어 정하지 않았다고 밝혔다. 한 실행 안의 순서(U-01 → U-02 → U-03)만 있다. 주기·마감 시간 자료가 없어 판단할 수 없다."
+        },
+        "decided_by": null
+      },
+      {
+        "rule_id": "AUTO-03",
+        "rule_version": "1.0",
+        "name": "안전 요구사항 할당",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "FIXED",
+        "fixed_check": "allocation-complete",
+        "deviation_allowed": false,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책. 지금은 요구사항 전체의 할당으로 확인(안전 요구사항 표시는 차후)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "안전 요구사항을 포함한 모든 잎 요구사항이 관련 설계 요소에 연결되었는가.",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "AUTO-04",
+        "rule_version": "1.0",
+        "name": "간섭 방지",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "ARCHITECTURE",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "design_stage": "ARCHITECTURE",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책. 설계 모델에 요소별 안전등급이 아직 없어 사람이 본다"
+        },
+        "interpretation_status": "PENDING",
+        "text": "서로 다른 안전등급의 요소 사이 간섭 위험을 고려했는가.",
+        "file": "domain/automotive.json",
+        "status": "NOT_APPLICABLE",
+        "reason": "해당 없음: 교육용 예제는 QM 단일 기능(안전벨트 경고)이고 안전등급이 다른 요소가 없다. 실제 차량에서는 다른 기능과의 간섭 분석이 필요하다.",
+        "fixed_result": null,
+        "ai_result": {
+          "result": "UNDETERMINED",
+          "evidence": "설계에 안전등급이 다른 요소가 함께 있는지에 대한 자료가 없다. 등급은 QM 으로 주어졌으나 같은 실행 환경에서 다른 등급 요소와 공존하는지 알 수 없다."
+        },
+        "decided_by": "HJ",
+        "acknowledged": true,
+        "changed_from_ai": false
+      },
+      {
+        "rule_id": "AUTO-05",
+        "rule_version": "1.0",
+        "name": "신호 인터페이스 정의",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "design_stage": "INTERFACE",
+        "check_method": "FIXED",
+        "fixed_check": "interface-defined",
+        "deviation_allowed": false,
+        "required_for": [
+          "code",
+          "test"
+        ],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "유닛 사이 인터페이스 신호의 자료형·물리 단위가 정의되었는가(범위·초기값·변환 방식은 사람이 확인).",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "AUTO-06",
+        "rule_version": "1.0",
+        "name": "상태 소유권",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "BLOCKING",
+        "design_stage": "DETAILED",
+        "check_method": "FIXED",
+        "fixed_check": "state-owner",
+        "deviation_allowed": false,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "모드·타이머·카운터·래치(상태 변수)의 소유 유닛·초기값·갱신 책임이 명확한가.",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "AUTO-07",
+        "rule_version": "1.0",
+        "name": "유닛별 독립 시험",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "REVIEW_REQUIRED",
+        "design_stage": "INTERFACE",
+        "check_method": "FIXED",
+        "fixed_check": "unit-testable",
+        "deviation_allowed": true,
+        "required_for": [
+          "test"
+        ],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책"
+        },
+        "interpretation_status": "PENDING",
+        "text": "설계 유닛마다 입력을 제어하고 출력을 관측할 수 있는가.",
+        "file": "domain/automotive.json",
+        "status": "SATISFIED",
+        "reason": "",
+        "fixed_result": "PASS",
+        "ai_result": null,
+        "decided_by": null
+      },
+      {
+        "rule_id": "AUTO-08",
+        "rule_version": "1.0",
+        "name": "자원 및 타이밍",
+        "layer": "domain",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "DETAILED",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책. CPU 부하·스택·실행시간은 타깃·정적 분석에서만 확인 가능 — 설계 단계에서 완료로 보지 않음"
+        },
+        "interpretation_status": "PENDING",
+        "text": "CPU 부하, 스택, 실행시간 등 관련 제약을 고려했는가.",
+        "file": "domain/automotive.json",
+        "status": "NOT_ASSESSED",
+        "reason": "",
+        "fixed_result": null,
+        "ai_result": {
+          "result": "UNDETERMINED",
+          "evidence": "CPU 부하, 스택, 실행시간 제약에 관한 설계 자료가 없다. 설계는 단순 비교·논리 연산만 쓰고 동적 자원이 없다는 점만 확인된다."
+        },
+        "decided_by": null
+      },
+      {
+        "rule_id": "EC-01",
+        "rule_version": "1.0",
+        "name": "구성요소의 소스 묶음",
+        "layer": "environment",
+        "purpose": "DECOMPOSITION",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "DETAILED",
+        "check_method": "AI_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책(권장, 강제 아님)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "구성요소 하나는 보통 .c/.h 한 쌍으로 구현하는 것을 권장한다. 유닛 경계는 파일이 아니라 기능으로 정한다.",
+        "file": "environment/embedded-c.json",
+        "status": "GUIDANCE"
+      },
+      {
+        "rule_id": "EC-02",
+        "rule_version": "1.0",
+        "name": "상태 변수의 파일 범위",
+        "layer": "environment",
+        "purpose": "REVIEW",
+        "activity": "DETAILED_DESIGN",
+        "rule_type": "DESIGN_POLICY",
+        "enforcement": "ADVISORY",
+        "design_stage": "DETAILED",
+        "check_method": "HUMAN_REVIEW",
+        "fixed_check": null,
+        "deviation_allowed": true,
+        "required_for": [],
+        "source": {
+          "review_status": "NOT_CHECKED",
+          "note": "자체 정책. 실제 선언은 코드에서 확인(코딩 규칙 limit_globals)"
+        },
+        "interpretation_status": "PENDING",
+        "text": "유닛이 소유한 상태 변수는 그 유닛 파일 안의 static 으로 두고 다른 유닛은 인터페이스로만 접근한다.",
+        "file": "environment/embedded-c.json",
+        "status": "NOT_ASSESSED",
+        "reason": "",
+        "fixed_result": null,
+        "ai_result": {
+          "result": "VIOLATED",
+          "evidence": "참고 의견이다. warning_cmd 는 U-03 소유로 적혀 있으나 sbr_state_t 는 호출하는 쪽이 갖고 U-03 함수가 포인터로 쓴다. 따라서 U-03 파일 안의 static 상태 변수가 아니며 다른 코드가 구조체에 직접 접근할 수 있다. 전역 변수를 피하려는 의도는 문서에 있으나 이 규칙의 기준과는 다르다. 최종 판정은 사람이 한다."
+        },
+        "decided_by": null
+      }
+    ],
+    "note": "규칙 유형(rule_type)이 DESIGN_POLICY 인 규칙의 충족은 VeriXera·조직의 자체 정책 충족이며 표준 적합 주장이 아니다."
+  },
+  "design_hash": "sha256:5d0b9acebbdfa8a1278894329fae4a2abbbc0c11ffdf57aa559e5549019178d5"
+}

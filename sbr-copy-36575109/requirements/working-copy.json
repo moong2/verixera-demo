@@ -1,0 +1,230 @@
+{
+ "schema": "ears-working-copy/v1",
+ "note": "웹앱의 작업 중 요구사항(고정하기 전의 트리) — 프로젝트를 열 때 불러온다. 승인된 요구사항은 BL-*.baseline.json 이다",
+ "project": "예시: 안전벨트 경고",
+ "based_on": "BL-002",
+ "updated_at": "2026-11-26T18:43:31.511Z",
+ "requirements": [
+  {
+   "id": "REQ-SBR-01",
+   "text": "안전벨트 경고 제어기는 동승석 안전벨트 미착용 경고 기능을 제공해야 한다.",
+   "type": "Ubiquitous",
+   "parent": null,
+   "summary": "동승석 안전벨트 미착용 경고",
+   "status": "confirmed",
+   "acceptanceCriteria": [],
+   "source": "교육용 예제 (가상 니즈) — 실제 양산 명세 · 법규가 아님",
+   "ltl": "",
+   "ltlText": ""
+  },
+  {
+   "id": "REQ-SBR-01-1",
+   "text": "WHILE passenger_occupied = TRUE AND seatbelt_buckled = FALSE AND vehicle_speed 가 15 km/h 이상 200 km/h 이하인 동안, 안전벨트 경고 제어기는 warning_cmd 를 TRUE 로 출력해야 한다.",
+   "type": "State-driven",
+   "parent": "REQ-SBR-01",
+   "summary": "경고 켜기 (탑승 AND 미착용 AND 15 km/h 이상)",
+   "status": "confirmed",
+   "draftReason": "",
+   "missingInfo": [],
+   "acceptanceCriteria": [
+    "passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 14 km/h 이면 warning_cmd = FALSE",
+    "passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 15 km/h 이면 warning_cmd = TRUE",
+    "passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 16 km/h 이면 warning_cmd = TRUE",
+    "passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 200 km/h 이면 warning_cmd = TRUE"
+   ],
+   "source": "교육용 예제 (가상 니즈) — 실제 양산 명세 · 법규가 아님",
+   "ltl": "□((passenger_occupied ∧ ¬seatbelt_buckled ∧ speed_in_warning_range) → warning_cmd_active)",
+   "ltlText": "G((passenger_occupied & !seatbelt_buckled & speed_in_warning_range) -> warning_cmd_active)",
+   "ltlExplanation": "탑승자가 있고 안전벨트가 풀려 있으며 속도가 15 km/h 이상 200 km/h 이하인 동안에는 경고 명령이 항상 켜져 있어야 한다.",
+   "propositions": [
+    {
+     "name": "passenger_occupied",
+     "desc": "동승석에 탑승자가 있음"
+    },
+    {
+     "name": "seatbelt_buckled",
+     "desc": "안전벨트가 착용됨"
+    },
+    {
+     "name": "speed_in_warning_range",
+     "desc": "차량 속도가 15 km/h 이상 200 km/h 이하임"
+    },
+    {
+     "name": "warning_cmd_active",
+     "desc": "경고 명령이 TRUE 로 출력됨"
+    }
+   ]
+  },
+  {
+   "id": "REQ-SBR-01-2",
+   "text": "WHILE vehicle_speed 가 200 km/h 이하이고 [passenger_occupied = FALSE OR seatbelt_buckled = TRUE OR vehicle_speed 가 15 km/h 미만]인 동안, 안전벨트 경고 제어기는 warning_cmd 를 FALSE 로 출력해야 한다.",
+   "type": "State-driven",
+   "parent": "REQ-SBR-01",
+   "summary": "경고 끄기 (탑승 없음 OR 착용 OR 15 km/h 미만)",
+   "status": "confirmed",
+   "draftReason": "",
+   "missingInfo": [],
+   "acceptanceCriteria": [
+    "passenger_occupied = FALSE, seatbelt_buckled = FALSE, vehicle_speed = 50 km/h 이면 warning_cmd = FALSE",
+    "passenger_occupied = TRUE, seatbelt_buckled = TRUE, vehicle_speed = 50 km/h 이면 warning_cmd = FALSE",
+    "passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 0 km/h 이면 warning_cmd = FALSE"
+   ],
+   "source": "교육용 예제 (가상 니즈) — 실제 양산 명세 · 법규가 아님",
+   "ltl": "□(((speed_at_most_200) ∧ (¬passenger_occupied ∨ seatbelt_buckled ∨ speed_below_15)) → ¬warning_cmd_active)",
+   "ltlText": "G((speed_at_most_200 & (!passenger_occupied | seatbelt_buckled | speed_below_15)) -> !warning_cmd_active)",
+   "ltlExplanation": "속도가 200 km/h 이하이면서 탑승자가 없거나 안전벨트가 착용되었거나 속도가 15 km/h 미만인 동안에는 경고 명령이 꺼져 있어야 한다.",
+   "propositions": [
+    {
+     "name": "speed_at_most_200",
+     "desc": "차량 속도가 200 km/h 이하임"
+    },
+    {
+     "name": "passenger_occupied",
+     "desc": "동승석에 탑승자가 있음"
+    },
+    {
+     "name": "seatbelt_buckled",
+     "desc": "안전벨트가 착용됨"
+    },
+    {
+     "name": "speed_below_15",
+     "desc": "차량 속도가 15 km/h 미만임"
+    },
+    {
+     "name": "warning_cmd_active",
+     "desc": "경고 명령이 TRUE 로 출력됨"
+    }
+   ]
+  },
+  {
+   "id": "REQ-SBR-01-3",
+   "text": "WHEN 안전벨트 경고 제어기가 초기화되면, 안전벨트 경고 제어기는 warning_cmd 를 FALSE 로 설정해야 한다.",
+   "type": "Event-driven",
+   "parent": "REQ-SBR-01",
+   "summary": "초기화하면 경고 끄기",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "초기화 직후 warning_cmd = FALSE"
+   ],
+   "source": "",
+   "ltl": "",
+   "ltlText": ""
+  },
+  {
+   "id": "REQ-SBR-01-4",
+   "text": "안전벨트 경고 제어기는 판단을 한 번 실행할 때마다 그 실행의 vehicle_speed, passenger_occupied, seatbelt_buckled 값으로 warning_cmd 를 다시 정해 출력해야 한다.",
+   "type": "Ubiquitous",
+   "parent": "REQ-SBR-01",
+   "summary": "판단 1회마다 그 입력에 맞는 결과 출력",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "1회차 입력 passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 30 km/h 이면 warning_cmd = TRUE",
+    "이어서 2회차 입력 passenger_occupied = TRUE, seatbelt_buckled = TRUE, vehicle_speed = 30 km/h 이면 warning_cmd = FALSE"
+   ],
+   "source": "",
+   "ltl": "",
+   "ltlText": ""
+  },
+  {
+   "id": "REQ-SBR-01-5",
+   "text": "IF vehicle_speed 가 200 km/h 초과이면, THEN 안전벨트 경고 제어기는 warning_cmd 를 FALSE 로 출력해야 한다.",
+   "type": "Unwanted Behaviour",
+   "parent": "REQ-SBR-01",
+   "summary": "범위 밖 속도면 경고 끄기 (200 km/h 초과)",
+   "status": "confirmed",
+   "acceptanceCriteria": [
+    "passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 201 km/h 이면 warning_cmd = FALSE",
+    "passenger_occupied = TRUE, seatbelt_buckled = FALSE, vehicle_speed = 255 km/h 이면 warning_cmd = FALSE"
+   ],
+   "source": "",
+   "ltl": "",
+   "ltlText": ""
+  }
+ ],
+ "signals": [
+  {
+   "name": "passenger_occupied",
+   "direction": "input",
+   "type": "",
+   "unit": "",
+   "min": "",
+   "max": "",
+   "initial": "",
+   "description": "동승석 탑승 여부 (TRUE = 탑승자가 있음)",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4"
+   ],
+   "kind": "external_input",
+   "logical_type": "boolean",
+   "allowed_values": [
+    "FALSE",
+    "TRUE"
+   ]
+  },
+  {
+   "name": "seatbelt_buckled",
+   "direction": "input",
+   "type": "",
+   "unit": "",
+   "min": "",
+   "max": "",
+   "initial": "",
+   "description": "안전벨트 착용 여부 (TRUE = 안전벨트를 맴)",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4"
+   ],
+   "kind": "external_input",
+   "logical_type": "boolean",
+   "allowed_values": [
+    "FALSE",
+    "TRUE"
+   ]
+  },
+  {
+   "name": "vehicle_speed",
+   "direction": "input",
+   "type": "",
+   "unit": "km/h",
+   "min": "0",
+   "max": "200",
+   "initial": "",
+   "description": "차량 속도",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "kind": "external_input",
+   "logical_type": "integer",
+   "resolution": "1 km/h"
+  },
+  {
+   "name": "warning_cmd",
+   "direction": "output",
+   "type": "",
+   "unit": "",
+   "min": "",
+   "max": "",
+   "initial": "FALSE",
+   "description": "경고 명령 (TRUE = 경고를 켬). 경고등을 켜는 명령이며 경고등 자체가 아니다",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-3",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "kind": "external_output",
+   "logical_type": "boolean",
+   "allowed_values": [
+    "FALSE",
+    "TRUE"
+   ]
+  }
+ ]
+}

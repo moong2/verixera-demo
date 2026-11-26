@@ -1,0 +1,68 @@
+{
+  "schema": "project-config/v1",
+  "domain": "automotive",
+  "standard": "ISO 26262-6:2018",
+  "level": "QM",
+  "design_policy": "legacy",
+  "asil": "QM",
+  "basis": "ISO 26262-6:2018 권고표를 바탕으로 한 초기값 — 표준 원문과 프로젝트 안전 계획으로 확인 필요",
+  "build": {
+    "compiler": "gcc-14",
+    "c_standard": "c11",
+    "warnings_as_errors": true,
+    "optimization": "-O0",
+    "extra_flags": []
+  },
+  "coding_rules": {
+    "single_exit": "recommended",
+    "no_dynamic_memory": "recommended",
+    "initialize_variables": "recommended",
+    "no_duplicate_names": "recommended",
+    "limit_globals": "recommended",
+    "restrict_pointers": "recommended",
+    "no_implicit_conversion": "recommended",
+    "no_hidden_flow": "recommended",
+    "no_goto": "recommended",
+    "no_recursion": "recommended",
+    "misra_c_2012": "recommended"
+  },
+  "test_design": {
+    "requirements_analysis": "required",
+    "equivalence_classes": "recommended",
+    "boundary_values": "recommended",
+    "error_guessing": "recommended",
+    "interface_test": "recommended",
+    "fault_injection": "off"
+  },
+  "coverage": {
+    "statement": {
+      "level": "recommended",
+      "min": 100
+    },
+    "branch": {
+      "level": "recommended",
+      "min": 100
+    },
+    "mcdc": {
+      "level": "off",
+      "min": 100
+    }
+  },
+  "static_analysis": {
+    "level": "recommended",
+    "tool": "cppcheck",
+    "fail_on": "warning"
+  },
+  "timing": {
+    "call_period_ms": null
+  },
+  "design_profile": {
+    "subdomain": "automotive",
+    "standards": [
+      "ISO 26262:2018",
+      "Automotive SPICE 4.0"
+    ],
+    "environment": "embedded-c",
+    "level_status": "assigned"
+  }
+}

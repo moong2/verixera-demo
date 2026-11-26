@@ -258,7 +258,7 @@ function fileFindings(p, oldText, newText, hunks) {
 
 // 생성 기록(적용한 것만)과 사람 수정 기록: 파일마다 [{ id, at, sha }] / [{ at, before, after }] (시각 순)
 function editHistory(root) {
-  const gens = new Map(); const edits = new Map();
+  const gens = new Map(); const edits = new Map(); const deletions = new Map();
   const logDir = path.join(root, "agent-log");
   let names = [];
   try { names = fs.readdirSync(logDir).filter((n) => /^GEN-.+\.json$/.test(n)); } catch (_) { names = []; }
@@ -267,7 +267,9 @@ function editHistory(root) {
     try { g = JSON.parse(fs.readFileSync(path.join(logDir, n), "utf8")); } catch (_) { g = null; }
     if (!g || !g.applied_at || !Array.isArray(g.outputs)) continue;
     for (const o of g.outputs) {
-      if (!o || !o.path || o.action === "deleted") continue;
+      if (!o || !o.path) continue;
+      // AI 생성이 지운 파일(새 설계로 파일을 나누는 등) — 사람이 지운 것으로 보지 않게 따로 남긴다(사용자 QA 2026-11-26)
+      if (o.action === "deleted") { if (!deletions.has(o.path)) deletions.set(o.path, []); deletions.get(o.path).push({ id: g.generation_id || n.replace(/\.json$/, ""), at: g.applied_at }); continue; }
       if (!gens.has(o.path)) gens.set(o.path, []);
       gens.get(o.path).push({ id: g.generation_id || n.replace(/\.json$/, ""), at: g.applied_at, sha: o.sha256 || null });
     }
@@ -282,7 +284,7 @@ function editHistory(root) {
     if (!edits.has(e.path)) edits.set(e.path, []);
     edits.get(e.path).push({ at: e.at, before: e.before_sha256 || null, after: e.after_sha256 || null, deleted: Boolean(e.deleted) });
   }
-  return { gens, edits };
+  return { gens, edits, deletions };
 }
 
 // 두 내용의 줄 차이(hunk 머리). 임시 파일에 써서 git diff --no-index 로 구한다.
@@ -360,9 +362,15 @@ async function check(root, opts) {
   if (mode === "auto") {
     const hist = editHistory(root);
     const isCode = (p) => trace.C_EXT.has(path.extname(p).toLowerCase()) && dirs.code.some((d) => p === d || p.startsWith(d.replace(/\/$/, "") + "/"));
-    const candidates = [...new Set([...files.map((f) => f.newPath || f.oldPath), ...hist.gens.keys(), ...hist.edits.keys()])].filter(isCode);
+    const candidates = [...new Set([...files.map((f) => f.newPath || f.oldPath), ...hist.gens.keys(), ...hist.edits.keys(), ...(hist.deletions || new Map()).keys()])].filter(isCode);
     for (const p of candidates) {
       const gen = (hist.gens.get(p) || []).slice(-1)[0] || null;
+      // AI 생성이 마지막으로 이 파일을 지웠고 지금도 없으며 그 뒤에 사람이 고친 기록이 없으면: 사람의 변경이 아니다(비교에서 뺌)
+      const del = ((hist.deletions && hist.deletions.get(p)) || []).slice(-1)[0] || null;
+      if (del && (!gen || del.at > gen.at) && readNew(p) === null && !(hist.edits.get(p) || []).some((e) => e.at > del.at)) {
+        refs.set(p, { kind: "ai_deleted", label: `AI 생성에서 지움 (${del.id})`, at: del.at, sha: null, text: "", human_edits: 0 });
+        continue;
+      }
       const edits = (hist.edits.get(p) || []).filter((e) => !gen || e.at > gen.at);
       let ref = null;
       if (gen && gen.sha) {
@@ -391,6 +399,7 @@ async function check(root, opts) {
       files = files.filter((f) => !refs.has(f.newPath || f.oldPath));
       for (const [p, ref] of refs) {
         const cur = readNew(p);
+        if (ref.kind === "ai_deleted" && cur === null) continue; // AI 가 지운 그대로 — 사람이 바꾼 것 없음
         const hunks = diffTexts(ref.text, cur === null ? "" : cur);
         if (cur !== null && !hunks.length) continue; // 생성본(고치기 전)과 같음 — 사람이 바꾼 것 없음
         files.push({ oldPath: p, newPath: cur === null ? null : p, hunks, ref: true });

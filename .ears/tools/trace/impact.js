@@ -214,6 +214,7 @@ function artifactImpact(model, items, fromB, toB) {
       parent: req ? req.parent || null : null,
       children,
       designs, functions, tests, related_tests,
+      shared_requirements: [...sharedReqs].map(([id, via]) => ({ id, via })),
       // 하위 요구사항으로 나뉜 상위 요구사항은 직접 연결이 없어도 된다(하위의 연결을 본다).
       action: children.length && !designs.length && !tests.length && item.change !== "removed" ? `${item.change === "added" ? "새" : "바뀐"} 요구사항 — 하위 요구사항 ${children.join(", ")} 으로 구체화됨, 그쪽의 설계·코드·시험을 본다` : actionFor(item, designs, tests),
       review_children: item.change === "modified" && children.length > 0,
@@ -285,6 +286,23 @@ function callGraph(root, codeDirs) {
 // none      영향 없음 확인 — 분석 범위(추적 태그·함수 공유·신호·상하위)에서 연결이 없고, 자신의 추적 연결은 갖춰짐 → 근거 기록 후 제외 가능
 // unknown   미확인        — 추적 연결이 없어 판단할 수 없음. '영향 없음'으로 처리하지 않는다
 const VERDICT_LABEL = { direct: "직접 영향", indirect: "간접 영향", potential: "잠재 영향", none: "영향 없음 확인", unknown: "미확인" };
+const VERDICT_RANK = { direct: 4, indirect: 3, potential: 2, unknown: 1, none: 0 };
+
+// 한 대상에 여러 경로가 닿으면 근거 행은 보존하고 집계에는 가장 강한 판정 한 번만 쓴다.
+function countImpactTargets(items, otherRequirements = []) {
+  const kinds = { "상위 요구사항": "요구사항", "하위 요구사항": "요구사항", "호출하는 함수": "함수" };
+  const targets = new Map();
+  function add(kind, id, verdict) {
+    const key = `${kinds[kind] || kind}:${id}`;
+    const previous = targets.get(key);
+    if (!previous || VERDICT_RANK[verdict] > VERDICT_RANK[previous]) targets.set(key, verdict);
+  }
+  for (const item of items) add(item.kind, item.id, item.verdict);
+  for (const req of otherRequirements) add("요구사항", req.id, req.verdict);
+  const counts = { direct: 0, indirect: 0, potential: 0, none: 0, unknown: 0 };
+  for (const verdict of targets.values()) counts[verdict]++;
+  return counts;
+}
 
 // 시험 하나의 기존 증거가 새 고정본에서도 쓸 수 있는지. 지난 결과는 지우지 않고 '어느 형상의 증거인지'만 판정한다.
 function evidenceOf(last, impacted, toId) {
@@ -351,17 +369,25 @@ function classifyImpact(root, model, toB, fromB, changed, signals, dirs) {
   const impactedTests = new Set();
   // 다른 요구사항 수준의 판정(바뀐 요구사항이 아닌 것)
   const others = new Map(); // id → { verdict, evidence: [] }
-  const RANK = { direct: 4, indirect: 3, potential: 2, unknown: 1, none: 0 };
   const mark = (id, verdict, why) => {
     if (changedIds.has(id)) return;
     const cur = others.get(id) || { id, verdict, evidence: [] };
-    if (RANK[verdict] > RANK[cur.verdict]) cur.verdict = verdict;
+    if (VERDICT_RANK[verdict] > VERDICT_RANK[cur.verdict]) cur.verdict = verdict;
     if (!cur.evidence.includes(why)) cur.evidence.push(why);
     others.set(id, cur);
   };
 
   for (const q of changed) {
     const items = [];
+    const functionLinks = new Set();
+    function markViaFunction(id, why) {
+      if (changedIds.has(id)) return;
+      const link = `${id}:${why}`;
+      if (functionLinks.has(link)) return;
+      functionLinks.add(link);
+      items.push({ verdict: "indirect", kind: "요구사항", id, evidence: why, todo: "연결된 함수의 변경이 이 요구사항에 미치는 영향 확인" });
+      mark(id, "indirect", why);
+    }
     const ev = (t) => Object.assign(evidenceOf(lastOf(t.id), true, toId), { regression: regOf(t.id) });
     for (const d of q.designs) items.push({ verdict: "direct", kind: "설계", id: d.id, file: d.file, line: d.line, evidence: `${d.file}:${d.line} 의 @satisfies ${q.id}${d.linked_version ? "@v" + d.linked_version : ""}`, todo: d.state === "반영됨" ? "새 버전으로 갱신됨 — 바뀐 내용과 맞는지 확인" : q.change === "removed" ? "근거 요구사항 삭제 — 제거 또는 다른 요구사항에 연결" : "설계 내용 수정·재검토 후 태그 갱신" });
     for (const t of q.tests) {
@@ -385,7 +411,7 @@ function classifyImpact(root, model, toB, fromB, changed, signals, dirs) {
         const designIds = unit ? unit.implements : [];
         for (const d of designIds) {
           const design = model.designs.get(d);
-          for (const l of design ? design.links : []) if (l.id !== q.id) mark(l.id, "indirect", `${up.name}() 가 바뀐 함수 ${fn.func}() 를 호출`);
+          for (const l of design ? design.links : []) markViaFunction(l.id, `${up.name}() 가 바뀐 함수 ${fn.func}() 를 호출`);
         }
         for (const t of model.tests.values()) {
           if (callerTests.has(t.id) || q.tests.some((x) => x.id === t.id) || (q.related_tests || []).some((x) => x.id === t.id)) continue;
@@ -402,8 +428,10 @@ function classifyImpact(root, model, toB, fromB, changed, signals, dirs) {
       impactedTests.add(t.id);
       if (changedIds.has(t.requirement)) continue; // 그 요구사항도 바뀌었으면 그쪽 카드에서 직접 영향으로 보인다
       items.push({ verdict: "indirect", kind: "시험", id: t.id, file: t.file, line: t.line, evidence: `같은 함수(${t.via.join(", ")})를 쓰는 ${t.requirement} 의 시험`, todo: "회귀 시험으로 다시 실행", evidence_state: Object.assign(evidenceOf(lastOf(t.id), true, toId), { regression: regOf(t.id) }) });
-      mark(t.requirement, "indirect", `${q.id} 와 같은 함수(${t.via.join(", ")})를 씀`);
     }
+    const sharedRequirements = q.shared_requirements || (q.related_tests || [])
+      .filter((t) => reqs.has(t.requirement)).map((t) => ({ id: t.requirement, via: t.via }));
+    for (const r of sharedRequirements) markViaFunction(r.id, `${q.id} 와 같은 함수(${r.via.join(", ")})를 씀`);
     for (const c of q.children || []) { items.push({ verdict: "indirect", kind: "하위 요구사항", id: c, evidence: `parent: ${q.id}`, todo: "상위 변경에 맞는지 검토" }); mark(c, "indirect", `상위 요구사항 ${q.id} 가 바뀜`); }
     if (q.parent) { items.push({ verdict: "indirect", kind: "상위 요구사항", id: q.parent, evidence: `${q.id} 의 parent`, todo: "상위 요구사항과 일관한지 검토" }); mark(q.parent, "indirect", `하위 요구사항 ${q.id} 가 바뀜`); }
     // 같은 신호를 쓰는 다른 요구사항: 의미상 영향 가능(예: 정지 임계값이 바뀌면 같은 온도를 쓰는 복귀 조건)
@@ -423,7 +451,7 @@ function classifyImpact(root, model, toB, fromB, changed, signals, dirs) {
     items.sort((a, b) => order[a.verdict] - order[b.verdict]);
     q.impacts = items;
     q.priority = priorityOf(q, items, reqs.get(q.id) || (fromB && fromB.requirements.find((x) => x.requirement_id === q.id)) || null, level);
-    q.verdict_counts = Object.fromEntries(Object.keys(VERDICT_LABEL).map((k) => [k, items.filter((x) => x.verdict === k).length]));
+    q.verdict_counts = countImpactTargets(items);
   }
 
   // 바뀌지 않은 요구사항 가운데 위에서 표시되지 않은 것: 자신의 추적 연결이 있으면 '영향 없음 확인', 없으면 '미확인'
@@ -438,9 +466,7 @@ function classifyImpact(root, model, toB, fromB, changed, signals, dirs) {
     void r;
   }
   const list = [...others.values()].map((o) => Object.assign(o, { summary: (reqs.get(o.id) || {}).summary || "", tests: o.verdict === "none" ? linkedTests(o.id).map((t) => ({ id: t.id, evidence_state: evidenceOf(lastOf(t.id), false, toId) })) : [] })).sort((a, b) => byId(a.id, b.id));
-  const counts = { direct: 0, indirect: 0, potential: 0, none: 0, unknown: 0 };
-  for (const q of changed) for (const it of q.impacts) counts[it.verdict]++;
-  for (const o of list) counts[o.verdict]++;
+  const counts = countImpactTargets(changed.flatMap((q) => q.impacts), list);
   // 재검증 범위: 영향받은 시험 각각의 기존 증거 상태
   const evidence = [...impactedTests].sort(byId).map((id) => Object.assign({ id }, evidenceOf(lastOf(id), true, toId), { regression: regOf(id) }));
   const priority = { high: changed.filter((q) => q.priority.level === "high").length, medium: changed.filter((q) => q.priority.level === "medium").length, low: changed.filter((q) => q.priority.level === "low").length };
@@ -483,8 +509,7 @@ async function analyzeRequirementImpact(root, opts) {
       designs_to_review: uniq(changed.flatMap((c) => stale(c.designs).map((d) => d.id))).length,
       functions_affected: uniq(changed.flatMap((c) => c.functions.map((f) => `${f.file}:${f.func}`))).length,
       tests_to_review: uniq(changed.flatMap((c) => stale(c.tests).map((t) => t.id))).length,
-      // 직접 연결된 시험 + 같은 함수를 쓰는 다른 요구사항의 시험
-      tests_to_rerun: uniq(changed.flatMap((c) => [...c.tests.map((t) => t.id), ...(c.related_tests || []).map((t) => t.id)])).length,
+      tests_to_rerun: classification.retest.length,
       related_tests: uniq(changed.flatMap((c) => (c.related_tests || []).map((t) => t.id))).length,
       // 신호 표가 바뀌었을 때만 적는다.
       ...(signals.length ? { signals_changed: signals.length, signals_to_review: signals.filter((s) => s.declared.some((d) => d.state !== "반영됨")).length } : {}),

@@ -17,6 +17,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const view = require("../trace/view.js");
+const buildDiagnostics = require("../trace/build-diagnostics.js");
 
 const SCHEMA = "verification-run/v1";
 const DIR = "verification-log";
@@ -78,6 +79,8 @@ const summaryOf = (e) => ({
   failures: e.record.failures.length, analyzed: e.record.failures.length > 0 && e.record.failures.every((f) => f.ai), ci: e.record.ci || null,
   // 목록에서 바로 보이게: 유효 커버리지(실측 + 정당화) 백분율, 정적 분석 지적 수, 게이트가 막힌 이유 수
   coverage: coverageBrief(e.record.coverage), static_findings: e.record.static_analysis && e.record.static_analysis.ran ? e.record.static_analysis.counted || 0 : null, problems: (e.record.problems || []).length, build_errors: (e.record.build_errors || []).length,
+  // 첫 번째 막힌 이유(목록에서 '실패'인데 TC 는 모두 통과로 보이던 것 — 이유를 함께 보인다, QA 2026-11-26)
+  first_problem: (e.record.problems || [])[0] ? String(((e.record.problems || [])[0].rule ? `${e.record.problems[0].rule} ` : "") + ((e.record.problems || [])[0].message || "")).slice(0, 160) : null,
 });
 function coverageBrief(c) {
   if (!c) return null;
@@ -254,7 +257,28 @@ function record(root, input) {
     ...((results.rules && results.rules.errors) || []).map((e) => ({ rule: e.rule, message: e.message, where: e.where || "" })),
   ];
   for (const p of (results.gate && results.gate.problems) || []) if (!problems.some((x) => p.includes(x.message))) problems.push({ rule: "게이트", message: p, where: "" });
-  const gate = results.gate && results.gate.result ? results.gate.result : failures.length || buildFailed || problems.length ? "fail" : "pass";
+  const recordedGate = results.gate && results.gate.result;
+  const interrupted = results.timed_out || (results.test_exit_code !== undefined && results.test_exit_code !== 0);
+  const noResults = !(results.results || []).length;
+  if (!recordedGate && (interrupted || noResults)) {
+    const message = results.timed_out ? "시험 명령이 제한 시간을 넘김" : noResults ? "실행된 시험 결과가 없음" : `시험 명령이 정상 종료되지 않음 (종료 코드 ${results.test_exit_code ?? "없음"})`;
+    problems.push({ rule: "게이트", message, where: "" });
+  }
+  const gate = recordedGate || (failures.length || problems.length ? "fail" : "pass");
+  // TC 마다 검증 수준·대상(시험 주석 @level·@target, 없으면 단위로 본다) — 수준별 결과를 따로 센다(verification-design.md V2)
+  const levelOf = (tc) => {
+    const src = tests.get(tc);
+    const lv = src && /@level\s+(unit|integration|software)\b/i.exec(src.code);
+    const tg = src && /@target\s+(\S+)/.exec(src.code);
+    return { level: lv ? lv[1].toLowerCase() : "unit", target: tg ? tg[1] : null };
+  };
+  const byLevel = {};
+  for (const x of results.results || []) {
+    const { level } = levelOf(x.tc_id);
+    const s = byLevel[level] || (byLevel[level] = { pass: 0, fail: 0, skip: 0, total: 0 });
+    if (s[x.result] !== undefined) s[x.result] += 1;
+    s.total += 1;
+  }
   const rec = {
     schema: SCHEMA,
     run_id: results.run_id || null,
@@ -269,13 +293,20 @@ function record(root, input) {
     result_fingerprint: results.result_fingerprint || null,
     gate,
     summary: { pass: count("pass"), fail: count("fail"), skip: count("skip"), total: (results.results || []).length },
-    requirements: rows.map((r) => ({ requirement_id: r.requirement_id, version: r.version, status: r.status, tests: (r.results || []).map((x) => ({ tc_id: x.tc_id, result: x.result })) })),
-    coverage: results.coverage && results.coverage.measured ? Object.assign({ statement: results.coverage.statement, branch: results.coverage.branch }, results.coverage.mcdc ? { mcdc: results.coverage.mcdc } : {}, results.coverage.tool ? { tool: results.coverage.tool } : {}, justifiedOf(results.coverage), coverageFiles(results.coverage.files)) : results.coverage ? { measured: false, reason: results.coverage.reason } : null,
+    summary_by_level: byLevel,
+    // 단계별 실제 출력(시나리오 타임라인용, 판정에 쓰지 않음). 없던 기록은 키 없음.
+    ...(results.actuals && typeof results.actuals === "object" ? { actuals: results.actuals } : {}),
+    requirements: rows.map((r) => ({ requirement_id: r.requirement_id, version: r.version, status: r.status, tests: (r.results || []).map((x) => { const l = levelOf(x.tc_id); return Object.assign({ tc_id: x.tc_id, result: x.result, level: l.level }, l.target ? { target: l.target } : {}); }) })),
+    coverage: results.coverage && results.coverage.measured ? Object.assign({ statement: results.coverage.statement, branch: results.coverage.branch }, results.coverage.mcdc ? { mcdc: results.coverage.mcdc } : {}, results.coverage.tool ? { tool: results.coverage.tool } : {}, justifiedOf(results.coverage), coverageFiles(results.coverage.files),
+      // 함수·호출 커버리지와 수준별 커버리지(verification-design.md V3). 없던 기록은 이 키가 없다.
+      results.coverage.function ? { function: results.coverage.function } : {},
+      results.coverage.call ? { call: results.coverage.call } : results.coverage.call_unmeasured ? { call_unmeasured: results.coverage.call_unmeasured } : {},
+      results.coverage.by_level ? { by_level: results.coverage.by_level, by_level_note: results.coverage.by_level_note } : {}) : results.coverage ? { measured: false, reason: results.coverage.reason } : null,
     // 정적 분석(설정에서 켰을 때): 도구·버전·지적. 지적은 30건까지 남긴다.
     static_analysis: results.static_analysis ? Object.assign({ level: results.static_analysis.level, ran: results.static_analysis.ran, tool: results.static_analysis.tool, version: results.static_analysis.version || null },
       results.static_analysis.ran ? { fail_on: results.static_analysis.fail_on, counted: results.static_analysis.counted, total: results.static_analysis.findings.length, findings: results.static_analysis.findings.slice(0, 30) } : { reason: results.static_analysis.reason }) : null,
     problems,
-    build_errors: buildFailed ? String(input.testOutput || "").split(/\r?\n/).filter((l) => /\berror\b/i.test(l)).slice(0, 20).map((l) => l.slice(0, 300)) : [],
+    build_errors: buildFailed ? buildDiagnostics(input.testOutput) : [],
     failures,
     ci: input.ci || null,
     sources,
@@ -379,6 +410,49 @@ function fixRequest(root, file) {
   return { run: file, failures, skipped, build_errors: build.slice(0, 20), requirement_ids: ids };
 }
 
+// 커버리지 미달을 시험 에이전트에 넘길 요청: 미달인 함수, 그 함수 안에서 실행 안 된 줄·가지 않은 분기·확인 안 된 조건,
+// 그리고 함수 앞의 계약 주석(@pre·@post·@range·@req 등). 구현 본문은 넣지 않는다 — 시험은 구현과 독립으로 만든다.
+// 정당화한 줄은 뺀다. 기록 뒤에 소스가 바뀌었으면 거부한다(그 미달은 지금 코드의 것이 아닐 수 있다).
+function contractOf(source, start) {
+  const lines = String(source || "").split(/\r?\n/);
+  let i = start - 2; // 함수 시작 줄(1부터) 바로 위
+  while (i >= 0 && !lines[i].trim()) i--;
+  if (i < 0 || !/\*\/\s*$/.test(lines[i])) return "";
+  const end = i;
+  while (i >= 0 && !/\/\*/.test(lines[i])) i--;
+  if (i < 0) return "";
+  return lines.slice(i, end + 1).join("\n").slice(0, 2000);
+}
+function coverageRequest(root, file) {
+  const rec = read(root, file);
+  if (!rec) return { error: "검증 기록이 없습니다.", status: 404 };
+  const cov = rec.coverage;
+  if (!cov || !Array.isArray(cov.files) || !cov.files.length) return { error: "이 기록에는 커버리지 측정 결과가 없습니다.", status: 409 };
+  if (changedSince(rec, sourceHashes(root))) return { error: "이 기록 뒤에 소스·시험·빌드 설정이 바뀌었습니다. 다시 검증한 뒤, 새 기록의 커버리지로 요청하세요.", status: 409 };
+  const gaps = [];
+  for (const f of cov.files) {
+    const j = f.justified_lines || {};
+    const skip = (kind, line) => (j[kind] || []).includes(line);
+    let source = "";
+    try { source = fs.readFileSync(path.join(root, ...String(f.file).split("/")), "utf8"); } catch (_) { source = ""; }
+    for (const fn of f.functions || []) {
+      const inFn = (line) => line >= fn.start && line <= fn.end;
+      const lines = (f.uncovered_lines || []).filter((l) => inFn(l) && !skip("statement", l));
+      const branches = (f.uncovered_branches || []).filter((b) => inFn(b.line) && !skip("branch", b.line));
+      const conditions = (f.uncovered_conditions || []).filter((c) => inFn(c.line) && !skip("mcdc", c.line));
+      if (!lines.length && !branches.length && !conditions.length) continue;
+      const contract = contractOf(source, fn.start);
+      const reqs = [...new Set((contract.match(/REQ-[A-Za-z0-9_-]+/g) || []))];
+      gaps.push({ file: f.file, function: fn.name, start: fn.start, end: fn.end, lines, branches, conditions, contract, requirements: reqs });
+    }
+  }
+  if (!gaps.length) return { error: "이 기록에는 시험으로 채울 커버리지 미달이 없습니다(정당화한 줄은 뺐습니다).", status: 409 };
+  const known = new Set((rec.requirements || []).map((r) => String(r.requirement_id || r.id || "").replace(/@v\d+$/, "")).filter(Boolean));
+  let ids = [...new Set(gaps.flatMap((g) => g.requirements))];
+  if (known.size) ids = ids.filter((id) => known.has(id));
+  return { run: file, gaps, requirement_ids: ids };
+}
+
 // 수정 제안을 적용했다는 사실을 그 실패 기록에 남긴다(실패 근거 → 패치 → 재시험의 연결).
 function notePatch(root, file, patch) {
   const rec = read(root, file);
@@ -388,4 +462,4 @@ function notePatch(root, file, patch) {
   return rec;
 }
 
-module.exports = { codeHashes, staleness, normalizeRecord, fixRequest, notePatch, changedSince, SCHEMA, DIR, FILE_RE, list, summaryOf, read, record, analyze, parseAnalysis, buildAnalysisInput, outputFor, sourceHashes, CAUSES };
+module.exports = { codeHashes, staleness, normalizeRecord, fixRequest, coverageRequest, notePatch, changedSince, SCHEMA, DIR, FILE_RE, list, summaryOf, read, record, analyze, parseAnalysis, buildAnalysisInput, outputFor, sourceHashes, CAUSES };

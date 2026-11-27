@@ -1,0 +1,609 @@
+{
+  "architecture_baseline": {
+    "id": "ABL-003",
+    "hash": "sha256:804ace69b39ed4398c4726ad6caae1b048aed347eb9037879e1a1f007ac05e8f"
+  },
+  "adr_id": "ADR-003",
+  "title": "3단 파이프라인 (입력 수집 → 경고 판정 → 경고 명령 출력) 선정",
+  "created_at": "2026-11-26T21:38:59.874Z",
+  "approver": "HJ",
+  "requirements_baseline": {
+    "id": "BL-002",
+    "hash": "sha256:2e7f097d4e3f0d13b3d5ffb9e431cec56f5a15c932d9bc75b218ce1f472b28ec"
+  },
+  "drivers": [
+    {
+      "id": "DRV-01",
+      "kind": "functionality",
+      "class": "hard",
+      "statement": "동승석 탑승이고 안전벨트 미착용이며 속도가 10 km/h 이상 200 km/h 이하인 동안 warning_cmd = TRUE 로 출력한다.",
+      "requirements": [
+        "REQ-SBR-01-1"
+      ],
+      "origin": "requirements",
+      "value": "10 km/h ≤ vehicle_speed ≤ 200 km/h",
+      "weight": null,
+      "confirmed": true,
+      "question": ""
+    },
+    {
+      "id": "DRV-02",
+      "kind": "functionality",
+      "class": "hard",
+      "statement": "비탑승, 착용, 또는 속도 10 km/h 미만이면 warning_cmd = FALSE 로 출력한다.",
+      "requirements": [
+        "REQ-SBR-01-2"
+      ],
+      "origin": "requirements",
+      "value": "vehicle_speed < 10 km/h",
+      "weight": null,
+      "confirmed": true,
+      "question": ""
+    },
+    {
+      "id": "DRV-03",
+      "kind": "functionality",
+      "class": "hard",
+      "statement": "속도가 200 km/h 를 초과하면 warning_cmd = FALSE 로 출력한다.",
+      "requirements": [
+        "REQ-SBR-01-5"
+      ],
+      "origin": "requirements",
+      "value": "vehicle_speed > 200 km/h",
+      "weight": null,
+      "confirmed": true,
+      "question": ""
+    },
+    {
+      "id": "DRV-04",
+      "kind": "reliability",
+      "class": "hard",
+      "statement": "초기화되면 warning_cmd 를 FALSE 로 설정한다.",
+      "requirements": [
+        "REQ-SBR-01-3"
+      ],
+      "origin": "requirements",
+      "value": "warning_cmd = FALSE",
+      "weight": null,
+      "confirmed": true,
+      "question": ""
+    },
+    {
+      "id": "DRV-05",
+      "kind": "functionality",
+      "class": "hard",
+      "statement": "판단 실행마다 그 실행의 입력값만으로 warning_cmd 를 다시 정해 출력한다(이전 실행 결과에 의존하지 않는다).",
+      "requirements": [
+        "REQ-SBR-01-4"
+      ],
+      "origin": "requirements",
+      "value": "",
+      "weight": null,
+      "confirmed": true,
+      "question": ""
+    },
+    {
+      "id": "DRV-06",
+      "kind": "testability",
+      "class": "preference",
+      "statement": "판정 로직을 입출력 처리와 분리해 판정 규칙을 독립적으로 시험할 수 있게 하는 구조를 선호한다. 인터페이스 수가 늘지 않는 범위에서 적용한다(DEC-01, DEC-07).",
+      "requirements": [
+        "REQ-SBR-01-1",
+        "REQ-SBR-01-2",
+        "REQ-SBR-01-5"
+      ],
+      "origin": "requirements",
+      "value": "",
+      "weight": 25,
+      "confirmed": true,
+      "question": ""
+    }
+  ],
+  "functions": [
+    {
+      "id": "FN-01",
+      "name": "입력 신호 수집",
+      "responsibility": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 판단 1회 실행 단위의 입력 값 한 벌로 판정 기능에 넘긴다. 판정 규칙은 갖지 않는다.",
+      "requirements": [
+        "REQ-SBR-01-4"
+      ],
+      "depends": [],
+      "safety_related": "no",
+      "change_independent": "yes"
+    },
+    {
+      "id": "FN-02",
+      "name": "경고 판정",
+      "responsibility": "입력 3개의 값만으로 warning 여부를 정한다. 탑승 AND 미착용 AND 15~200 km/h 이면 TRUE, 비탑승·착용·15 km/h 미만 또는 200 km/h 초과이면 FALSE 이다. 내부 상태를 갖지 않고 이전 실행 결과를 쓰지 않는다.",
+      "requirements": [
+        "REQ-SBR-01-1",
+        "REQ-SBR-01-2",
+        "REQ-SBR-01-4",
+        "REQ-SBR-01-5"
+      ],
+      "depends": [
+        {
+          "on": "FN-01",
+          "kind": "data",
+          "note": ""
+        }
+      ],
+      "safety_related": "no",
+      "change_independent": "yes"
+    },
+    {
+      "id": "FN-03",
+      "name": "경고 명령 출력",
+      "responsibility": "판정 결과를 warning_cmd 로 출력한다. 초기화될 때 warning_cmd 를 FALSE 로 설정한다.",
+      "requirements": [
+        "REQ-SBR-01-3",
+        "REQ-SBR-01-4"
+      ],
+      "depends": [
+        {
+          "on": "FN-02",
+          "kind": "data",
+          "note": ""
+        }
+      ],
+      "safety_related": "no",
+      "change_independent": "yes"
+    }
+  ],
+  "criteria_confirmed": {
+    "at": "2026-11-26T17:28:03.732Z",
+    "by": "HJ"
+  },
+  "functions_confirmed": {
+    "at": "2026-11-26T21:38:59.874Z",
+    "by": "HJ",
+    "hash": "sha256:8ac31885c92bbf1e2768f3f2af157c49f7ea843be5612900350bc2a2bfe78e07"
+  },
+  "criteria_log": [
+    {
+      "at": "2026-11-26T17:28:03.732Z",
+      "by": "HJ",
+      "driver": "ALL",
+      "field": "confirmed",
+      "from": "",
+      "to": "구조 승인",
+      "after_evaluation": true,
+      "note": "구조 승인과 함께 확정(확인 전 조건 6건 포함)"
+    },
+    {
+      "at": "2026-11-26T17:28:03.732Z",
+      "by": "HJ",
+      "driver": "FUNCTIONS",
+      "field": "functions_confirmed",
+      "from": "",
+      "to": "기능 3개",
+      "after_evaluation": true,
+      "note": "구조 승인과 함께 확정"
+    },
+    {
+      "at": "2026-11-26T21:38:59.874Z",
+      "by": "HJ",
+      "driver": "FUNCTIONS",
+      "field": "functions_confirmed",
+      "from": "",
+      "to": "기능 3개",
+      "after_evaluation": true,
+      "note": "구조 승인과 함께 확정"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "ARC-A",
+      "title": "3단 파이프라인 (입력 수집 → 경고 판정 → 경고 명령 출력)",
+      "summary": "기능 분해 그대로 FN-01, FN-02, FN-03 을 각각 한 구성요소로 두고, 한 방향 데이터 흐름으로 잇는다. 판정은 입력만으로 결과를 내는 무상태 규칙 단위로 입출력과 완전히 분리한다.",
+      "patterns": [
+        "AUTO-P-PIPELINE"
+      ],
+      "pros": [
+        "판정 규칙이 순수 단위라 입출력 없이 경계값 시험을 할 수 있다(DRV-06).",
+        "책임 경계가 가장 분명하고 데이터 흐름이 한 방향이다.",
+        "입력 수집이나 출력 방식이 바뀌어도 판정에 영향이 없다."
+      ],
+      "cons": [
+        "구성요소가 3개라 인터페이스와 통합 시험 대상이 가장 많다.",
+        "입력 수집과 출력이 얇은 단위가 되어 구성요소 수에 비해 내용이 적을 수 있다(DEC-07)."
+      ],
+      "risks": [
+        "단계 사이 지연이 쌓일 수 있다(측정 필요).",
+        "단계 사이 신호의 자료형·단위·초기값을 정해야 한다."
+      ],
+      "unknowns": [
+        "판단 실행의 호출 주기와 스케줄링은 요구사항에 없어 상세설계로 미룬다(Q-01).",
+        "CPU·RAM·Stack·WCET 값은 측정 필요(Q-08).",
+        "결정 요인 DRV-01/DRV-02/DRV-06 은 속도 임계값을 10 km/h 로 적었으나 요구사항 REQ-SBR-01-1/-2 와 기능 분해는 15 km/h 이다. 이 후보는 요구사항(15 km/h)을 따랐으며, 결정 요인 문구의 정정은 사람이 확인해야 한다.",
+        "vehicle_speed 신호 표의 범위(0~200)와 200 km/h 초과 입력 처리(REQ-SBR-01-5)의 관계, 입력 신호의 자료형은 상세설계에서 정한다.",
+        "초기화를 호출하는 주체와 시점(상위 소프트웨어와의 연결)은 상세설계에서 정한다."
+      ]
+    },
+    {
+      "id": "ARC-B",
+      "title": "입출력 계층 + 판정 로직 분리 (2 구성요소)",
+      "summary": "입력 수집(FN-01)과 경고 명령 출력(FN-03)을 하나의 입출력 구성요소로 묶고, 경고 판정(FN-02)은 별도 구성요소로 둔다. 하드웨어·상위 소프트웨어와 접하는 경계를 한곳에 모으고 판정 규칙만 순수 로직으로 분리한다.",
+      "patterns": [
+        "AUTO-P-LAYERED",
+        "AUTO-P-PIPELINE"
+      ],
+      "pros": [
+        "판정만 독립 시험이 되면서 구성요소는 2개로 줄어 인터페이스가 ARC-A 보다 적다.",
+        "외부(입력·출력) 접점이 한 구성요소에 모여 입출력 변경이 판정에 퍼지지 않는다.",
+        "IO 구성요소가 판정을 호출하는 구조라 호출 순서가 단순하다."
+      ],
+      "cons": [
+        "입력 수집과 출력이 한 구성요소에 있어 신호 처리와 출력 처리의 책임 경계가 ARC-A 보다 흐리다(AUTO-01 검토 필요).",
+        "IO 구성요소가 호출과 데이터 전달을 모두 맡아 결합이 한곳에 몰린다."
+      ],
+      "risks": [
+        "IO 구성요소 안에서 입력·출력 책임이 섞이면 응집도가 떨어진다.",
+        "구성요소 사이 호출 방식(call)이 상세설계에서 스케줄링과 맞는지 확인해야 한다."
+      ],
+      "unknowns": [
+        "판단 실행의 호출 주기와 스케줄링은 요구사항에 없어 상세설계로 미룬다(Q-01).",
+        "CPU·RAM·Stack·WCET 값은 측정 필요(Q-08).",
+        "결정 요인 DRV-01/DRV-02/DRV-06 의 10 km/h 와 요구사항 REQ-SBR-01-1/-2 의 15 km/h 가 다르다. 이 후보는 요구사항(15 km/h)을 따랐으며 결정 요인 문구의 정정은 사람이 확인해야 한다.",
+        "vehicle_speed 신호 표의 범위(0~200)와 200 km/h 초과 입력 처리의 관계, 입력 신호의 자료형은 상세설계에서 정한다.",
+        "초기화를 호출하는 주체와 시점은 상세설계에서 정한다."
+      ]
+    },
+    {
+      "id": "ARC-C",
+      "title": "통합형 단일 구성요소",
+      "summary": "입력 수집, 경고 판정, 경고 명령 출력(FN-01~FN-03)을 하나의 구성요소가 처리한다. 판정은 내부의 규칙 부분으로 두지만 구성요소 경계는 없다.",
+      "patterns": [
+        "AUTO-P-INTEGRATED"
+      ],
+      "pros": [
+        "구성요소 사이 인터페이스가 없어 구조가 가장 단순하다.",
+        "통합 시험 대상이 하나다."
+      ],
+      "cons": [
+        "판정 규칙이 입출력과 같은 유닛에 있어 판정 단독 시험이 어렵다(DRV-06 선호를 구성요소 수준에서 충족하지 못함).",
+        "기능이 늘면 복잡도와 변경 영향 범위가 커진다.",
+        "신호 처리·판단·출력의 책임 경계가 구성요소 수준에서 드러나지 않는다(AUTO-01 검토 필요)."
+      ],
+      "risks": [
+        "내부 함수 수준에서 판정과 입출력을 나누지 않으면 판정 독립 시험성이 떨어진다.",
+        "이후 기능이 추가되면 분리 비용이 생긴다."
+      ],
+      "unknowns": [
+        "판단 실행의 호출 주기와 스케줄링은 요구사항에 없어 상세설계로 미룬다(Q-01).",
+        "CPU·RAM·Stack·WCET 값은 측정 필요(Q-08).",
+        "결정 요인 DRV-01/DRV-02/DRV-06 의 10 km/h 와 요구사항 REQ-SBR-01-1/-2 의 15 km/h 가 다르다. 이 후보는 요구사항(15 km/h)을 따랐으며 결정 요인 문구의 정정은 사람이 확인해야 한다.",
+        "vehicle_speed 신호 표의 범위(0~200)와 200 km/h 초과 입력 처리의 관계, 입력 신호의 자료형은 상세설계에서 정한다.",
+        "초기화를 호출하는 주체와 시점은 상세설계에서 정한다."
+      ]
+    }
+  ],
+  "single_candidate_reason": null,
+  "evaluation": {
+    "ARC-A": {
+      "hard": [
+        {
+          "driver": "DRV-01",
+          "result": "EVIDENCE_PENDING",
+          "evidence": "REQ-SBR-01-1 은 CMP-JUDGE 에 할당되어 있고 [구조 지표]의 unallocated 도 비어 있다. 그러나 DRV-01 은 속도 하한을 10 km/h 로 적고, 요구사항 REQ-SBR-01-1(수용 기준 14 km/h → FALSE, 15 km/h → TRUE)과 기능 분해 FN-02 는 15 km/h 이다. 후보는 15 km/h 를 따랐다. 어느 값이 맞는지는 구조로 판단할 수 없고 사람의 확인이 필요하다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-02",
+          "result": "EVIDENCE_PENDING",
+          "evidence": "REQ-SBR-01-2 는 CMP-JUDGE 에 할당되어 있다. DRV-02 의 임계값 10 km/h 와 요구사항의 15 km/h 가 서로 다르다. DRV-01 과 같은 이유로 사람의 확인이 필요하다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-03",
+          "result": "SATISFIED",
+          "evidence": "REQ-SBR-01-5(200 km/h 초과 → FALSE)가 CMP-JUDGE 의 책임에 명시되어 있고 판정 규칙이 한 구성요소에 모여 있다. 입력 범위(0~200)와 초과 입력의 자료형 처리는 상세설계 항목이다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-04",
+          "result": "SATISFIED",
+          "evidence": "CMP-OUTPUT 이 warning_cmd 를 소유하고 초기화 시 FALSE 로 설정하도록 책임이 적혀 있다(REQ-SBR-01-3 할당). 초기화 호출 주체·시점과 단계 사이 신호의 초기값은 상세설계에서 정해야 한다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-05",
+          "result": "SATISFIED",
+          "evidence": "CMP-JUDGE 는 내부 상태가 없고 입력 3개만으로 결과를 정한다. 판정 결과 신호는 CMP-JUDGE 가 쓰고 CMP-OUTPUT 이 읽는 한 방향이라 이전 실행 결과를 되먹임하는 경로가 없다. 입력 한 벌이 같은 실행의 값이라는 점은 호출 주기·스케줄링이 정해진 뒤 확인해야 한다.",
+          "by": "ai"
+        }
+      ],
+      "preferences": [
+        {
+          "driver": "DRV-06",
+          "rating": "high",
+          "rationale": "판정이 입출력과 별도 구성요소여서 입출력 없이 경계값(14/15/200/201 km/h)을 시험할 수 있다. [구조 지표]상 단계 사이 신호는 5개, 제어 간선은 2개로 ARC-B 와 같아 이 후보가 인터페이스 수를 더 늘리지는 않는다. 다만 구성요소가 3개라 통합 시험 대상이 ARC-B 보다 많다.",
+          "by": "ai"
+        }
+      ],
+      "summary": "장점: 기능 분해와 1:1 로 대응하고 책임 경계가 가장 분명하다(AUTO-01). 데이터 흐름이 한 방향이고 call_cycles 도 없다. 판정 단독 시험이 쉽다. 단점: 구성요소 3개 중 입력 수집과 출력이 얇아 ARC-B 에 비해 DRV-06 에 추가로 얻는 이점이 거의 없고 통합 시험 대상만 늘어난다(DEC-07). 위험·미정: 단계 사이 지연은 측정 필요이고, 실행 주기·트리거는 3개 구성요소 모두 unknown 이다. 자원(WCET·RAM·Stack) 9건은 측정 필요이다. 속도 임계값은 DRV-01/02/06 의 10 km/h 와 요구사항의 15 km/h 가 어긋나 사람의 확인이 필요하다.",
+      "candidate_hash": "sha256:e4777e1c1394ebd32326333dca754e5d323b4cdad31d9fba65c6d8e8ca9891ab"
+    },
+    "ARC-B": {
+      "hard": [
+        {
+          "driver": "DRV-01",
+          "result": "EVIDENCE_PENDING",
+          "evidence": "REQ-SBR-01-1 은 CMP-JUDGE 에 할당되어 있다. DRV-01 의 하한 10 km/h 와 요구사항·기능 분해의 15 km/h 가 어긋나 있다. 후보는 15 km/h 를 따랐다. 어느 값이 맞는지는 사람의 확인이 필요하다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-02",
+          "result": "EVIDENCE_PENDING",
+          "evidence": "REQ-SBR-01-2 는 CMP-JUDGE 에 할당되어 있다. 결정 요인의 10 km/h 와 요구사항의 15 km/h 가 서로 다르다. 사람의 확인이 필요하다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-03",
+          "result": "SATISFIED",
+          "evidence": "REQ-SBR-01-5 가 CMP-JUDGE 에 할당되어 있고 판정 규칙이 한 구성요소에 있다. 200 km/h 초과 입력의 자료형 처리는 상세설계 항목이다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-04",
+          "result": "SATISFIED",
+          "evidence": "CMP-IO 가 warning_cmd 를 소유하고 초기화 시 FALSE 로 설정하도록 책임이 적혀 있다(REQ-SBR-01-3 할당). 초기화 호출 주체와 시점은 상세설계에서 정한다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-05",
+          "result": "SATISFIED",
+          "evidence": "CMP-JUDGE 는 상태가 없고 입력만으로 결과를 정한다. CMP-IO 가 CMP-JUDGE 를 호출(call)해 결과를 돌려받는 구조라 한 번의 실행에서 입력 수집, 판정, 출력이 이어진다는 점이 호출 관계로 드러난다. 호출 주기와 스케줄링은 미정이다.",
+          "by": "ai"
+        }
+      ],
+      "preferences": [
+        {
+          "driver": "DRV-06",
+          "rating": "high",
+          "rationale": "판정이 순수 로직 구성요소로 분리되어 판정 규칙만 독립 시험할 수 있다. 구성요소는 2개이고 단계 사이 신호 5개·제어 간선 2개로 ARC-A 와 같다. 구성요소 수가 가장 적으면서 분리 이점을 얻어 '인터페이스가 늘지 않는 범위'라는 단서에 가장 잘 맞는다. 입출력 책임이 한 구성요소에 섞인 점은 응집 측면의 검토 대상이다.",
+          "by": "ai"
+        }
+      ],
+      "summary": "장점: 판정만 분리해 독립 시험성을 확보하면서 구성요소를 2개로 줄여 통합 시험 대상이 ARC-A 보다 적다. 외부 접점이 CMP-IO 한 곳에 모여 입출력 변경이 판정으로 퍼지지 않는다. 단점: 입력 수집(신호 처리)과 출력 처리가 한 구성요소에 있어 AUTO-01 의 책임 명확성이 ARC-A 보다 흐리다. 이는 REVIEW_REQUIRED 항목이라 사람의 검토가 필요하다. CMP-IO 에 호출과 데이터 전달이 몰려 결합이 한곳에 모인다. 위험·미정: 호출 방식과 스케줄링의 정합성, 실행 주기·트리거(unknown), 자원 6건(측정 필요)이다. 속도 임계값 10 km/h 와 15 km/h 의 불일치는 사람의 확인이 필요하다.",
+      "candidate_hash": "sha256:7e095b3734c763d998a603cb11b2c58042ad22a7dc868236774d3f3a190828c6"
+    },
+    "ARC-C": {
+      "hard": [
+        {
+          "driver": "DRV-01",
+          "result": "EVIDENCE_PENDING",
+          "evidence": "REQ-SBR-01-1 이 CMP-SBR 에 할당되어 있다. DRV-01 의 하한 10 km/h 와 요구사항의 15 km/h 가 어긋나 있다. 후보는 15 km/h 를 따랐고, 어느 값이 맞는지는 사람의 확인이 필요하다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-02",
+          "result": "EVIDENCE_PENDING",
+          "evidence": "REQ-SBR-01-2 가 CMP-SBR 에 할당되어 있다. 결정 요인의 10 km/h 와 요구사항의 15 km/h 가 서로 다르다. 사람의 확인이 필요하다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-03",
+          "result": "SATISFIED",
+          "evidence": "REQ-SBR-01-5 가 CMP-SBR 에 할당되어 있다. 단일 구성요소라 판정 규칙이 한 곳에 있다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-04",
+          "result": "SATISFIED",
+          "evidence": "CMP-SBR 의 책임에 초기화 시 warning_cmd = FALSE 설정이 적혀 있다(REQ-SBR-01-3 할당). 초기화 호출 주체와 시점은 상세설계에서 정한다.",
+          "by": "ai"
+        },
+        {
+          "driver": "DRV-05",
+          "result": "SATISFIED",
+          "evidence": "CMP-SBR 책임에 '판단 실행마다 그 실행의 입력값만으로 결과를 다시 정한다(무상태)'가 명시되어 있다. 구성요소 사이 신호가 없어 단계 간 값 불일치 가능성이 구조상 없다.",
+          "by": "ai"
+        }
+      ],
+      "preferences": [
+        {
+          "driver": "DRV-06",
+          "rating": "low",
+          "rationale": "판정과 입출력이 구성요소 수준에서 분리되지 않는다. 후보 스스로도 이 선호를 내부 구조로만 충족한다고 적었다. 인터페이스는 늘지 않지만(단계 사이 신호 0, 제어 간선 0) 판정 단독 시험성은 내부 함수 분리 같은 상세설계 노력에 달려 있어 구조가 보장하지 못한다.",
+          "by": "ai"
+        }
+      ],
+      "summary": "장점: 구성요소와 인터페이스가 가장 적고(구성요소 1, 제어 간선 0) 통합 시험 대상이 하나이며 상태나 단계 간 지연 문제가 없다. 기능이 작은 현재 범위에서는 가장 단순하다. 단점: DRV-06 을 구성요소 수준에서 충족하지 못하고 DEC-01·AUTO-01 의 책임 분리가 구조에 드러나지 않는다. 기능이 늘면 변경 영향 범위가 커진다. 위험·미정: 내부에서 판정과 입출력을 나누지 않으면 판정 독립 시험성이 떨어진다. 실행 주기·트리거는 unknown 이고 자원 3건은 측정 필요이다. 속도 임계값 불일치(10 vs 15 km/h)는 사람의 확인이 필요하다. 이 후보는 비교 기준선 성격이다.",
+      "candidate_hash": "sha256:f2222ab2a9eb5c30db3d0a0b3d733167c5b043faf755298541e8694f748c847c"
+    }
+  },
+  "ranking": {
+    "recommended": "ARC-A",
+    "basis": "필수 제약을 어기지 않은 후보 가운데 선호 조건 등급(낮음 1·보통 2·높음 3)을 가중치로 평균한 값이 가장 큰 후보 — 설명용 비교이며 성능·안전 평가가 아니다",
+    "sensitive": false,
+    "sensitivity": [],
+    "candidates": [
+      {
+        "id": "ARC-A",
+        "status": "EVIDENCE_PENDING",
+        "relative": 3
+      },
+      {
+        "id": "ARC-B",
+        "status": "EVIDENCE_PENDING",
+        "relative": 3
+      },
+      {
+        "id": "ARC-C",
+        "status": "EVIDENCE_PENDING",
+        "relative": 1
+      }
+    ]
+  },
+  "selected": "ARC-A",
+  "selection_reason": "추천 후보 선택",
+  "differs_from_recommendation": false,
+  "accepted_cons": [
+    "구성요소가 3개라 인터페이스와 통합 시험 대상이 가장 많다.",
+    "입력 수집과 출력이 얇은 단위가 되어 구성요소 수에 비해 내용이 적을 수 있다(DEC-07)."
+  ],
+  "readiness": [
+    {
+      "item": "functional_completeness",
+      "status": "sufficient",
+      "note": "잎 요구사항 5개(REQ-SBR-01-1~5)와 수용 기준으로 warning_cmd 의 출력 조건이 모두 정해져 있다. 속도 15 km/h 경계와 200 km/h 경계는 REQ-SBR-01-1·2·5 가 서로 겹치지 않고 빠짐없이 나눈다.",
+      "by": "ai"
+    },
+    {
+      "item": "sw_boundary",
+      "status": "sufficient",
+      "note": "SW 는 세 입력(passenger_occupied, seatbelt_buckled, vehicle_speed)을 받아 warning_cmd 를 출력하는 데까지만 책임진다. warning_cmd 는 경고등 자체가 아니라 명령이다(신호 표). 경고등 구동은 경계 밖이다.",
+      "by": "ai"
+    },
+    {
+      "item": "interfaces",
+      "status": "sufficient",
+      "note": "요구사항 신호 표 4개",
+      "by": "fixed"
+    },
+    {
+      "item": "execution",
+      "status": "sufficient",
+      "note": "REQ-SBR-01-4 는 실행 기반 기준(판단 1회 실행마다 재결정)이다. REQ-SBR-01-3 은 이벤트 기반(초기화 시)이다. ms 단위 응답시간 요구가 없으므로 호출 주기가 없어도 논리 구조를 만들 수 있다.",
+      "by": "ai"
+    },
+    {
+      "item": "safety",
+      "status": "sufficient",
+      "note": "안전등급은 QM 이고 안전 감시·격리를 요구하는 요구사항이 없다. 안전 요구를 새로 추가하지 않는다.",
+      "by": "ai"
+    },
+    {
+      "item": "resources",
+      "status": "unknown",
+      "note": "CPU·RAM·Stack·WCET 는 측정하지 않았다(측정 필요). 판정이 단순한 조건식이라 구조 결정을 막지 않는다.",
+      "by": "ai"
+    },
+    {
+      "item": "priorities",
+      "status": "sufficient",
+      "note": "확정한 선호 조건 1개",
+      "by": "fixed"
+    }
+  ],
+  "asr": [
+    {
+      "requirement": "REQ-SBR-01-1",
+      "significant": true,
+      "affects": [
+        "structure"
+      ],
+      "reason": "warning_cmd 의 TRUE 조건(세 입력과 15~200 km/h 구간)을 정하는 핵심 판정 규칙이다. 입출력 처리와 분리해 독립 시험하려는 선호(DRV-06)의 대상이다."
+    },
+    {
+      "requirement": "REQ-SBR-01-2",
+      "significant": true,
+      "affects": [
+        "structure"
+      ],
+      "reason": "REQ-SBR-01-1 의 보완 조건(FALSE 출력)이다. 같은 입력을 같은 판정 규칙으로 평가하므로 같은 구성요소에서 처리해야 한다."
+    },
+    {
+      "requirement": "REQ-SBR-01-3",
+      "significant": true,
+      "affects": [
+        "interface",
+        "execution"
+      ],
+      "reason": "초기화 시 warning_cmd = FALSE 로 설정해야 한다. 초기화 이벤트와 출력 초기값을 누가 소유하는지 정해야 한다."
+    },
+    {
+      "requirement": "REQ-SBR-01-4",
+      "significant": true,
+      "affects": [
+        "structure",
+        "execution"
+      ],
+      "reason": "판정이 이전 실행 결과에 의존하지 않는다(무상태). 판정 구성요소가 내부 상태 없이 입력만으로 결과를 내는 구조가 된다."
+    },
+    {
+      "requirement": "REQ-SBR-01-5",
+      "significant": false,
+      "affects": [],
+      "reason": "200 km/h 초과 시 FALSE 출력이다. 판정 규칙의 한 분기이므로 별도 구조 영향이 없다."
+    }
+  ],
+  "change_requests": [],
+  "open_items": [
+    {
+      "id": "Q-01",
+      "topic": "execution_timing",
+      "resolution": "DEFERRED",
+      "statement": "판단 실행의 호출 주기와 스케줄링은 요구사항에 없다.",
+      "related": [
+        "REQ-SBR-01-4"
+      ],
+      "element": "FN-01~FN-03 의 호출 방식·주기(상위 스케줄러와의 연결)",
+      "stage": "detail_design",
+      "blocking": false,
+      "assumption": "",
+      "decision": "",
+      "answer": "",
+      "resolved": ""
+    },
+    {
+      "id": "Q-02",
+      "topic": "function_decomposition",
+      "resolution": "DESIGN_DECISION",
+      "statement": "기능 분해와 구조 제안: 입력 수집(FN-01), 경고 판정(FN-02), 경고 명령 출력(FN-03)을 한 방향 파이프라인으로 둔다.",
+      "related": [
+        "REQ-SBR-01-1",
+        "REQ-SBR-01-2",
+        "REQ-SBR-01-3",
+        "REQ-SBR-01-4",
+        "REQ-SBR-01-5"
+      ],
+      "element": "",
+      "stage": "",
+      "blocking": false,
+      "assumption": "",
+      "decision": "AUTO-P-PIPELINE 을 기본 구조로 제안한다. 판정(FN-02)은 입력만으로 결과를 내는 순수한 규칙 단위로 둬 입출력과 분리하고 독립 시험을 쉽게 한다(DRV-06, DEC-01, DEC-04). 입력 수집과 출력은 세 입력과 한 출력이라 단계 사이 신호가 적으므로(DEC-07) 불필요하게 더 나누지 않는다. 초기화 FALSE 설정은 출력 단계(FN-03)가 맡는다. 판정이 무상태이므로 상태 구성요소는 두지 않는다. 안전 감시 분리나 출력 중재 구성요소는 두지 않는다(요구사항·안전등급 QM 근거 없음). 후보 비교 시 통합형(AUTO-P-INTEGRATED)과 비교할 수 있다.",
+      "answer": "",
+      "resolved": ""
+    },
+    {
+      "id": "Q-08",
+      "topic": "resource",
+      "resolution": "DEFERRED",
+      "statement": "CPU·RAM·Stack·WCET 값(측정 필요).",
+      "related": [
+        "REQ-SBR-01-4"
+      ],
+      "element": "경고 판정 실행 단위의 자원 사용",
+      "stage": "test_execution",
+      "blocking": false,
+      "assumption": "",
+      "decision": "",
+      "answer": "",
+      "resolved": ""
+    }
+  ],
+  "unknowns": [
+    "설계 입력 자원 제약(MCU·RAM 등): 미확인 — CPU·RAM·Stack·WCET 는 측정하지 않았다(측정 필요). 판정이 단순한 조건식이라 구조 결정을 막지 않는다.",
+    "판단 실행의 호출 주기와 스케줄링은 요구사항에 없어 상세설계로 미룬다(Q-01).",
+    "CPU·RAM·Stack·WCET 값은 측정 필요(Q-08).",
+    "결정 요인 DRV-01/DRV-02/DRV-06 은 속도 임계값을 10 km/h 로 적었으나 요구사항 REQ-SBR-01-1/-2 와 기능 분해는 15 km/h 이다. 이 후보는 요구사항(15 km/h)을 따랐으며, 결정 요인 문구의 정정은 사람이 확인해야 한다.",
+    "vehicle_speed 신호 표의 범위(0~200)와 200 km/h 초과 입력 처리(REQ-SBR-01-5)의 관계, 입력 신호의 자료형은 상세설계에서 정한다.",
+    "초기화를 호출하는 주체와 시점(상위 소프트웨어와의 연결)은 상세설계에서 정한다.",
+    "자원 예산 9건 측정 필요",
+    "CMP-INPUT 실행 구조 미정",
+    "CMP-JUDGE 실행 구조 미정",
+    "CMP-OUTPUT 실행 구조 미정"
+  ],
+  "approval": "conditional",
+  "pending_evidence": {
+    "drivers": [
+      "DRV-01",
+      "DRV-02"
+    ],
+    "plan": "구현·시험 뒤 검증 계획에서 증거 확보(실측 시간·자원, 안전 분석) — 증거가 나오면 구조를 다시 확인",
+    "plan_default": false
+  },
+  "note": "ADD·ATAM·NASA Decision Analysis·ASPICE SWE.2 의 원리를 참고한 VeriXera 절차의 기록이다. 그 방법론을 수행했다는 주장이 아니며, 등급은 AI·사람의 정성 판단이다."
+}

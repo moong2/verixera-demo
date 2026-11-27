@@ -1,0 +1,293 @@
+{
+ "schema": "design-recommendations/v1",
+ "design_baseline_id": "DBL-002",
+ "items": [
+  {
+   "key": "signal:passenger_occupied|type",
+   "target": "signal:passenger_occupied",
+   "signal": "passenger_occupied",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4"
+   ],
+   "status": "computed",
+   "value": "bool",
+   "basis": "참·거짓 신호(논리 자료형 boolean)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:seatbelt_buckled|type",
+   "target": "signal:seatbelt_buckled",
+   "signal": "seatbelt_buckled",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4"
+   ],
+   "status": "computed",
+   "value": "bool",
+   "basis": "참·거짓 신호(논리 자료형 boolean)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:vehicle_speed|type",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "uint8_t",
+   "basis": "상세설계 초안에서 AI 가 쓴 값(근거 미기재 — 검토 필요)",
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:19.641Z",
+    "for_value": "uint8_t"
+   },
+   "value_final": "uint8_t"
+  },
+  {
+   "key": "signal:vehicle_speed|min",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "min",
+   "label": "Physical Min",
+   "unit": "km/h",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "spec",
+   "value": "0",
+   "basis": "승인된 데이터 사전(요구사항 고정본)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:vehicle_speed|max",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "max",
+   "label": "Physical Max",
+   "unit": "km/h",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "spec",
+   "value": "200",
+   "basis": "승인된 데이터 사전(요구사항 고정본)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:vehicle_speed|raw_min",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "raw_min",
+   "label": "Raw Min",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "0",
+   "basis": "상세설계 초안에서 AI 가 쓴 값(근거 미기재 — 검토 필요)",
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:33:14.715Z",
+    "for_value": "0"
+   },
+   "value_final": "0"
+  },
+  {
+   "key": "signal:vehicle_speed|raw_max",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "raw_max",
+   "label": "Raw Max",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "255",
+   "basis": "상세설계 초안에서 AI 가 쓴 값(근거 미기재 — 검토 필요)",
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:39.628Z",
+    "for_value": "255"
+   },
+   "value_final": "255"
+  },
+  {
+   "key": "signal:vehicle_speed|scaling",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "scaling",
+   "label": "Scaling",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "1",
+   "basis": "상세설계 초안에서 AI 가 쓴 값(근거 미기재 — 검토 필요)",
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "1"
+   },
+   "value_final": "1"
+  },
+  {
+   "key": "signal:vehicle_speed|offset",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "offset",
+   "label": "Offset",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "0",
+   "basis": "상세설계 초안에서 AI 가 쓴 값(근거 미기재 — 검토 필요)",
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "0"
+   },
+   "value_final": "0"
+  },
+  {
+   "key": "signal:vehicle_speed|resolution",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "resolution",
+   "label": "Resolution",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "spec",
+   "value": "1 km/h",
+   "basis": "승인된 데이터 사전(요구사항 고정본)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:warning_cmd|type",
+   "target": "signal:warning_cmd",
+   "signal": "warning_cmd",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-3",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "computed",
+   "value": "bool",
+   "basis": "참·거짓 신호(논리 자료형 boolean)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:warning_cmd|initial",
+   "target": "signal:warning_cmd",
+   "signal": "warning_cmd",
+   "attr": "initial",
+   "label": "초기값",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-3",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "FALSE",
+   "basis": "데이터 사전에 적힌 값 — 요구사항 근거가 없어 설계에서 확정",
+   "required": true,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:33:44.501Z",
+    "for_value": "FALSE"
+   },
+   "value_final": "FALSE"
+  }
+ ],
+ "summary": {
+  "total": 12,
+  "spec": 3,
+  "computed": 3,
+  "recommended": 0,
+  "confirmed": 6,
+  "undetermined": 0,
+  "reviewed": 6,
+  "to_review": 6,
+  "pending_required": []
+ }
+}

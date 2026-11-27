@@ -1,0 +1,177 @@
+{
+  "schema": "requirement-set-check/v1",
+  "id": "SETCHECK-20261126T184112Z-49f9",
+  "created_at": "2026-11-26T18:41:12.054Z",
+  "requested_by": "HJ",
+  "agent": {
+    "role": "requirements-set-check",
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "usage": {
+      "input": 39842,
+      "output": 5063
+    }
+  },
+  "inputs": {
+    "conversation": false,
+    "writer_notes": false,
+    "signals": 4
+  },
+  "prompt_hash": "sha256:8d7f499a822e77c0e91d5375ae4155d74732663d7a236e6e0f8978cc5a98e81d",
+  "output_hash": "sha256:2e4d8ae46d7fd5e23aa351e7f58d257a41181cf79ce45c6c85258c22c95d5d26",
+  "requirements": [
+    {
+      "id": "REQ-SBR-01",
+      "content_hash": "sha256:c9fd0cc6b32fb7340bac83ec9591761901bfe378b9e7da0c04213c3d41a17131"
+    },
+    {
+      "id": "REQ-SBR-01-1",
+      "content_hash": "sha256:867a8ccc80963fefb660ecaa3db9885c2bae75a133726234d3c9565c88f67492",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-2",
+      "content_hash": "sha256:91142968aedad751aff709bcca3275f09429014145303f95ecdc5a80eeaa784d",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-3",
+      "content_hash": "sha256:a74741e6055d8043b192fbaabf130416cd44907206481501be0231a427491aa2",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-4",
+      "content_hash": "sha256:9cbed76d928e08fd3337a2a1df3568ef54aa305a511cbb7dfb21abfff4a673c1",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-5",
+      "content_hash": "sha256:700e6b531d088da9f788f6e5d3884dea78393e386f73565240474ae585d14069",
+      "parent": "REQ-SBR-01"
+    }
+  ],
+  "pending": [],
+  "policy": "check-issues/v1",
+  "input_fingerprint": "sha256:01193dbda2385228cfbdc8b12cd636911498d8478779cbc9ec07ef2bf09ea7f1",
+  "characteristics": [
+    {
+      "id": "C10",
+      "name": "완전성",
+      "verdict": "partial",
+      "summary": "바뀐 REQ-SBR-01-1 과 01-2 는 속도 0~200 km/h 구간을 15 km/h 경계에서 빠짐없이 나눈다. 01-5 가 200 km/h 초과를 맡으므로 입력 범위의 빈틈은 없다. 켜짐 조건이 사라지면 곧바로 해제되고, 초기값도 정해져 있으며, 응답 기준은 판단 실행 기준이라 시간 수치 없이 검증할 수 있다. 이번 변경과 무관한 이전 지적(C10.priority: 초기화와 입력 조건의 선후)은 그대로 유지된다.",
+      "issues": []
+    },
+    {
+      "id": "C11",
+      "name": "일관성",
+      "verdict": "partial",
+      "summary": "REQ-SBR-01-1 과 01-2 는 15 km/h 와 200 km/h 경계에서 겹치거나 비는 구간 없이 서로 보완한다. 01-1 은 15 이상 200 이하, 01-2 는 15 미만 또는 다른 조건 불성립이고, 01-5 는 200 초과다. 다만 신호 표의 vehicle_speed 최댓값(200 km/h)과 REQ-SBR-01-5 가 다루는 200 km/h 초과 입력의 관계는 아직 정해지지 않았다. 중복 지적(C11.duplicate)은 이전과 같다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-SBR-01-1",
+            "REQ-SBR-01-2",
+            "REQ-SBR-01-5"
+          ],
+          "text": "REQ-SBR-01-1 과 01-2 는 '200 km/h 이하'를 정상 범위로 명시한다. 신호 표의 vehicle_speed 는 max=200 km/h 이다. 그런데 REQ-SBR-01-5 와 그 수용 기준은 201, 255 km/h 입력을 다룬다. 200 km/h 초과 값이 신호 표 범위 밖의 무효 입력인지, 범위를 늘려야 할 유효 입력인지 정해져 있지 않다. 어느 쪽이든 warning_cmd = FALSE 라는 기대 결과는 같아서 구현과 시험은 진행할 수 있다.",
+          "suggestion": "사람이 둘 중 하나를 정한다. (가) 200 km/h 초과를 무효 입력으로 보면 신호 표의 max 를 유지하고 REQ-SBR-01-5 를 '범위 밖 입력 처리'로 읽도록 용어를 맞춘다. (나) 유효 입력으로 보면 신호 표의 max 를 올린다(예: 255 km/h — 결정 필요).",
+          "rule": "C11.conflict",
+          "class": "needs_confirmation",
+          "blocking": false,
+          "key": "C11.conflict|REQ-SBR-01-1,REQ-SBR-01-2,REQ-SBR-01-5",
+          "basis": "41a6c185869b4e93"
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "실현 가능성",
+      "verdict": "pass",
+      "summary": "서로 맞지 않는 시간·성능·자원 요구가 없다. REQ-SBR-01-1, 01-2, 01-5 의 조건이 겹치지 않고 모든 입력 조합이 하나의 warning_cmd 값으로 정해져서 함께 만족할 수 있다.",
+      "issues": []
+    },
+    {
+      "id": "C13",
+      "name": "이해 가능성",
+      "verdict": "partial",
+      "summary": "상위 REQ-SBR-01 아래에 하위 5개가 기능별로 묶여 있고 구조는 이해하기 쉽다. 신호 표에서 passenger_occupied, seatbelt_buckled, warning_cmd 의 자료형·단위가 비어 있고 입력 신호 초기값도 없다는 이전 지적(개선 권고)은 그대로 유지된다.",
+      "issues": []
+    },
+    {
+      "id": "C14",
+      "name": "타당성 확인 가능성",
+      "verdict": "pass",
+      "summary": "구현 수준 요구사항마다 입력값과 기대 warning_cmd 값이 있는 수용 기준이 있다. REQ-SBR-01-1 은 14·15·16·200 km/h 경계값을 모두 시험할 수 있다. 상위 REQ-SBR-01 은 하위 시험으로 확인하는 방식이 타당하다.",
+      "issues": []
+    },
+    {
+      "id": "C15",
+      "name": "정확성",
+      "verdict": "partial",
+      "summary": "상위 REQ-SBR-01 의 '동승석 안전벨트 미착용 경고'와 하위 내용은 어긋나지 않는다. 바뀐 경고 활성 속도 기준값 15 km/h 와 200 km/h 가 상위 니즈에서 온 값인지는 주어진 정보로 확인할 수 없다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-SBR-01-1",
+            "REQ-SBR-01-2",
+            "REQ-SBR-01-5"
+          ],
+          "text": "경고 활성 속도 하한이 15 km/h 로 바뀌었고 상한은 200 km/h 이다. 출처가 '교육용 예제(가상 니즈)'라고만 되어 있어 이 값이 니즈와 맞는지 대조할 정보가 없다. 값이 옳은지 그른지는 임의로 판단하지 않는다.",
+          "suggestion": "니즈 문서나 상위 시스템 요구사항에서 15 km/h 와 200 km/h 기준의 근거를 확인해 출처로 남긴다. 근거가 주어지면 다시 판단한다.",
+          "rule": "C15.source",
+          "class": "not_assessable",
+          "blocking": false,
+          "key": "C15.source|REQ-SBR-01-1,REQ-SBR-01-2,REQ-SBR-01-5",
+          "basis": "41a6c185869b4e93"
+        }
+      ]
+    }
+  ],
+  "strategies": [
+    {
+      "requirement": "REQ-SBR-01",
+      "strategy": "via_children",
+      "reason": "상위 요구사항은 하위 REQ-SBR-01-1~01-5 의 시험으로 충족을 확인한다. 하위가 경고 켬(01-1), 경고 끔(01-2), 초기화(01-3), 매 실행 재판단(01-4), 속도 초과(01-5)를 모두 다룬다."
+    }
+  ],
+  "dropped": [],
+  "incremental": {
+    "previous": "SETCHECK-20261126T173847Z-fc2e",
+    "changed": [
+      "REQ-SBR-01-1",
+      "REQ-SBR-01-2"
+    ],
+    "carried": 0,
+    "deferred": 0,
+    "added": [],
+    "modified": [
+      "REQ-SBR-01-1",
+      "REQ-SBR-01-2"
+    ],
+    "removed": []
+  },
+  "decisions_used": 0,
+  "decisions": {},
+  "counts": {
+    "pass": 2,
+    "partial": 4,
+    "fail": 0,
+    "none": 0,
+    "issues": 2
+  },
+  "gate": {
+    "ok": true,
+    "counts": {
+      "must_fix": 0,
+      "needs_confirmation": 1,
+      "improvement": 0,
+      "reviewed": 0,
+      "not_applicable": 0,
+      "not_assessable": 1,
+      "deferred": 0,
+      "blocking": 0,
+      "satisfied": 2
+    }
+  },
+  "passed": true
+}

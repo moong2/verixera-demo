@@ -1,0 +1,478 @@
+{
+ "schema": "design-recommendations/v1",
+ "design_baseline_id": "DBL-001",
+ "items": [
+  {
+   "key": "signal:passenger_occupied|type",
+   "target": "signal:passenger_occupied",
+   "signal": "passenger_occupied",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4"
+   ],
+   "status": "computed",
+   "value": "bool",
+   "basis": "참·거짓 신호(논리 자료형 boolean)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:seatbelt_buckled|type",
+   "target": "signal:seatbelt_buckled",
+   "signal": "seatbelt_buckled",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4"
+   ],
+   "status": "computed",
+   "value": "bool",
+   "basis": "참·거짓 신호(논리 자료형 boolean)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:vehicle_speed|type",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "uint8_t",
+   "basis": "logical_type 이 integer 이고 수용 기준에 201, 255 km/h 입력이 있어 0~255 를 표현해야 한다.",
+   "assumption": "실제 입력 인터페이스 사양 확인 필요",
+   "alternatives": [
+    "uint16_t"
+   ],
+   "affects": [
+    "U-01",
+    "U-02"
+   ],
+   "required": true,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:19.641Z",
+    "for_value": "uint8_t"
+   },
+   "value_final": "uint8_t"
+  },
+  {
+   "key": "signal:vehicle_speed|min",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "min",
+   "label": "Physical Min",
+   "unit": "km/h",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "spec",
+   "value": "0",
+   "basis": "승인된 데이터 사전(요구사항 고정본)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:vehicle_speed|max",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "max",
+   "label": "Physical Max",
+   "unit": "km/h",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "spec",
+   "value": "200",
+   "basis": "승인된 데이터 사전(요구사항 고정본)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:vehicle_speed|raw_min",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "raw_min",
+   "label": "Raw Min",
+   "unit": "km/h",
+   "requirements": [
+    "REQ-SBR-01-1"
+   ],
+   "status": "confirmed",
+   "value": "0",
+   "basis": "데이터 사전 min 0 과 uint8_t 하한이다.",
+   "assumption": "",
+   "alternatives": [],
+   "affects": [
+    "U-01"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:33:14.715Z",
+    "for_value": "0"
+   },
+   "value_final": "0"
+  },
+  {
+   "key": "signal:vehicle_speed|raw_max",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "raw_max",
+   "label": "Raw Max",
+   "unit": "km/h",
+   "requirements": [
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "255",
+   "basis": "uint8_t 상한이며 수용 기준의 255 km/h 입력을 표현한다. 유효 범위 max 200 은 데이터 사전 값 그대로다.",
+   "assumption": "실제 입력 인터페이스 사양 확인 필요",
+   "alternatives": [],
+   "affects": [
+    "U-01",
+    "U-02"
+   ],
+   "required": true,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:39.628Z",
+    "for_value": "255"
+   },
+   "value_final": "255"
+  },
+  {
+   "key": "signal:vehicle_speed|scaling",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "scaling",
+   "label": "Scaling",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1"
+   ],
+   "status": "confirmed",
+   "value": "1",
+   "basis": "정수 km/h 이고 경계값 10, 200 이 정수로 주어진다.",
+   "assumption": "입력이 1 km/h 단위 정수로 들어온다고 가정",
+   "alternatives": [],
+   "affects": [
+    "U-01"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "1"
+   },
+   "value_final": "1"
+  },
+  {
+   "key": "signal:vehicle_speed|offset",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "offset",
+   "label": "Offset",
+   "unit": "km/h",
+   "requirements": [
+    "REQ-SBR-01-1"
+   ],
+   "status": "confirmed",
+   "value": "0",
+   "basis": "변환 없이 km/h 값으로 쓴다.",
+   "assumption": "",
+   "alternatives": [],
+   "affects": [
+    "U-01"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "0"
+   },
+   "value_final": "0"
+  },
+  {
+   "key": "signal:vehicle_speed|resolution",
+   "target": "signal:vehicle_speed",
+   "signal": "vehicle_speed",
+   "attr": "resolution",
+   "label": "Resolution",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "spec",
+   "value": "1 km/h",
+   "basis": "승인된 데이터 사전(요구사항 고정본)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:warning_cmd|type",
+   "target": "signal:warning_cmd",
+   "signal": "warning_cmd",
+   "attr": "type",
+   "label": "자료형",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-3",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "computed",
+   "value": "bool",
+   "basis": "참·거짓 신호(논리 자료형 boolean)",
+   "decision": {
+    "state": "n/a"
+   }
+  },
+  {
+   "key": "signal:warning_cmd|initial",
+   "target": "signal:warning_cmd",
+   "signal": "warning_cmd",
+   "attr": "initial",
+   "label": "초기값",
+   "unit": "",
+   "requirements": [
+    "REQ-SBR-01-1",
+    "REQ-SBR-01-2",
+    "REQ-SBR-01-3",
+    "REQ-SBR-01-4",
+    "REQ-SBR-01-5"
+   ],
+   "status": "confirmed",
+   "value": "FALSE",
+   "basis": "데이터 사전에 적힌 값 — 요구사항 근거가 없어 설계에서 확정",
+   "required": true,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:33:44.501Z",
+    "for_value": "FALSE"
+   },
+   "value_final": "FALSE"
+  },
+  {
+   "key": "signal:warning_result|type",
+   "target": "signal:warning_result",
+   "attr": "type",
+   "label": "자료형",
+   "status": "confirmed",
+   "value": "bool",
+   "unit": "",
+   "basis": "warning_cmd 와 같은 논리형 값이다.",
+   "requirements": [
+    "REQ-SBR-01-4"
+   ],
+   "assumption": "",
+   "alternatives": [],
+   "affects": [
+    "U-02",
+    "U-03"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "bool"
+   },
+   "value_final": "bool"
+  },
+  {
+   "key": "signal:SBR_WARN_SPEED_KMH|type",
+   "target": "signal:SBR_WARN_SPEED_KMH",
+   "attr": "type",
+   "label": "자료형",
+   "status": "confirmed",
+   "value": "uint8_t",
+   "unit": "km/h",
+   "basis": "vehicle_speed 와 같은 형으로 비교한다.",
+   "requirements": [
+    "REQ-SBR-01-1"
+   ],
+   "assumption": "",
+   "alternatives": [],
+   "affects": [
+    "U-02"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "uint8_t"
+   },
+   "value_final": "uint8_t"
+  },
+  {
+   "key": "signal:SBR_SPEED_MAX_KMH|type",
+   "target": "signal:SBR_SPEED_MAX_KMH",
+   "attr": "type",
+   "label": "자료형",
+   "status": "confirmed",
+   "value": "uint8_t",
+   "unit": "km/h",
+   "basis": "vehicle_speed 와 같은 형으로 비교한다.",
+   "requirements": [
+    "REQ-SBR-01-5"
+   ],
+   "assumption": "",
+   "alternatives": [],
+   "affects": [
+    "U-02"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "uint8_t"
+   },
+   "value_final": "uint8_t"
+  },
+  {
+   "key": "interface:warning_result|transfer",
+   "target": "interface:warning_result",
+   "attr": "transfer",
+   "label": "transfer",
+   "status": "confirmed",
+   "value": "U-02 sbr_judge_warning 의 반환값을 U-03 sbr_output_warning 의 인자로 같은 실행 안에서 전달",
+   "unit": "",
+   "basis": "Q-05 의 같은 실행 안 처리 제안과 내부 상태 없는 구조(Q-04)를 따른다.",
+   "requirements": [
+    "REQ-SBR-01-4"
+   ],
+   "assumption": "전역 변수로 전달하지 않는다",
+   "alternatives": [
+    "공유 변수로 전달"
+   ],
+   "affects": [
+    "U-02",
+    "U-03"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "U-02 sbr_judge_warning 의 반환값을 U-03 sbr_output_warning 의 인자로 같은 실행 안에서 전달"
+   },
+   "value_final": "U-02 sbr_judge_warning 의 반환값을 U-03 sbr_output_warning 의 인자로 같은 실행 안에서 전달"
+  },
+  {
+   "key": "unit:U-03|state_variable",
+   "target": "unit:U-03",
+   "attr": "state_variable",
+   "label": "state_variable",
+   "status": "confirmed",
+   "value": "warning_cmd 를 U-03 파일 static 변수로 소유, 초기값 FALSE, sbr_init_output 과 sbr_output_warning 만 쓴다",
+   "unit": "",
+   "basis": "REQ-SBR-01-3 의 초기값, EC-02 의 상태 변수 파일 범위 권장, AUTO-06 의 상태 소유권.",
+   "requirements": [
+    "REQ-SBR-01-3",
+    "REQ-SBR-01-4"
+   ],
+   "assumption": "외부는 getter 또는 출력 구조체 복사로 읽는다",
+   "alternatives": [
+    "호출자가 소유한 구조체에 쓴다"
+   ],
+   "affects": [
+    "U-03"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "warning_cmd 를 U-03 파일 static 변수로 소유, 초기값 FALSE, sbr_init_output 과 sbr_output_warning 만 쓴다"
+   },
+   "value_final": "warning_cmd 를 U-03 파일 static 변수로 소유, 초기값 FALSE, sbr_init_output 과 sbr_output_warning 만 쓴다"
+  },
+  {
+   "key": "unit:U-02|execution_period",
+   "target": "unit:U-02",
+   "attr": "execution_period",
+   "label": "execution_period",
+   "status": "confirmed",
+   "value": "호출 주기 미정. 호출 순서만 고정: U-01 → U-02 → U-03",
+   "unit": "",
+   "basis": "REQ-SBR-01-4 는 실행당 판단을 요구하지만 주기 값은 요구사항에 없다. 수치를 지어내지 않는다.",
+   "requirements": [
+    "REQ-SBR-01-4"
+   ],
+   "assumption": "주기는 상위 스케줄링에서 정한다",
+   "alternatives": [],
+   "affects": [
+    "U-01",
+    "U-02",
+    "U-03"
+   ],
+   "required": false,
+   "decision": {
+    "state": "accepted",
+    "reason": "",
+    "by": "HJ",
+    "at": "2026-11-26T17:32:40.006Z",
+    "for_value": "호출 주기 미정. 호출 순서만 고정: U-01 → U-02 → U-03"
+   },
+   "value_final": "호출 주기 미정. 호출 순서만 고정: U-01 → U-02 → U-03"
+  }
+ ],
+ "summary": {
+  "total": 18,
+  "spec": 3,
+  "computed": 3,
+  "recommended": 0,
+  "confirmed": 12,
+  "undetermined": 0,
+  "reviewed": 12,
+  "to_review": 12,
+  "pending_required": []
+ }
+}

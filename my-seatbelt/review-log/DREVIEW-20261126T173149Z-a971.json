@@ -1,0 +1,92 @@
+{
+  "schema": "design-review/v1",
+  "review_id": "DREVIEW-20261126T173149Z-a971",
+  "created_at": "2026-11-26T17:31:49.576Z",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "baseline_id": "BL-001",
+  "baseline_hash": "sha256:69d1a7709d58bde934c622affb94dc2b4a802c9488c3e12a2b14951ec2c8c0da",
+  "design_sha256": "sha256:0a86451e37a5cb6c46658b104e5e0c8fe43282af2f440f48d118bc5e08dffd86",
+  "inputs": [
+    {
+      "path": "design/architecture.json",
+      "sha256": "sha256:0a86451e37a5cb6c46658b104e5e0c8fe43282af2f440f48d118bc5e08dffd86"
+    },
+    {
+      "path": "docs/design/seatbelt_reminder.md",
+      "sha256": "sha256:c301400990f0c681eff87c8bd353519998e7f268a8c0b91576d6c8accf78bdb8"
+    }
+  ],
+  "prompt_sha256": "sha256:0c4a090bcd8c0a5cc7e96aca9ca85b9bb1b8a763a7b5a88d220c802fee96d6d5",
+  "response_sha256": "sha256:73ad0d630da0a269a374915dc7c3f50f17ec20fe653f8df96591e0203f6df36b",
+  "summary": "요구사항 REQ-SBR-01-1~5 의 조건, 경계값(10·200 km/h), 응답은 U-02·U-03 의 책임과 SWD-SBR-001~007 에 빠짐없이 반영되어 있고 설계가 새로 지어낸 동작도 없다. 다만 입력 신호의 쓰기 주체 중복, 속도 범위 표기 불일치, 검증 경계 몇 곳은 보완하는 편이 좋다.",
+  "findings": [
+    {
+      "level": "warning",
+      "target": "U-01",
+      "message": "passenger_occupied, seatbelt_buckled, vehicle_speed 세 입력은 connections 에서 EXT 가 WRITE 하고 U-01 도 READ_WRITE 하며, 소유자는 U-01 이다. 설계 문서(SWD-SBR-006)는 U-01 이 외부가 쓴 값을 읽어 '그 실행의 값 한 벌로 확정(기록)'한다고 하는데, 확정본이 원본과 같은 신호 이름이다. 그래서 외부 쓰기와 U-01 의 기록이 같은 변수에서 겹치고, 실행 도중 외부가 값을 바꾸면 U-02 가 읽는 값이 그 실행의 값과 달라질 수 있다. 이는 REQ-SBR-01-4 의 '그 실행의 값'을 검증하기 어렵게 만든다.",
+      "suggestion": "외부 원본 입력과 U-01 이 확정한 실행용 사본(예: 입력 스냅샷)을 구분하는 신호로 나누고, 쓰기 주체를 한 곳으로 정한다. U-02 는 사본만 읽도록 connections 를 고친다."
+    },
+    {
+      "level": "info",
+      "target": "vehicle_speed",
+      "message": "요구사항 신호 표와 설계 신호 표의 vehicle_speed 는 min 0, max 200 인데, REQ-SBR-01-5 의 수용 기준은 201, 255 km/h 입력을 다룬다. 설명란에 '유효 범위'라고 보완되어 있어 모순은 아니지만, min/max 열만 보면 201 이상 입력이 계약 밖으로 읽힌다.",
+      "suggestion": "min/max 열을 유효 범위로 명시하거나, 입력 타입의 실제 범위(0~255)와 유효 범위(0~200)를 별도 항목으로 나눠 적는다."
+    },
+    {
+      "level": "info",
+      "target": "REQ-SBR-01-4",
+      "message": "REQ-SBR-01-4 가 U-01, U-02, U-03 세 유닛에 나뉘어 할당되어 있다(SWD-SBR-006, 004, 007). 각 유닛의 acceptance 는 자기 몫(값 전달, 이전 결과 비의존, 출력 = warning_result)만 검증하므로 지금은 경계가 구분된다. 다만 '1회차 TRUE, 2회차 FALSE' 라는 요구사항 수용 기준을 끝에서 끝까지 확인하는 항목은 어느 유닛에도 없다.",
+      "suggestion": "유닛 검증과 별도로, 입력 취득에서 출력까지 이어지는 통합 수준에서 REQ-SBR-01-4 의 2회차 시나리오를 확인하는 항목을 추가한다."
+    },
+    {
+      "level": "info",
+      "target": "U-02",
+      "message": "REQ-SBR-01-2 의 세 번째 수용 기준은 vehicle_speed = 0 km/h(탑승 TRUE, 미착용)에서 FALSE 인 경우다. U-02 acceptance 에는 속도 9 만 있고 0 은 없다. 설계 로직(>= 10 판단)은 이 경우를 올바르게 처리하므로 설계 오류는 아니다.",
+      "suggestion": "U-02 acceptance 에 vehicle_speed = 0 인 경우를 추가해 요구사항 수용 기준과 맞춘다."
+    }
+  ],
+  "rule_profile_hash": "sha256:b56d981f7c9d3283a6b708c7df2a67a011cabb71113d5ae83c586439cacd93ee",
+  "rule_results": [
+    {
+      "rule_id": "AUTO-01",
+      "result": "SATISFIED",
+      "evidence": "신호 처리는 U-01(입력 확정, 판단 없음), 제어 판단은 U-02(내부 상태 없음), 출력 처리는 U-03(warning_cmd 소유·갱신·초기화)으로 나뉜다. 책임이 섞이지 않는다. 다만 U-01 입력 신호의 쓰기 주체 중복은 별도 warning 으로 지적했다."
+    },
+    {
+      "rule_id": "COM-05",
+      "result": "SATISFIED",
+      "evidence": "U-02 의 네 함수는 모두 경고 조건 판정이라는 한 책임에 속한다. U-03 의 초기화와 출력은 같은 출력값 warning_cmd 를 다루므로 응집이 유지된다. 유닛 사이 의존은 U-01 → U-02(입력 세 개), U-02 → U-03(warning_result 하나)의 단방향이라 결합이 낮다."
+    },
+    {
+      "rule_id": "COM-06",
+      "result": "SATISFIED",
+      "evidence": "U-02 의 조건은 속도 하한, 속도 상한, 탑승·미착용의 세 가지를 AND 로 묶는 것뿐이고 상태 변수는 없다. 함수도 조건별로 나뉘어 있어 한 유닛에 조건이 과도하게 몰리지 않았다."
+    },
+    {
+      "rule_id": "AUTO-02",
+      "result": "UNDETERMINED",
+      "evidence": "설계 문서는 호출 주기를 요구사항에 없다는 이유로 정하지 않고, 한 실행 안의 순서(U-01 → U-02 → U-03)만 정했다. 주기·이벤트·마감 시간 정보가 없어 실행 구조의 적절성을 판단할 수 없다."
+    },
+    {
+      "rule_id": "AUTO-04",
+      "result": "UNDETERMINED",
+      "evidence": "등급 QM 이고 설계에 다른 안전등급의 요소가 나오지 않는다. 간섭 위험을 고려했는지 판단할 자료가 없다."
+    },
+    {
+      "rule_id": "AUTO-08",
+      "result": "UNDETERMINED",
+      "evidence": "CPU 부하, 스택, 실행시간 제약에 관한 설계 서술이 없다. 범위에서 물리 응답시간을 제외한다고만 되어 있다."
+    },
+    {
+      "rule_id": "EC-02",
+      "result": "UNDETERMINED",
+      "evidence": "warning_cmd 는 U-03 이 소유하고 문서에는 `state->warning_cmd`(sbr_state_t 구조체 멤버)로 되어 있다. 이 변수가 U-03 파일 안의 static 인지, 다른 유닛이 인터페이스로만 접근하는지는 설계 문서에 명시되어 있지 않다. 입력 세 신호도 외부가 직접 쓰는 구조여서 파일 범위 규칙과의 관계가 불분명하다."
+    }
+  ],
+  "counts": {
+    "error": 0,
+    "warning": 1,
+    "info": 3
+  }
+}

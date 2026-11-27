@@ -1,0 +1,987 @@
+{
+  "schema": "ears-architecture-baseline/v1",
+  "architecture_baseline_id": "ABL-002",
+  "project": "example-seatbelt",
+  "created_at": "2026-11-26T17:28:31.908Z",
+  "approver": "HJ",
+  "requirements_baseline": {
+    "id": "BL-001",
+    "hash": "sha256:69d1a7709d58bde934c622affb94dc2b4a802c9488c3e12a2b14951ec2c8c0da"
+  },
+  "previous_architecture_baseline": {
+    "id": "ABL-001",
+    "hash": "sha256:dc713b96bb0c7da755014de7f0ff80878487605805a02e8bc89e02020c887bb4"
+  },
+  "architecture": {
+    "id": "ARC-A",
+    "title": "3단 파이프라인 (입력 취득 → 판정 → 출력·초기화)",
+    "summary": "기능 분해의 세 책임(FN-01, FN-02, FN-03)을 각각 구성요소로 두고, 한 번의 판단 실행 안에서 입력 취득 → 판정 → 출력 순으로 단방향 처리한다. 판정 구성요소는 내부 상태가 없다.",
+    "patterns": [
+      "AUTO-P-PIPELINE"
+    ],
+    "components": [
+      {
+        "id": "CMP-INPUT",
+        "name": "입력 신호 취득",
+        "responsibility": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 한 번의 판단 실행 단위로 모아 같은 시점의 값으로 판정 구성요소에 전달한다.",
+        "requirements": [
+          "REQ-SBR-01-4"
+        ],
+        "functions": [
+          "FN-01"
+        ],
+        "parent": null,
+        "execution": {
+          "trigger": "unknown",
+          "period_ms": null,
+          "period_source": "",
+          "order": "한 번의 판단 실행 안에서 1번째",
+          "priority": ""
+        },
+        "modes": [],
+        "safety": {
+          "isolation_needed": "no",
+          "rationale": "안전등급 QM 이고 격리·감시를 요구하는 요구사항이 없다(Q-06)."
+        }
+      },
+      {
+        "id": "CMP-JUDGE",
+        "name": "경고 조건 판정",
+        "responsibility": "현재 실행의 입력값만으로 경고 여부를 결정한다. 속도 구간(10 km/h 미만 / 10~200 km/h / 200 km/h 초과)과 탑승·착용 조건을 평가하며 내부 상태를 갖지 않는다.",
+        "requirements": [
+          "REQ-SBR-01-1",
+          "REQ-SBR-01-2",
+          "REQ-SBR-01-5",
+          "REQ-SBR-01-4"
+        ],
+        "functions": [
+          "FN-02"
+        ],
+        "parent": null,
+        "execution": {
+          "trigger": "unknown",
+          "period_ms": null,
+          "period_source": "",
+          "order": "한 번의 판단 실행 안에서 2번째",
+          "priority": ""
+        },
+        "modes": [],
+        "safety": {
+          "isolation_needed": "no",
+          "rationale": "안전등급 QM 이고 격리·감시를 요구하는 요구사항이 없다(Q-06)."
+        }
+      },
+      {
+        "id": "CMP-OUTPUT",
+        "name": "경고 명령 출력 및 초기화",
+        "responsibility": "판정 결과를 warning_cmd 로 출력한다. 초기화 시 warning_cmd 를 FALSE 로 설정한다. 초기화와 출력은 같은 출력값을 다루므로 이 구성요소가 맡는다(Q-07, DEC-04).",
+        "requirements": [
+          "REQ-SBR-01-3",
+          "REQ-SBR-01-4"
+        ],
+        "functions": [
+          "FN-03"
+        ],
+        "parent": null,
+        "execution": {
+          "trigger": "unknown",
+          "period_ms": null,
+          "period_source": "",
+          "order": "초기화 시 1회 + 한 번의 판단 실행 안에서 3번째",
+          "priority": ""
+        },
+        "modes": [],
+        "safety": {
+          "isolation_needed": "no",
+          "rationale": "안전등급 QM 이고 격리·감시를 요구하는 요구사항이 없다(Q-06)."
+        }
+      }
+    ],
+    "connections": [
+      {
+        "signal": "passenger_occupied",
+        "owner": "CMP-INPUT",
+        "accesses": [
+          {
+            "by": "EXT",
+            "mode": "WRITE"
+          },
+          {
+            "by": "CMP-JUDGE",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "seatbelt_buckled",
+        "owner": "CMP-INPUT",
+        "accesses": [
+          {
+            "by": "EXT",
+            "mode": "WRITE"
+          },
+          {
+            "by": "CMP-JUDGE",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "vehicle_speed",
+        "owner": "CMP-INPUT",
+        "accesses": [
+          {
+            "by": "EXT",
+            "mode": "WRITE"
+          },
+          {
+            "by": "CMP-JUDGE",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "warning_result (판정 결과, 이름은 잠정)",
+        "owner": "CMP-JUDGE",
+        "accesses": [
+          {
+            "by": "CMP-JUDGE",
+            "mode": "WRITE"
+          },
+          {
+            "by": "CMP-OUTPUT",
+            "mode": "READ"
+          }
+        ]
+      },
+      {
+        "signal": "warning_cmd",
+        "owner": "CMP-OUTPUT",
+        "accesses": [
+          {
+            "by": "CMP-OUTPUT",
+            "mode": "WRITE"
+          },
+          {
+            "by": "EXT",
+            "mode": "READ"
+          }
+        ]
+      }
+    ],
+    "control_flow": [
+      {
+        "from": "CMP-INPUT",
+        "to": "CMP-JUDGE",
+        "kind": "data",
+        "note": ""
+      },
+      {
+        "from": "CMP-JUDGE",
+        "to": "CMP-OUTPUT",
+        "kind": "data",
+        "note": ""
+      }
+    ],
+    "shared_resources": [],
+    "resources": [
+      {
+        "component": "CMP-INPUT",
+        "kind": "cpu",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-INPUT",
+        "kind": "ram",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-INPUT",
+        "kind": "stack",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-INPUT",
+        "kind": "wcet",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-JUDGE",
+        "kind": "cpu",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-JUDGE",
+        "kind": "ram",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-JUDGE",
+        "kind": "stack",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-JUDGE",
+        "kind": "wcet",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-OUTPUT",
+        "kind": "cpu",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-OUTPUT",
+        "kind": "ram",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-OUTPUT",
+        "kind": "stack",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      },
+      {
+        "component": "CMP-OUTPUT",
+        "kind": "wcet",
+        "value": "",
+        "source": "",
+        "status": "measurement_needed"
+      }
+    ],
+    "rationale": "신호 취득·판단·출력은 서로 다른 기능적 책임이므로 나눈다(DEC-01, AUTO-01). 판정은 내부 상태가 없어 상태를 유닛 사이로 흩뜨리는 문제가 없고, 초기화와 출력은 같은 출력값을 다루므로 한 구성요소에 둔다(DEC-04, Q-07). 판정 규칙을 입출력과 분리해 독립 시험하려는 선호(DRV-06)를 가장 직접적으로 충족한다. 세 구성요소를 한 실행 안에서 순서대로 끝내 DRV-05(실행마다 현재 입력으로 재결정)를 지킨다(Q-05).",
+    "rules_applied": [
+      "DEC-01",
+      "DEC-04",
+      "DEC-07",
+      "COM-05",
+      "AUTO-01"
+    ],
+    "pros": [
+      "판정 규칙(속도 구간·탑승·착용 조건)을 입출력 없이 독립 시험할 수 있다.",
+      "책임 경계가 가장 명확하고 데이터 흐름이 단방향이다.",
+      "입력 취득이나 출력 방식이 바뀌어도 판정 구성요소를 고치지 않는다."
+    ],
+    "cons": [
+      "신호가 4개뿐인 기능에 비해 구성요소와 인터페이스(구성요소 사이 신호 1개 포함)가 늘어난다.",
+      "통합 시험 대상이 늘고 단계 사이 호출 비용이 생긴다."
+    ],
+    "risks": [
+      "구성요소 수에 비해 각 구성요소의 내용이 매우 작아 구조 비용이 이득보다 커질 수 있다(DEC-07).",
+      "단계를 나눠도 한 실행 안에서 끝낸다는 전제(Q-05)가 구현에서 깨지면 REQ-SBR-01-4 를 위반할 수 있다."
+    ],
+    "unknowns": [
+      "신호 자료형이 정해지지 않았다(Q-01, 인터페이스 정의 승인 전 필요).",
+      "판단 실행의 호출 주기와 스케줄링은 상세설계에서 정한다(Q-02).",
+      "CPU·RAM·Stack·WCET 는 대상 환경에서 측정이 필요하다(Q-03).",
+      "구성요소 사이 판정 결과 신호의 이름과 자료형은 인터페이스 단계에서 정한다."
+    ],
+    "effort": "중간 — 구성요소 3개와 구성요소 사이 인터페이스 2개를 정의하고 시험해야 한다."
+  },
+  "functions": [
+    {
+      "id": "FN-01",
+      "name": "입력 신호 취득",
+      "responsibility": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 한 번의 판단 실행 단위로 모아 판정 기능에 전달한다. 한 실행 안에서는 같은 시점에 취득한 값을 사용하게 한다.",
+      "requirements": [
+        "REQ-SBR-01-4"
+      ],
+      "depends": [],
+      "safety_related": "no",
+      "change_independent": "yes"
+    },
+    {
+      "id": "FN-02",
+      "name": "경고 조건 판정",
+      "responsibility": "현재 실행의 입력값만으로 warning 여부를 결정한다. 속도 구간(10 미만 / 10~200 / 200 초과)과 탑승·착용 조건을 평가하며, 내부 상태를 갖지 않는다.",
+      "requirements": [
+        "REQ-SBR-01-1",
+        "REQ-SBR-01-2",
+        "REQ-SBR-01-5",
+        "REQ-SBR-01-4"
+      ],
+      "depends": [
+        {
+          "on": "FN-01",
+          "kind": "data",
+          "note": ""
+        }
+      ],
+      "safety_related": "no",
+      "change_independent": "yes"
+    },
+    {
+      "id": "FN-03",
+      "name": "경고 명령 출력 및 초기화",
+      "responsibility": "판정 결과를 warning_cmd 로 출력한다. 초기화 시 warning_cmd 를 FALSE 로 설정하는 책임도 진다.",
+      "requirements": [
+        "REQ-SBR-01-3",
+        "REQ-SBR-01-4"
+      ],
+      "depends": [
+        {
+          "on": "FN-02",
+          "kind": "data",
+          "note": ""
+        }
+      ],
+      "safety_related": "no",
+      "change_independent": "yes"
+    }
+  ],
+  "adr": {
+    "adr_id": "ADR-002",
+    "title": "3단 파이프라인 (입력 취득 → 판정 → 출력·초기화) 선정",
+    "created_at": "2026-11-26T17:28:31.908Z",
+    "approver": "HJ",
+    "requirements_baseline": {
+      "id": "BL-001",
+      "hash": "sha256:69d1a7709d58bde934c622affb94dc2b4a802c9488c3e12a2b14951ec2c8c0da"
+    },
+    "drivers": [
+      {
+        "id": "DRV-01",
+        "kind": "functionality",
+        "class": "hard",
+        "statement": "동승석 탑승이고 안전벨트 미착용이며 속도가 10 km/h 이상 200 km/h 이하인 동안 warning_cmd = TRUE 로 출력한다.",
+        "requirements": [
+          "REQ-SBR-01-1"
+        ],
+        "origin": "requirements",
+        "value": "10 km/h ≤ vehicle_speed ≤ 200 km/h",
+        "weight": null,
+        "confirmed": true,
+        "question": ""
+      },
+      {
+        "id": "DRV-02",
+        "kind": "functionality",
+        "class": "hard",
+        "statement": "비탑승, 착용, 또는 속도 10 km/h 미만이면 warning_cmd = FALSE 로 출력한다.",
+        "requirements": [
+          "REQ-SBR-01-2"
+        ],
+        "origin": "requirements",
+        "value": "vehicle_speed < 10 km/h",
+        "weight": null,
+        "confirmed": true,
+        "question": ""
+      },
+      {
+        "id": "DRV-03",
+        "kind": "functionality",
+        "class": "hard",
+        "statement": "속도가 200 km/h 를 초과하면 warning_cmd = FALSE 로 출력한다.",
+        "requirements": [
+          "REQ-SBR-01-5"
+        ],
+        "origin": "requirements",
+        "value": "vehicle_speed > 200 km/h",
+        "weight": null,
+        "confirmed": true,
+        "question": ""
+      },
+      {
+        "id": "DRV-04",
+        "kind": "reliability",
+        "class": "hard",
+        "statement": "초기화되면 warning_cmd 를 FALSE 로 설정한다.",
+        "requirements": [
+          "REQ-SBR-01-3"
+        ],
+        "origin": "requirements",
+        "value": "warning_cmd = FALSE",
+        "weight": null,
+        "confirmed": true,
+        "question": ""
+      },
+      {
+        "id": "DRV-05",
+        "kind": "functionality",
+        "class": "hard",
+        "statement": "판단 실행마다 그 실행의 입력값만으로 warning_cmd 를 다시 정해 출력한다(이전 실행 결과에 의존하지 않는다).",
+        "requirements": [
+          "REQ-SBR-01-4"
+        ],
+        "origin": "requirements",
+        "value": "",
+        "weight": null,
+        "confirmed": true,
+        "question": ""
+      },
+      {
+        "id": "DRV-06",
+        "kind": "testability",
+        "class": "preference",
+        "statement": "판정 로직을 입출력 처리와 분리해 판정 규칙을 독립적으로 시험할 수 있게 하는 구조를 선호한다. 인터페이스 수가 늘지 않는 범위에서 적용한다(DEC-01, DEC-07).",
+        "requirements": [
+          "REQ-SBR-01-1",
+          "REQ-SBR-01-2",
+          "REQ-SBR-01-5"
+        ],
+        "origin": "requirements",
+        "value": "",
+        "weight": 25,
+        "confirmed": true,
+        "question": ""
+      }
+    ],
+    "functions": [
+      {
+        "id": "FN-01",
+        "name": "입력 신호 취득",
+        "responsibility": "passenger_occupied, seatbelt_buckled, vehicle_speed 를 한 번의 판단 실행 단위로 모아 판정 기능에 전달한다. 한 실행 안에서는 같은 시점에 취득한 값을 사용하게 한다.",
+        "requirements": [
+          "REQ-SBR-01-4"
+        ],
+        "depends": [],
+        "safety_related": "no",
+        "change_independent": "yes"
+      },
+      {
+        "id": "FN-02",
+        "name": "경고 조건 판정",
+        "responsibility": "현재 실행의 입력값만으로 warning 여부를 결정한다. 속도 구간(10 미만 / 10~200 / 200 초과)과 탑승·착용 조건을 평가하며, 내부 상태를 갖지 않는다.",
+        "requirements": [
+          "REQ-SBR-01-1",
+          "REQ-SBR-01-2",
+          "REQ-SBR-01-5",
+          "REQ-SBR-01-4"
+        ],
+        "depends": [
+          {
+            "on": "FN-01",
+            "kind": "data",
+            "note": ""
+          }
+        ],
+        "safety_related": "no",
+        "change_independent": "yes"
+      },
+      {
+        "id": "FN-03",
+        "name": "경고 명령 출력 및 초기화",
+        "responsibility": "판정 결과를 warning_cmd 로 출력한다. 초기화 시 warning_cmd 를 FALSE 로 설정하는 책임도 진다.",
+        "requirements": [
+          "REQ-SBR-01-3",
+          "REQ-SBR-01-4"
+        ],
+        "depends": [
+          {
+            "on": "FN-02",
+            "kind": "data",
+            "note": ""
+          }
+        ],
+        "safety_related": "no",
+        "change_independent": "yes"
+      }
+    ],
+    "criteria_confirmed": {
+      "at": "2026-11-26T17:28:03.732Z",
+      "by": "HJ"
+    },
+    "functions_confirmed": {
+      "at": "2026-11-26T17:28:03.732Z",
+      "by": "HJ",
+      "hash": "sha256:55d1fd75eab98d3c5106e04ae3f8cf37414aec882fa09c7bbd888b44af372125"
+    },
+    "criteria_log": [
+      {
+        "at": "2026-11-26T17:28:03.732Z",
+        "by": "HJ",
+        "driver": "ALL",
+        "field": "confirmed",
+        "from": "",
+        "to": "구조 승인",
+        "after_evaluation": true,
+        "note": "구조 승인과 함께 확정(확인 전 조건 6건 포함)"
+      },
+      {
+        "at": "2026-11-26T17:28:03.732Z",
+        "by": "HJ",
+        "driver": "FUNCTIONS",
+        "field": "functions_confirmed",
+        "from": "",
+        "to": "기능 3개",
+        "after_evaluation": true,
+        "note": "구조 승인과 함께 확정"
+      }
+    ],
+    "candidates": [
+      {
+        "id": "ARC-A",
+        "title": "3단 파이프라인 (입력 취득 → 판정 → 출력·초기화)",
+        "summary": "기능 분해의 세 책임(FN-01, FN-02, FN-03)을 각각 구성요소로 두고, 한 번의 판단 실행 안에서 입력 취득 → 판정 → 출력 순으로 단방향 처리한다. 판정 구성요소는 내부 상태가 없다.",
+        "patterns": [
+          "AUTO-P-PIPELINE"
+        ],
+        "pros": [
+          "판정 규칙(속도 구간·탑승·착용 조건)을 입출력 없이 독립 시험할 수 있다.",
+          "책임 경계가 가장 명확하고 데이터 흐름이 단방향이다.",
+          "입력 취득이나 출력 방식이 바뀌어도 판정 구성요소를 고치지 않는다."
+        ],
+        "cons": [
+          "신호가 4개뿐인 기능에 비해 구성요소와 인터페이스(구성요소 사이 신호 1개 포함)가 늘어난다.",
+          "통합 시험 대상이 늘고 단계 사이 호출 비용이 생긴다."
+        ],
+        "risks": [
+          "구성요소 수에 비해 각 구성요소의 내용이 매우 작아 구조 비용이 이득보다 커질 수 있다(DEC-07).",
+          "단계를 나눠도 한 실행 안에서 끝낸다는 전제(Q-05)가 구현에서 깨지면 REQ-SBR-01-4 를 위반할 수 있다."
+        ],
+        "unknowns": [
+          "신호 자료형이 정해지지 않았다(Q-01, 인터페이스 정의 승인 전 필요).",
+          "판단 실행의 호출 주기와 스케줄링은 상세설계에서 정한다(Q-02).",
+          "CPU·RAM·Stack·WCET 는 대상 환경에서 측정이 필요하다(Q-03).",
+          "구성요소 사이 판정 결과 신호의 이름과 자료형은 인터페이스 단계에서 정한다."
+        ]
+      },
+      {
+        "id": "ARC-B",
+        "title": "단일 구성요소 통합형",
+        "summary": "입력 취득, 판정, 출력·초기화를 하나의 구성요소가 처리한다. 신호가 4개뿐이고 내부 상태가 없다는 점을 활용해 인터페이스를 최소화한다.",
+        "patterns": [
+          "AUTO-P-INTEGRATED"
+        ],
+        "pros": [
+          "구성요소 사이 인터페이스가 없어 구조와 통합 시험이 가장 단순하다.",
+          "단계 사이 지연이나 데이터 일관성 문제가 구조적으로 생기지 않는다.",
+          "구현·검토 작업량이 가장 적다."
+        ],
+        "cons": [
+          "판정 규칙을 입출력 처리와 분리해 시험하려는 선호(DRV-06)를 구조 수준에서는 충족하지 못한다(내부 함수 분리는 상세설계에서 가능).",
+          "취득·판정·출력의 책임이 한 구성요소에 섞여 AUTO-01 의 책임 명확성 검토에서 불리하다.",
+          "기능이 늘면 복잡도와 변경 영향 범위가 커진다."
+        ],
+        "risks": [
+          "향후 입력 신호나 판정 조건이 늘면 구성요소를 다시 나눠야 할 수 있다.",
+          "입출력 방식 변경이 판정 로직과 같은 구성요소에 영향을 준다."
+        ],
+        "unknowns": [
+          "신호 자료형이 정해지지 않았다(Q-01, 인터페이스 정의 승인 전 필요).",
+          "판단 실행의 호출 주기와 스케줄링은 상세설계에서 정한다(Q-02).",
+          "CPU·RAM·Stack·WCET 는 대상 환경에서 측정이 필요하다(Q-03).",
+          "내부 함수 분리 수준은 상세설계에서 정한다."
+        ]
+      },
+      {
+        "id": "ARC-C",
+        "title": "입출력 처리와 판정 로직 2분할",
+        "summary": "입력 취득(FN-01)과 출력·초기화(FN-03)를 하나의 입출력 처리 구성요소로 묶고, 판정(FN-02)만 상태 없는 구성요소로 분리한다. 판정 규칙의 독립 시험(DRV-06)과 인터페이스 수의 균형을 노린다.",
+        "patterns": [
+          "AUTO-P-LAYERED"
+        ],
+        "pros": [
+          "판정 규칙을 입출력 없이 독립 시험할 수 있어 DRV-06 을 충족하면서 구성요소는 2개로 유지된다.",
+          "입출력 방식이 바뀌어도 판정 구성요소는 영향을 받지 않는다.",
+          "ARC-A 보다 구성요소 사이 인터페이스가 적다."
+        ],
+        "cons": [
+          "입출력 처리 구성요소에 취득과 출력 두 책임이 있어 AUTO-01 의 책임 분리는 ARC-A 보다 약하다.",
+          "ARC-B 보다 인터페이스와 통합 시험 대상이 늘어난다."
+        ],
+        "risks": [
+          "입출력 처리 구성요소가 호출 순서를 쥐므로 이 구성요소가 비대해질 수 있다.",
+          "판정 호출이 한 실행 안에서 완결된다는 전제(Q-05)가 깨지면 REQ-SBR-01-4 를 위반할 수 있다."
+        ],
+        "unknowns": [
+          "신호 자료형이 정해지지 않았다(Q-01, 인터페이스 정의 승인 전 필요).",
+          "판단 실행의 호출 주기와 스케줄링은 상세설계에서 정한다(Q-02).",
+          "CPU·RAM·Stack·WCET 는 대상 환경에서 측정이 필요하다(Q-03).",
+          "구성요소 사이 판정 결과 신호의 이름과 자료형은 인터페이스 단계에서 정한다."
+        ]
+      }
+    ],
+    "single_candidate_reason": null,
+    "evaluation": {
+      "ARC-A": {
+        "hard": [
+          {
+            "driver": "DRV-01",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-1 이 CMP-JUDGE 에 할당되어 있고, CMP-JUDGE 의 책임에 10~200 km/h 구간과 탑승·착용 조건 평가가 명시되어 있다. 판정 결과는 CMP-OUTPUT 이 warning_cmd 로 출력한다. 경계값 동작(10, 200 km/h)은 상세설계와 시험에서 확인한다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-02",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-2 가 CMP-JUDGE 에 할당되어 있고, 책임에 10 km/h 미만과 비탑승·착용 조건 평가가 포함된다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-03",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-5 가 CMP-JUDGE 에 할당되어 있고 책임에 200 km/h 초과 구간이 명시되어 있다. 주의: 신호 표의 vehicle_speed 최대값이 200 이므로, CMP-INPUT 이 201·255 km/h 입력을 200 으로 제한하면 DRV-03 을 위반한다. 입력 취득 단계의 범위 처리는 인터페이스·상세설계에서 확인해야 한다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-04",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-3 이 CMP-OUTPUT 에 할당되어 있고, 책임에 초기화 시 warning_cmd = FALSE 설정이 명시되어 있다. warning_cmd 의 소유자도 CMP-OUTPUT 이다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-05",
+            "result": "EVIDENCE_PENDING",
+            "evidence": "CMP-JUDGE 는 내부 상태가 없어 이전 실행 결과에 의존하지 않는다. 그러나 세 구성요소를 '한 실행 안에서 순서대로 끝낸다'는 전제는 실행 구조에 달려 있다. control_flow 가 call 이 아닌 data 이고 세 구성요소의 trigger·주기가 모두 unknown(구조 지표 execution_unknown)이라, 구조만으로는 같은 실행·같은 시점 값을 보장한다고 판단할 수 없다. 실행 구조 결정과 연속 2회 입력 시험이 필요하다.",
+            "by": "ai"
+          }
+        ],
+        "preferences": [
+          {
+            "driver": "DRV-06",
+            "rating": "high",
+            "rationale": "판정 규칙이 입출력과 분리된 CMP-JUDGE 에 있어 입출력 없이 독립 시험할 수 있다. 구성요소 사이 신호는 5개로 ARC-C 와 같고 ARC-B 보다 1개 많다. 입력 취득과 출력을 따로 나누는 것은 판정 시험성에는 추가 이득이 없고 구성요소만 늘린다.",
+            "by": "ai"
+          }
+        ],
+        "summary": "장점은 취득·판정·출력의 책임 경계가 가장 명확하다는 것이다(AUTO-01). 데이터 흐름이 단방향이고 판정 규칙을 독립 시험할 수 있어 DRV-06 에 직접 부합한다. 단점은 신호 4개짜리 기능에 구성요소 3개와 연결 5개가 필요해 구조 비용이 크고(DEC-07), 판정 로직과 직접 관련 없는 입력/출력 분리의 이득이 작다는 것이다. 위험은 DRV-05 와 관련해 control_flow 가 data 이고 실행 주기·trigger 가 미정이라 한 실행 안에서 끝낸다는 전제가 구조로 보장되지 않는다는 점이다. 입력 취득에서 속도 범위를 제한하면 REQ-SBR-01-5 를 위반할 수 있다. CPU·RAM·Stack·WCET 는 측정 필요(12개 항목)이며 단계 사이 지연도 측정 전에는 알 수 없다.",
+        "candidate_hash": "sha256:882fcc46bce55825dce5b616625166640104f775b3449a632e44df783ddf35e4"
+      },
+      "ARC-B": {
+        "hard": [
+          {
+            "driver": "DRV-01",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-1 이 CMP-SBR_CTRL 에 할당되어 있고, 책임에 현재 입력으로 경고 조건 판정 후 warning_cmd 출력이 포함된다. 경계값 동작은 상세설계와 시험에서 확인한다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-02",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-2 가 CMP-SBR_CTRL 에 할당되어 있고, 판정 책임에 포함된다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-03",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-5 가 CMP-SBR_CTRL 에 할당되어 있다. 입력이 외부에서 직접 들어오고 구성요소 사이 전달이 없어 중간 단계에서 속도 값이 제한될 구조적 경로는 없다. 신호 표의 max 200 과 201 km/h 입력 시험 기준의 불일치는 구현 시 확인해야 한다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-04",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-3 이 CMP-SBR_CTRL 에 할당되어 있고, 책임에 초기화 시 warning_cmd = FALSE 설정이 명시되어 있다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-05",
+            "result": "SATISFIED",
+            "evidence": "단일 구성요소가 한 실행 안에서 취득 → 판정 → 출력을 끝내고(order 명시) 내부 상태가 없다. 구성요소 사이 전달이 없어 실행 경계가 어긋날 구조적 경로가 없다. 호출 주기는 미정이나 DRV-05 판단에는 영향이 없다.",
+            "by": "ai"
+          }
+        ],
+        "preferences": [
+          {
+            "driver": "DRV-06",
+            "rating": "low",
+            "rationale": "취득·판정·출력이 한 구성요소에 있어 구조 수준에서 판정 규칙을 입출력과 분리해 시험할 수 없다. 내부 함수 분리는 상세설계에서 가능하나 현재 구조의 근거로는 인정하기 어렵다. 인터페이스 수는 가장 적다(연결 4개).",
+            "by": "ai"
+          }
+        ],
+        "summary": "장점은 구성요소 사이 신호와 제어 연결이 없어 구조·통합 시험·구현 작업량이 가장 작고, DRV-05 의 한 실행 완결이 구조적으로 가장 분명하다는 것이다. 단점은 DRV-06 선호를 구조로 충족하지 못하고 한 구성요소에 취득·판정·출력이 섞여 AUTO-01 책임 명확성이 약하다는 것이다. 위험은 입력 신호·판정 조건이 늘면 구성요소를 다시 나눠야 하고 입출력 변경이 판정 로직에 영향을 줄 수 있다는 점이다. 현재 기능 규모에서는 단순성이 큰 이점이다. CPU·RAM·Stack·WCET 는 측정 필요(4개 항목)이다.",
+        "candidate_hash": "sha256:a4553563c5fdbb89ca9260119494f79d1ae0983144777c7845298e019844a9b4"
+      },
+      "ARC-C": {
+        "hard": [
+          {
+            "driver": "DRV-01",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-1 이 CMP-WARNING_JUDGE 에 할당되어 있고, 책임에 10~200 km/h 구간과 탑승·착용 조건 평가가 명시되어 있다. 출력은 CMP-IO_HANDLER 가 warning_cmd 로 수행한다. 경계값 동작은 상세설계와 시험에서 확인한다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-02",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-2 가 CMP-WARNING_JUDGE 에 할당되어 있고, 책임에 10 km/h 미만과 비탑승·착용 조건이 포함된다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-03",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-5 가 CMP-WARNING_JUDGE 에 할당되어 있고 책임에 200 km/h 초과 구간이 명시되어 있다. 주의: CMP-IO_HANDLER 가 입력을 취득하므로 201·255 km/h 를 200 으로 제한하지 않고 판정에 전달해야 한다. 신호 표의 max 200 과의 불일치는 인터페이스 단계에서 확인해야 한다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-04",
+            "result": "SATISFIED",
+            "evidence": "REQ-SBR-01-3 이 CMP-IO_HANDLER 에 할당되어 있고, 책임에 초기화 시 warning_cmd = FALSE 설정이 명시되어 있다. warning_cmd 의 소유자도 CMP-IO_HANDLER 이다.",
+            "by": "ai"
+          },
+          {
+            "driver": "DRV-05",
+            "result": "SATISFIED",
+            "evidence": "CMP-IO_HANDLER 가 한 실행 안에서 취득 → 판정 호출 → 출력을 이 순서로 끝내고, control_flow 가 call 이므로 실행 경계가 호출 구조로 묶인다. CMP-WARNING_JUDGE 는 내부 상태가 없다. 호출 주기는 미정이나 실행 단위 정합성에는 영향이 없다. ARC-A 와 달리 이 구조로 충분히 판단할 수 있다.",
+            "by": "ai"
+          }
+        ],
+        "preferences": [
+          {
+            "driver": "DRV-06",
+            "rating": "high",
+            "rationale": "판정 규칙이 상태 없는 CMP-WARNING_JUDGE 에 분리되어 입출력 없이 독립 시험할 수 있다. 구성요소는 2개이고 구성요소 사이 신호는 5개로 ARC-A 와 같으며 ARC-B 보다 1개 많다. 판정 시험성을 얻으면서 구성요소 수는 ARC-A 보다 적어 선호의 조건에 가장 가깝다.",
+            "by": "ai"
+          }
+        ],
+        "summary": "장점은 판정 규칙을 분리해 DRV-06 을 충족하고 구성요소를 2개로 유지한다는 것이다. 호출 구조로 DRV-05 의 한 실행 완결이 ARC-A 보다 분명하며 입출력 방식 변경이 판정에 퍼지지 않는다. 단점은 CMP-IO_HANDLER 가 취득과 출력 두 책임을 갖는 점이다. AUTO-01 의 책임 분리는 ARC-A 보다 약하고, ARC-B 보다 인터페이스와 통합 시험 대상이 늘어난다. 위험은 CMP-IO_HANDLER 가 호출 순서를 쥐고 비대해질 수 있다는 점과 입력 취득에서 속도 값을 제한할 가능성이다. CPU·RAM·Stack·WCET 는 측정 필요(8개 항목)이다.",
+        "candidate_hash": "sha256:35f8c2e2f06e506575ef08e16d794600fd6bad14c05d04cba6b8fce83fc01a24"
+      }
+    },
+    "ranking": {
+      "recommended": "ARC-A",
+      "basis": "필수 제약을 어기지 않은 후보 가운데 선호 조건 등급(낮음 1·보통 2·높음 3)을 가중치로 평균한 값이 가장 큰 후보 — 설명용 비교이며 성능·안전 평가가 아니다",
+      "sensitive": false,
+      "sensitivity": [],
+      "candidates": [
+        {
+          "id": "ARC-A",
+          "status": "EVIDENCE_PENDING",
+          "relative": 3
+        },
+        {
+          "id": "ARC-B",
+          "status": "SATISFIED",
+          "relative": 1
+        },
+        {
+          "id": "ARC-C",
+          "status": "SATISFIED",
+          "relative": 3
+        }
+      ]
+    },
+    "selected": "ARC-A",
+    "selection_reason": "추천 후보 선택",
+    "differs_from_recommendation": false,
+    "accepted_cons": [
+      "신호가 4개뿐인 기능에 비해 구성요소와 인터페이스(구성요소 사이 신호 1개 포함)가 늘어난다.",
+      "통합 시험 대상이 늘고 단계 사이 호출 비용이 생긴다."
+    ],
+    "readiness": [
+      {
+        "item": "functional_completeness",
+        "status": "sufficient",
+        "note": "잎 요구사항 5개(REQ-SBR-01-1~5)가 경고 켜짐, 경고 꺼짐, 초기화, 실행마다 재계산, 200 km/h 초과를 모두 다룬다. 속도 구간(10 미만 / 10~200 / 200 초과)에 빈틈과 겹침이 없다.",
+        "by": "ai"
+      },
+      {
+        "item": "sw_boundary",
+        "status": "sufficient",
+        "note": "SW 의 책임은 warning_cmd 출력까지다. 신호 표에 따라 warning_cmd 는 경고등 자체가 아니라 경고등을 켜는 명령이다. 경고등 구동과 입력 신호 생성은 SW 밖이다.",
+        "by": "ai"
+      },
+      {
+        "item": "interfaces",
+        "status": "sufficient",
+        "note": "요구사항 신호 표 4개",
+        "by": "fixed"
+      },
+      {
+        "item": "execution",
+        "status": "sufficient",
+        "note": "REQ-SBR-01-3 은 이벤트 기반(초기화 시), REQ-SBR-01-4 는 실행 기반(판단 1회마다 재계산)이다. 시간(ms) 요구사항이 없으므로 실행 주기를 정하지 않아도 논리 구조를 만들 수 있다.",
+        "by": "ai"
+      },
+      {
+        "item": "safety",
+        "status": "not_applicable",
+        "note": "안전등급 QM 이고 안전 요구사항이나 독립 감시 요구가 없다. 등급은 변경하지 않는다.",
+        "by": "ai"
+      },
+      {
+        "item": "resources",
+        "status": "unknown",
+        "note": "CPU·RAM·Stack·WCET 는 측정 전이다. 값을 쓰지 않고 '측정 필요'로 남긴다.",
+        "by": "ai"
+      },
+      {
+        "item": "priorities",
+        "status": "insufficient",
+        "note": "선호 조건의 비중(프로젝트 기본값)을 아직 확인하지 않음 — 설계 기준을 확정하세요",
+        "by": "fixed"
+      }
+    ],
+    "asr": [
+      {
+        "requirement": "REQ-SBR-01",
+        "significant": false,
+        "affects": [],
+        "reason": "하위 요구사항을 묶는 상위 기능이다. 구조 결정은 잎 요구사항이 정한다."
+      },
+      {
+        "requirement": "REQ-SBR-01-1",
+        "significant": true,
+        "affects": [
+          "structure",
+          "interface"
+        ],
+        "reason": "세 입력 신호를 모두 읽고 warning_cmd 를 켜는 핵심 판정이다. 입력·출력 인터페이스와 판정 책임을 정한다."
+      },
+      {
+        "requirement": "REQ-SBR-01-2",
+        "significant": false,
+        "affects": [],
+        "reason": "REQ-SBR-01-1 과 상보적인 판정 조건이다. 같은 판정 책임 안에서 처리하며 새 구조를 요구하지 않는다."
+      },
+      {
+        "requirement": "REQ-SBR-01-3",
+        "significant": true,
+        "affects": [
+          "execution",
+          "structure"
+        ],
+        "reason": "초기화 이벤트에서 출력 초기값을 보장해야 한다. 초기화 책임이 어느 구성요소에 있는지 정해야 한다."
+      },
+      {
+        "requirement": "REQ-SBR-01-4",
+        "significant": true,
+        "affects": [
+          "structure",
+          "execution"
+        ],
+        "reason": "실행마다 현재 입력만으로 재계산하므로 이전 실행 값을 쓰는 내부 상태(래치·디바운스)가 없다. 판정은 상태 없는 구조로 둔다."
+      },
+      {
+        "requirement": "REQ-SBR-01-5",
+        "significant": true,
+        "affects": [
+          "interface"
+        ],
+        "reason": "신호 표의 최대값(200 km/h)을 넘는 입력도 판정 입력으로 들어올 수 있다. 판정이 범위 밖 값을 받는다는 점이 입력 인터페이스 계약에 영향을 준다."
+      }
+    ],
+    "change_requests": [],
+    "open_items": [
+      {
+        "id": "Q-01",
+        "topic": "interface",
+        "resolution": "DEFERRED",
+        "statement": "입력·출력 신호의 자료형 정의(신호 표의 type 이 비어 있음).",
+        "related": [
+          "REQ-SBR-01-1",
+          "REQ-SBR-01-2",
+          "REQ-SBR-01-5"
+        ],
+        "element": "FN-01 입력 인터페이스, FN-03 출력 인터페이스",
+        "stage": "interface",
+        "blocking": true,
+        "assumption": "",
+        "decision": "",
+        "answer": "",
+        "resolved": ""
+      },
+      {
+        "id": "Q-02",
+        "topic": "execution_timing",
+        "resolution": "DEFERRED",
+        "statement": "판단 기능의 호출 주기와 스케줄링.",
+        "related": [
+          "REQ-SBR-01-4"
+        ],
+        "element": "판정 실행 단위의 호출 주기",
+        "stage": "detail_design",
+        "blocking": false,
+        "assumption": "",
+        "decision": "",
+        "answer": "",
+        "resolved": ""
+      },
+      {
+        "id": "Q-03",
+        "topic": "resource",
+        "resolution": "DEFERRED",
+        "statement": "CPU·RAM·Stack·WCET 값(측정 필요).",
+        "related": [
+          "REQ-SBR-01-4"
+        ],
+        "element": "경고 판정 실행 단위의 자원 사용",
+        "stage": "test_execution",
+        "blocking": false,
+        "assumption": "",
+        "decision": "",
+        "answer": "",
+        "resolved": ""
+      },
+      {
+        "id": "Q-04",
+        "topic": "function_decomposition",
+        "resolution": "DESIGN_DECISION",
+        "statement": "기능 분해와 구성요소 구성 방식.",
+        "related": [
+          "REQ-SBR-01-1",
+          "REQ-SBR-01-2",
+          "REQ-SBR-01-3",
+          "REQ-SBR-01-4",
+          "REQ-SBR-01-5"
+        ],
+        "element": "",
+        "stage": "",
+        "blocking": false,
+        "assumption": "",
+        "decision": "입력 취득(FN-01), 판정(FN-02), 출력 및 초기화(FN-03)의 세 책임으로 나눈 단방향 흐름을 기본 제안으로 한다(AUTO-P-PIPELINE). 신호가 4개뿐이고 내부 상태가 없으므로, 후보 중에는 단일 구성요소(AUTO-P-INTEGRATED)도 함께 비교한다. 판정 기능은 내부 상태 없이 입력에서 결과를 내는 구조로 둔다. 구성요소 수는 인터페이스 수가 늘지 않는 선에서 후보 단계에서 정한다(DEC-07).",
+        "answer": "",
+        "resolved": ""
+      },
+      {
+        "id": "Q-05",
+        "topic": "execution_timing",
+        "resolution": "DESIGN_DECISION",
+        "statement": "한 번의 판단 실행 안에서의 처리 순서.",
+        "related": [
+          "REQ-SBR-01-4"
+        ],
+        "element": "",
+        "stage": "",
+        "blocking": false,
+        "assumption": "",
+        "decision": "한 번의 판단 실행 안에서 입력 취득 → 판정 → 출력을 이 순서로 모두 끝내는 구조를 제안한다. 단계 사이에 별도 실행 주기나 지연을 두지 않아 REQ-SBR-01-4 의 실행 기반 기준을 충족한다. 시간(ms) 수치는 요구사항에 없으므로 만들지 않는다.",
+        "answer": "",
+        "resolved": ""
+      }
+    ],
+    "unknowns": [
+      "설계 입력 자원 제약(MCU·RAM 등): 미확인 — CPU·RAM·Stack·WCET 는 측정 전이다. 값을 쓰지 않고 '측정 필요'로 남긴다.",
+      "설계 입력 설계 우선순위(비교 기준): 부족 — 선호 조건의 비중(프로젝트 기본값)을 아직 확인하지 않음 — 설계 기준을 확정하세요",
+      "신호 자료형이 정해지지 않았다(Q-01, 인터페이스 정의 승인 전 필요).",
+      "판단 실행의 호출 주기와 스케줄링은 상세설계에서 정한다(Q-02).",
+      "CPU·RAM·Stack·WCET 는 대상 환경에서 측정이 필요하다(Q-03).",
+      "구성요소 사이 판정 결과 신호의 이름과 자료형은 인터페이스 단계에서 정한다.",
+      "자원 예산 12건 측정 필요",
+      "CMP-INPUT 실행 구조 미정",
+      "CMP-JUDGE 실행 구조 미정",
+      "CMP-OUTPUT 실행 구조 미정"
+    ],
+    "approval": "conditional",
+    "pending_evidence": {
+      "drivers": [
+        "DRV-05"
+      ],
+      "plan": "구현·시험 뒤 검증 계획에서 증거 확보(실측 시간·자원, 안전 분석) — 증거가 나오면 구조를 다시 확인",
+      "plan_default": false
+    },
+    "note": "ADD·ATAM·NASA Decision Analysis·ASPICE SWE.2 의 원리를 참고한 VeriXera 절차의 기록이다. 그 방법론을 수행했다는 주장이 아니며, 등급은 AI·사람의 정성 판단이다."
+  },
+  "rule_profile_hash": "sha256:b56d981f7c9d3283a6b708c7df2a67a011cabb71113d5ae83c586439cacd93ee",
+  "architecture_hash": "sha256:61af3d3c2e7e2424eb7fde374de88aef9814569e29a83a23a786a345f01fee41"
+}

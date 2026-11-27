@@ -1,0 +1,226 @@
+{
+  "schema": "requirement-set-check/v1",
+  "id": "SETCHECK-20261126T173847Z-fc2e",
+  "created_at": "2026-11-26T17:38:47.642Z",
+  "requested_by": "HJ",
+  "agent": {
+    "role": "requirements-set-check",
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "usage": {
+      "input": 38363,
+      "output": 8424
+    }
+  },
+  "inputs": {
+    "conversation": false,
+    "writer_notes": false,
+    "signals": 4
+  },
+  "prompt_hash": "sha256:af4f8aeb41bb7bd33f42f630534080715a249421a5d77377b1e1b9e7dd9c4353",
+  "output_hash": "sha256:4ac79dcb6811ea514558eacf57c239b7f0bda49a94f785af4b6b3ad066c7026d",
+  "requirements": [
+    {
+      "id": "REQ-SBR-01",
+      "content_hash": "sha256:c9fd0cc6b32fb7340bac83ec9591761901bfe378b9e7da0c04213c3d41a17131"
+    },
+    {
+      "id": "REQ-SBR-01-1",
+      "content_hash": "sha256:c310e3c4329201f78992f3b34d3f5dc0f15f5adc8d0dd3ddad6d614d9ee25d83",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-2",
+      "content_hash": "sha256:dea14b072cd5595805064755f964383bcc4b0a54fdddeb0d616b1364faaefba8",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-3",
+      "content_hash": "sha256:a74741e6055d8043b192fbaabf130416cd44907206481501be0231a427491aa2",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-4",
+      "content_hash": "sha256:9cbed76d928e08fd3337a2a1df3568ef54aa305a511cbb7dfb21abfff4a673c1",
+      "parent": "REQ-SBR-01"
+    },
+    {
+      "id": "REQ-SBR-01-5",
+      "content_hash": "sha256:700e6b531d088da9f788f6e5d3884dea78393e386f73565240474ae585d14069",
+      "parent": "REQ-SBR-01"
+    }
+  ],
+  "pending": [],
+  "policy": "check-issues/v1",
+  "input_fingerprint": "sha256:0fafdbe7e3a2adf9cc78678a90bb7ad39b72e53523b29c1cb2de2c1b124a0a70",
+  "characteristics": [
+    {
+      "id": "C10",
+      "name": "완전성",
+      "verdict": "partial",
+      "summary": "핵심 입출력 조건은 빠짐없이 정의되어 있다. vehicle_speed 는 10 km/h 미만, 10~200 km/h, 200 km/h 초과 구간이 모두 다뤄진다. 해제 조건은 즉시 해제(상태 기반)이고, warning_cmd 초기값은 REQ-SBR-01-3 으로 정해져 있다. 응답 기준은 판단 실행 단위(실행 기반)여서 ms 수치가 없어도 논리 검증이 가능하다. 다만 초기화 직후의 출력과 최초 판단 실행의 결과가 어떤 관계인지가 문장상 분명하지 않다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-SBR-01-3",
+            "REQ-SBR-01-1",
+            "REQ-SBR-01-4"
+          ],
+          "text": "REQ-SBR-01-3 은 초기화 시 warning_cmd 를 FALSE 로 설정하라고 한다. 반면 REQ-SBR-01-1 과 REQ-SBR-01-4 는 입력 조건이 성립하면 TRUE 로 정하라고 한다. 초기화 시점에 이미 입력 조건이 성립해 있으면 어느 쪽이 먼저인지 문장만으로는 구분되지 않는다. 판단 실행 단위로 읽으면 대체로 해석할 수 있어 개발을 막지는 않는다.",
+          "suggestion": "초기화 직후에는 최초 판단 실행 전까지 FALSE 를 유지하고, 최초 판단 실행부터는 REQ-SBR-01-1·01-2·01-5 에 따라 정해진다고 명시한다. 새로운 시간 값은 필요하지 않다.",
+          "fixes": [
+            {
+              "requirement": "REQ-SBR-01-3",
+              "text": "WHEN 안전벨트 경고 제어기가 초기화되면, 안전벨트 경고 제어기는 최초 판단 실행 전까지 warning_cmd 를 FALSE 로 설정해야 한다.",
+              "acceptance_criteria": [
+                "초기화 직후 warning_cmd = FALSE",
+                "초기화 후 최초 판단 실행 전까지 warning_cmd = FALSE",
+                "최초 판단 실행에서는 REQ-SBR-01-1, REQ-SBR-01-2, REQ-SBR-01-5 에 따라 warning_cmd 가 정해짐"
+              ],
+              "open": [],
+              "ears_type": "Event-driven",
+              "quality": {
+                "violations": [],
+                "review": [],
+                "checked": "quality-rules/v1"
+              }
+            }
+          ],
+          "rule": "C10.priority",
+          "class": "improvement",
+          "blocking": false,
+          "key": "C10.priority|REQ-SBR-01-1,REQ-SBR-01-3,REQ-SBR-01-4",
+          "basis": "9d1a1049fbdc703d"
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "일관성",
+      "verdict": "partial",
+      "summary": "요구사항끼리 충돌하는 쌍은 없다. REQ-SBR-01-1, 01-2, 01-5 는 조건이 서로 겹치지 않으면서 전체 입력 구간을 덮는다. 단위(km/h)와 용어도 일관된다. 다만 신호 표의 vehicle_speed 범위(max=200)가 REQ-SBR-01-5 와 수용 기준(201, 255 km/h)과 어긋나고, REQ-SBR-01-4 가 다른 요구사항과 일부 겹친다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-SBR-01-5",
+            "REQ-SBR-01-1",
+            "REQ-SBR-01-2"
+          ],
+          "text": "신호 표는 vehicle_speed 의 유효 범위를 min=0, max=200 km/h 로 정의한다. 그런데 REQ-SBR-01-5 와 그 수용 기준은 200 km/h 를 넘는 값(201, 255 km/h)이 입력되는 경우를 다룬다. 200 km/h 초과 값이 정상 입력 범위 안의 값인지, 범위 밖(무효) 값인지 정해져 있지 않다. 신호 표와 요구사항 중 어느 쪽이 맞는지도 불분명하다.",
+          "suggestion": "신호 표의 max 를 실제 신호 범위에 맞게 고치거나(예: 255 km/h 까지 표현 가능하다면 그 값, 결정 필요), 200 km/h 초과를 '범위 밖 입력'으로 규정하고 그 처리 방침(warning_cmd = FALSE 유지가 의도인지)을 사람이 확인한다. 요구사항 문장은 이 결정 이후에 맞춘다.",
+          "rule": "C11.conflict",
+          "class": "needs_confirmation",
+          "blocking": false,
+          "key": "C11.conflict|REQ-SBR-01-1,REQ-SBR-01-2,REQ-SBR-01-5",
+          "basis": "0f0371e301270b25"
+        },
+        {
+          "requirements": [
+            "REQ-SBR-01-4",
+            "REQ-SBR-01-1",
+            "REQ-SBR-01-2",
+            "REQ-SBR-01-5"
+          ],
+          "text": "REQ-SBR-01-1, 01-2, 01-5 는 입력 조합마다 warning_cmd 값을 이미 정한다. REQ-SBR-01-4 는 '판단 실행마다 현재 입력으로 다시 정한다'는 내용이라 이 셋과 일부 겹친다. 이전 TRUE 가 유지(래치)되지 않음을 명시하는 가치는 있고, 지금 명세로도 개발과 검증은 가능하다.",
+          "suggestion": "REQ-SBR-01-4 는 '이전 출력과 무관하게 현재 실행의 입력만으로 출력이 정해진다'는 비유지 요구로 남기고, 값 결정 조건은 REQ-SBR-01-1·01-2·01-5 에만 둔다. 같은 조건을 두 곳에서 표현하지 않는지 확인한다.",
+          "rule": "C11.duplicate",
+          "class": "improvement",
+          "blocking": false,
+          "key": "C11.duplicate|REQ-SBR-01-1,REQ-SBR-01-2,REQ-SBR-01-4,REQ-SBR-01-5",
+          "basis": "761b59a5703b33b7"
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "실현 가능성",
+      "verdict": "pass",
+      "summary": "세트 전체를 함께 만족시키지 못하는 시간·성능·자원 요구 조합이 없다. 요구사항들은 서로 다른 입력 조건 구간을 다루며 같은 출력에 대해 모순되지 않는다.",
+      "issues": []
+    },
+    {
+      "id": "C13",
+      "name": "이해 가능성",
+      "verdict": "partial",
+      "summary": "상위 REQ-SBR-01 아래 하위 5개로 구조가 분명하고 용어도 통일되어 있다. 다만 신호 표에 자료형·단위 정의가 비어 있는 항목이 있다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-SBR-01-1",
+            "REQ-SBR-01-2",
+            "REQ-SBR-01-4"
+          ],
+          "text": "신호 표에서 passenger_occupied, seatbelt_buckled, warning_cmd 의 자료형과 단위가 '?' 로 남아 있다. 입력 신호 3개는 초기값도 비어 있다. 요구사항 본문에서 TRUE/FALSE 의미는 설명되어 있어 해석에는 지장이 없지만, 신호 정의서로는 불완전하다.",
+          "suggestion": "세 신호의 자료형을 논리값(Boolean)으로 정리하고, 단위는 해당 없음으로 표기한다. 입력 신호의 초기값이 필요한지는 사람이 확인한다.",
+          "rule": "other",
+          "class": "improvement",
+          "blocking": false,
+          "key": "other|REQ-SBR-01-1,REQ-SBR-01-2,REQ-SBR-01-4",
+          "basis": "9638324c2f80be30"
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "name": "타당성 확인 가능성",
+      "verdict": "pass",
+      "summary": "구현 수준 요구사항 5개 모두 직접 시험할 수 있는 입력 조합과 기대값(수용 기준)을 갖고 있다. 경계값(9, 10, 11, 200, 201 km/h)도 포함된다. 상위 요구사항은 하위 요구사항의 시험으로 충족을 확인하는 방식이 타당하다.",
+      "issues": []
+    },
+    {
+      "id": "C15",
+      "name": "정확성",
+      "verdict": "pass",
+      "summary": "상위 요구사항 '동승석 안전벨트 미착용 경고 기능'과 하위 요구사항의 방향이 일치하고, 어긋나는 내용은 없다. 다만 기준값의 출처는 제공된 정보만으로 확인할 수 없다.",
+      "issues": [
+        {
+          "requirements": [
+            "REQ-SBR-01-1",
+            "REQ-SBR-01-2",
+            "REQ-SBR-01-5"
+          ],
+          "text": "10 km/h 와 200 km/h 라는 경고 활성 속도 기준이 상위 니즈에서 온 값인지 확인할 정보가 주어지지 않았다. 출처가 '교육용 예제(가상 니즈)'라고만 되어 있어 니즈 내용과 대조할 수 없다. 값을 임의로 판단하지 않는다.",
+          "suggestion": "니즈 문서에서 10 km/h 와 200 km/h 기준의 근거를 확인해 추적 정보로 남긴다.",
+          "rule": "C15.source",
+          "class": "not_assessable",
+          "blocking": false,
+          "key": "C15.source|REQ-SBR-01-1,REQ-SBR-01-2,REQ-SBR-01-5",
+          "basis": "0f0371e301270b25"
+        }
+      ]
+    }
+  ],
+  "strategies": [
+    {
+      "requirement": "REQ-SBR-01",
+      "strategy": "via_children",
+      "reason": "상위 요구사항은 기능의 목적을 정하고, 하위 요구사항 REQ-SBR-01-1~01-5 의 수용 기준 시험으로 충족을 확인한다."
+    }
+  ],
+  "dropped": [],
+  "incremental": null,
+  "decisions_used": 0,
+  "decisions": {},
+  "counts": {
+    "pass": 3,
+    "partial": 3,
+    "fail": 0,
+    "none": 0,
+    "issues": 5
+  },
+  "gate": {
+    "ok": true,
+    "counts": {
+      "must_fix": 0,
+      "needs_confirmation": 1,
+      "improvement": 3,
+      "reviewed": 0,
+      "not_applicable": 0,
+      "not_assessable": 1,
+      "deferred": 0,
+      "blocking": 0,
+      "satisfied": 3
+    }
+  },
+  "passed": true
+}

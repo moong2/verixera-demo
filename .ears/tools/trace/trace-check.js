@@ -17,7 +17,8 @@ const { execFileSync } = require("node:child_process");
 const baselineApi = require("../../webapp/baseline.js");
 const notVerified = require("./not-verified.js");
 
-const TAGS = ["design", "satisfies", "implements", "testcase", "verifies", "trace-exempt", "oracle-unresolved", "signal"];
+// unit: 함수가 속한 설계 유닛(U-…). level·target: 시험의 검증 수준(unit|integration|software)과 대상(U-… | CON-<신호> | CMP-… | SW) — 설계 경계 T15·T17
+const TAGS = ["design", "satisfies", "implements", "testcase", "verifies", "trace-exempt", "oracle-unresolved", "signal", "unit", "level", "target"];
 // 뒤에 오는 글 전체를 사유 하나로 읽는 태그.
 const REASON_TAGS = new Set(["trace-exempt", "oracle-unresolved"]);
 // 태그 뒤에는 빈칸·콜론·줄 끝만 온다. "신호 선언(@signal)은" · "`@signal`" 처럼 문장 속에서 태그 이름을 말한 것은 태그가 아니다.
@@ -77,7 +78,7 @@ function parseRef(token) {
 // ───────────────────────── C 함수 정의 찾기 ─────────────────────────
 
 // 주석·문자열·전처리 줄을 같은 길이의 공백으로 바꾼다(줄 번호 유지).
-function blankNonCode(src) {
+function blankNonCode(src, keepDirectives = false) {
   const out = src.split("");
   const blank = (from, to) => { for (let k = from; k < to; k++) if (out[k] !== "\n") out[k] = " "; };
   let i = 0;
@@ -92,7 +93,7 @@ function blankNonCode(src) {
       while (e < src.length && src[e] !== c && src[e] !== "\n") e += src[e] === "\\" ? 2 : 1;
       blank(i, Math.min(e + 1, src.length)); i = e + 1; continue;
     }
-    if (c === "#" && lineStart) {
+    if (!keepDirectives && c === "#" && lineStart) {
       let e = i;
       for (;;) { let n = src.indexOf("\n", e); if (n < 0) { e = src.length; break; } if (src[n - 1] === "\\" || (src[n - 1] === "\r" && src[n - 2] === "\\")) { e = n + 1; continue; } e = n; break; }
       blank(i, e); i = e; continue;
@@ -161,13 +162,14 @@ function scanCFunctions(src) {
 // 반환: { units: [{ name, startLine, endLine, implements, exempt }], orphans: [태그] }
 function cUnits(text) {
   const funcs = scanCFunctions(text);
-  const units = funcs.map((f) => ({ name: f.name, startLine: f.startLine, endLine: f.endLine, implements: [], exempt: null }));
+  const units = funcs.map((f) => ({ name: f.name, startLine: f.startLine, endLine: f.endLine, implements: [], exempt: null, unit: null }));
   const orphans = [];
   for (const t of parseTags(text)) {
-    if (t.tag !== "implements" && t.tag !== "trace-exempt") continue;
+    if (t.tag !== "implements" && t.tag !== "trace-exempt" && t.tag !== "unit") continue;
     const u = units.find((x) => t.line <= x.endLine);
     if (!u) { orphans.push(t); continue; }
     if (t.tag === "implements") u.implements.push(...t.args);
+    else if (t.tag === "unit") u.unit = t.args[0] || "";
     else u.exempt = t.args[0] || "";
   }
   return { units, orphans };
@@ -175,9 +177,15 @@ function cUnits(text) {
 
 // ───────────────────────── 산출물 수집 ─────────────────────────
 
-function collect(root, opts) {
+function* workingDesignDocuments(root, dirs) {
+  for (const dir of dirs) for (const file of walk(path.join(root, dir))) {
+    yield { path: path.relative(root, file).split(path.sep).join("/"), content: fs.readFileSync(file, "utf8") };
+  }
+}
+
+function collect(root, opts, designDocuments) {
   const rel = (f) => path.relative(root, f).split(path.sep).join("/");
-  const model = { designs: new Map(), tests: new Map(), units: [], untraced: [], exempt: [], problems: [], signalRefs: [] };
+  const model = { designs: new Map(), tests: new Map(), units: [], untraced: [], exempt: [], problems: [], signalRefs: [], codeFiles: [] };
   const problem = (rule, message, where) => model.problems.push({ rule, message, where });
 
   const declare = (map, kind, prefix, id, file, line) => {
@@ -190,10 +198,9 @@ function collect(root, opts) {
   };
 
   // 설계 문서: @design 다음의 @satisfies 가 그 설계 항목에 속한다.
-  for (const dir of opts.design) for (const full of walk(path.join(root, dir))) {
-    const file = rel(full);
+  for (const { path: file, content } of designDocuments ?? workingDesignDocuments(root, opts.design)) {
     let cur = null;
-    for (const t of parseTags(fs.readFileSync(full, "utf8"))) {
+    for (const t of parseTags(content)) {
       if (t.tag === "design") cur = declare(model.designs, "design", "SWD-", t.args[0], file, t.line);
       else if (t.tag === "satisfies") {
         if (!cur) problem("T5", "@satisfies 앞에 @design 이 없음", `${file}:${t.line}`);
@@ -210,20 +217,22 @@ function collect(root, opts) {
   for (const dir of opts.code) for (const full of walk(path.join(root, dir))) {
     const file = rel(full);
     const text = fs.readFileSync(full, "utf8");
-    const tags = parseTags(text).filter((t) => t.tag === "implements" || t.tag === "trace-exempt");
+    const tags = parseTags(text).filter((t) => t.tag === "implements" || t.tag === "trace-exempt" || t.tag === "unit");
     if (!C_EXT.has(path.extname(full).toLowerCase())) {
       const ids = tags.filter((t) => t.tag === "implements").flatMap((t) => t.args);
       if (ids.length) model.units.push({ file, func: null, line: tags[0].line, implements: ids });
       continue;
     }
+    model.codeFiles.push({ file, source: text });
     const { units, orphans } = cUnits(text);
     for (const t of orphans) problem("T5", `@${t.tag} 뒤에 함수 정의가 없음`, `${file}:${t.line}`);
     for (const f of units) {
-      if (f.implements.length) model.units.push({ file, func: f.name, line: f.startLine, implements: f.implements });
+      const u = f.unit !== null ? { unit: f.unit } : {};
+      if (f.implements.length) model.units.push(Object.assign({ file, func: f.name, line: f.startLine, implements: f.implements }, u));
       else if (f.exempt !== null) {
         if (!f.exempt) problem("T6", `${f.name}(): @trace-exempt 에 사유가 없음`, `${file}:${f.startLine}`);
-        model.exempt.push({ file, func: f.name, line: f.startLine, reason: f.exempt });
-      } else model.untraced.push({ file, func: f.name, line: f.startLine });
+        model.exempt.push(Object.assign({ file, func: f.name, line: f.startLine, reason: f.exempt }, u));
+      } else model.untraced.push(Object.assign({ file, func: f.name, line: f.startLine }, u));
     }
   }
 
@@ -236,6 +245,9 @@ function collect(root, opts) {
       else if (t.tag === "verifies") {
         if (!cur) problem("T5", "@verifies 앞에 @testcase 가 없음", `${file}:${t.line}`);
         else for (const a of t.args) cur.links.push(Object.assign(parseRef(a), { line: t.line }));
+      } else if (t.tag === "level" || t.tag === "target") {
+        if (!cur) problem("T5", `@${t.tag} 앞에 @testcase 가 없음`, `${file}:${t.line}`);
+        else cur[t.tag] = { value: t.args[0] || "", line: t.line };
       } else if (t.tag === "oracle-unresolved") {
         // 기대값 미확정: 요구사항(수용 기준)만으로 기대 결과를 정할 수 없는 시험. 사유를 적어야 하고, 사람이 확정할 때까지 검증으로 치지 않는다.
         if (!cur) problem("T5", "@oracle-unresolved 앞에 @testcase 가 없음", `${file}:${t.line}`);
@@ -313,7 +325,7 @@ function check(baseline, model, results, env) {
   for (const s of signalTable.values()) {
     if (signalSeen.has(s.name)) continue;
     const designed = (s.requirements || []).filter((id) => designsByReq.has(id));
-    if (designed.length) err("T12", `신호 ${s.name}@v${s.version}: 이 신호를 쓰는 요구사항(${designed.join(", ")})의 설계가 있는데 설계 문서에 @signal ${s.name}@v${s.version} 선언이 없음`);
+    if (designed.length) err("T12", `신호 ${s.name}@v${s.version}: 이 신호를 쓰는 요구사항(${designed.join(", ")})의 설계가 있는데 설계 문서에 @signal ${s.name}@v${s.version} 선언이 없음 — 신호 표를 고정하기 전에 만든 설계라면, 'AI 생성'에서 ${designed.join(", ")} 의 코드를 다시 생성하면 설계 문서에 선언이 더해진다(직접 고치려면 설계 문서에 이 선언을 적는다)`);
     else if (!(s.requirements || []).length) warn("T12", `신호 ${s.name}@v${s.version}: 어느 요구사항에도 연결되지 않은 신호`);
   }
 
@@ -366,7 +378,12 @@ function check(baseline, model, results, env) {
   } else {
     resultOf = new Map();
     if (results.schema !== RESULTS_SCHEMA) err("T9", `시험 결과 형식이 ${RESULTS_SCHEMA} 가 아님: ${results.schema}`);
-    for (const r of Array.isArray(results.results) ? results.results : []) {
+    if (!Array.isArray(results.results)) err("T4", "시험 결과 목록(results)이 배열이 아님");
+    for (const [index, r] of (Array.isArray(results.results) ? results.results : []).entries()) {
+      if (!r || typeof r.tc_id !== "string" || !r.tc_id.trim()) {
+        err("T4", `시험 결과 ${index + 1}번째 항목의 tc_id 가 없거나 올바르지 않음`);
+        continue;
+      }
       if (resultOf.has(r.tc_id)) err("T4", `${r.tc_id}: 시험 결과가 중복됨`);
       resultOf.set(r.tc_id, String(r.result || "").toLowerCase());
       if (!model.tests.has(r.tc_id)) warn("T4", `${r.tc_id}: 결과는 있지만 @testcase 로 선언된 시험이 없음`);
@@ -375,7 +392,7 @@ function check(baseline, model, results, env) {
       err("T9", `시험이 다른 고정본으로 실행됨 — 결과: ${results.baseline_id || "?"} ${String(results.baseline_hash).slice(0, 19)}…, 현재: ${baseline.baseline_id} ${baseline.baseline_hash.slice(0, 19)}…`);
     }
     if (!env.commit) notRun.push("현재 커밋을 알 수 없어 시험한 커밋과의 일치(T9)를 확인하지 않음 (--commit 으로 지정 가능)");
-    else if (!results.commit || !(env.commit.startsWith(results.commit) || results.commit.startsWith(env.commit))) {
+    else if (typeof results.commit !== "string" || !results.commit || !(env.commit.startsWith(results.commit) || results.commit.startsWith(env.commit))) {
       err("T9", `시험한 커밋(${results.commit || "없음"})이 현재 커밋(${env.commit.slice(0, 12)})과 다름`);
     }
     if (env.dirty) warn("T9", "커밋되지 않은 변경이 있어 시험 결과가 현재 파일과 다를 수 있음");
@@ -591,7 +608,7 @@ const HELP = `요구사항–설계–코드–시험–결과 추적 점검기
 
 종료 코드: 0 오류 없음, 1 추적성 오류, 2 실행 조건 오류. 태그 규칙: tools/trace/TAG_RULES.md`;
 
-async function run(argv) {
+async function run(argv, { designDocuments } = {}) {
   const opts = parseArgs(argv);
   if (opts.help) return { code: 0, text: HELP };
   const root = path.resolve(opts.root);
@@ -615,9 +632,16 @@ async function run(argv) {
     catch (e) { throw new UsageError(`시험 결과 파일을 읽을 수 없음: ${file} (${e.message})`); }
   }
   const git = opts.commit ? { commit: opts.commit, dirty: false } : gitInfo(root);
-  const model = collect(root, opts);
+  const model = collect(root, opts, designDocuments);
   const nv = notVerified.load(root);
   const result = check(baseline, model, results, { commit: git.commit, dirty: git.dirty, requireResults: opts.requireResults, notVerified: nv.items, notVerifiedProblem: nv.problem });
+  // 설계 경계(T13~T17, T9 확장). 작업 모드(project.json 의 design_policy)로 적용 여부를 정한다.
+  // 여기서 불러오는 이유: design-gate → design-store → impact → 이 파일로 이어지는 순환을 피한다.
+  const design = require("./design-gate.js").check(root, baseline, model, results);
+  result.errors.push(...design.errors);
+  result.warnings.push(...design.warnings);
+  result.notRun.push(...design.notRun);
+  result.design = { policy: design.policy, design_baseline: design.design_baseline };
   const report = {
     baseline: { baseline_id: baseline.baseline_id, baseline_hash: baseline.baseline_hash, requirements: baseline.requirements },
     baseline_file: path.relative(root, baselineFile).split(path.sep).join("/"),

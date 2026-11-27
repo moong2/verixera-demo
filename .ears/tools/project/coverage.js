@@ -85,16 +85,23 @@ function summarize(docs, root, only, opts) {
       const abs = path.isAbsolute(f.file) ? f.file : path.resolve(cwd, f.file);
       const rel = path.relative(root, abs).split(path.sep).join("/");
       if (rel.startsWith("..") || !only.test(rel)) continue;
-      if (!files.has(rel)) files.set(rel, { lines: new Map(), branches: new Map(), conditions: new Map(), functions: new Map(), fall: new Map() });
+      if (!files.has(rel)) files.set(rel, { lines: new Map(), branches: new Map(), conditions: new Map(), functions: new Map(), fall: new Map(), calls: new Map(), hasCalls: false });
       const acc = files.get(rel);
-      // 함수 범위(시작·끝 줄). 함수별 커버리지를 이 범위 안의 줄·분기로 센다.
+      // 함수 범위(시작·끝 줄). 함수별 커버리지를 이 범위 안의 줄·분기로 센다. 실행 수(execution_count)는 함수 커버리지에 쓴다.
       for (const fn of f.functions || []) {
         const name = fn.demangled_name || fn.name;
-        if (!name || acc.functions.has(name)) continue;
-        acc.functions.set(name, { name, start: fn.start_line, end: fn.end_line });
+        if (!name) continue;
+        const prev = acc.functions.get(name);
+        if (prev) { prev.executed += fn.execution_count || 0; continue; }
+        acc.functions.set(name, { name, start: fn.start_line, end: fn.end_line, executed: fn.execution_count || 0 });
       }
       for (const l of f.lines || []) {
         acc.lines.set(l.line_number, (acc.lines.get(l.line_number) || 0) + (l.count || 0));
+        // 호출 커버리지: 호출 위치마다 돌아온 횟수(gcov JSON 형식 2 의 calls[].returned). 옛 gcov(형식 1)에는 calls 가 없다 — '미측정'.
+        if (Array.isArray(l.calls)) {
+          acc.hasCalls = true;
+          l.calls.forEach((c, i) => { const k = `${l.line_number}:${i}`; acc.calls.set(k, (acc.calls.get(k) || 0) + (c.returned || 0)); });
+        }
         (l.branches || []).forEach((b, i) => { const k = `${l.line_number}:${i}`; acc.branches.set(k, (acc.branches.get(k) || 0) + (b.count || 0)); if (b.fallthrough !== undefined) acc.fall.set(k, Boolean(b.fallthrough)); });
         // 조건 커버리지(-fcondition-coverage): 결정마다 조건 결과 수(count)와 독립적으로 영향을 준 것으로 확인된 수(covered).
         // 여러 시험 프로그램의 결과는 '확인되지 않은 결과'의 교집합으로 합친다.
@@ -123,10 +130,16 @@ function summarize(docs, root, only, opts) {
       const cs = [...acc.conditions].filter(([k]) => inRange(fn, Number(k.split(":")[0])));
       const c1 = ls.filter(([, n]) => n > 0).length; const c2 = bs.filter(([, n]) => n > 0).length;
       const ctot = cs.reduce((n, [, c]) => n + c.total, 0); const cmiss = cs.reduce((n, [, c]) => n + Math.min(c.total, c.miss.size), 0);
-      return Object.assign({ name: fn.name, start: fn.start, end: fn.end, statement: { covered: c1, total: ls.length, percent: pct(c1, ls.length) }, branch: { covered: c2, total: bs.length, percent: pct(c2, bs.length) } }, ctot ? { mcdc: { covered: ctot - cmiss, total: ctot, percent: pct(ctot - cmiss, ctot) } } : {});
+      return Object.assign({ name: fn.name, start: fn.start, end: fn.end, executed: fn.executed, statement: { covered: c1, total: ls.length, percent: pct(c1, ls.length) }, branch: { covered: c2, total: bs.length, percent: pct(c2, bs.length) } }, ctot ? { mcdc: { covered: ctot - cmiss, total: ctot, percent: pct(ctot - cmiss, ctot) } } : {});
     });
+    const ft = functions.length; const fc = functions.filter((fn) => fn.executed > 0).length;
+    const kt = acc.calls.size; const kc = [...acc.calls.values()].filter((n) => n > 0).length;
     return {
       file, statement: { covered: lc, total: lt, percent: pct(lc, lt) }, branch: { covered: bc, total: bt, percent: pct(bc, bt) }, mcdc: { covered: ct - cm, total: ct, percent: pct(ct - cm, ct) }, has_conditions: acc.conditions.size > 0,
+      function: { covered: fc, total: ft, percent: pct(fc, ft) },
+      ...(acc.hasCalls ? { call: { covered: kc, total: kt, percent: pct(kc, kt) } } : {}),
+      uncovered_functions: functions.filter((fn) => !fn.executed).map((fn) => fn.name),
+      ...(acc.hasCalls ? { uncovered_calls: [...acc.calls].filter(([, n]) => n === 0).map(([k]) => Number(k.split(":")[0])).filter((x, i, a) => a.indexOf(x) === i).sort((a, b) => a - b) } : {}),
       uncovered_lines: [...acc.lines].filter(([, n]) => n === 0).map(([n]) => n).sort((a, b) => a - b),
       uncovered_branches: uncoveredBranches,
       uncovered_conditions: uncoveredConditions,
@@ -145,6 +158,11 @@ function summarize(docs, root, only, opts) {
   // 조건 정보는 -fcondition-coverage 로 빌드했을 때만 있다.
   // 조건 정보가 실제로 있을 때만(조건 0개를 100% 로 보이지 않게).
   if (mc.total > 0) out.mcdc = Object.assign(mc, { percent: pct(mc.covered, mc.total) });
+  // 함수·호출 커버리지(통합 검증 — verification-design.md 3.6). 호출 정보가 없는 gcov 면 호출은 '미측정'(통과로 치지 않음).
+  const fnSum = sum("function");
+  out.function = Object.assign(fnSum, { percent: pct(fnSum.covered, fnSum.total) });
+  if (perFile.length && perFile.every((f) => f.call)) { const cs = sum("call"); out.call = Object.assign(cs, { percent: pct(cs.covered, cs.total) }); }
+  else if (perFile.length) out.call_unmeasured = "이 gcov 의 JSON 출력에 호출 정보(calls)가 없음 — gcc 14 이상의 gcov 가 필요";
   return out;
 }
 
@@ -169,4 +187,33 @@ function measure(root, options) {
   return Object.assign({ measured: true, tool: (docs[0].gcc_version && `gcov (gcc ${docs[0].gcc_version})`) || "gcov" }, s);
 }
 
-module.exports = { measure, clean, parseGcov, summarize, needsRedirect, redirect, collect };
+// 시험 주석의 @level 로 TC 를 수준별로 나눈다(없으면 단위). 반환: Map(level → [TC ID]) — 수준 이름순이 아니라 unit·integration·software 순
+function levelsOf(root) {
+  const view = require("../trace/view.js");
+  const dir = path.join(root, "tests");
+  const out = new Map();
+  if (!fs.existsSync(dir)) return out;
+  const seen = new Set();
+  for (const name of fs.readdirSync(dir).filter((n) => /\.c$/.test(n)).sort()) {
+    const lines = fs.readFileSync(path.join(dir, name), "utf8").replace(/\r\n?/g, "\n").split("\n");
+    for (const b of view.testBlocks(lines)) {
+      if (seen.has(b.id)) continue;
+      seen.add(b.id);
+      const m = /@level\s+(unit|integration|software)\b/i.exec(lines.slice(b.startLine - 1, b.endLine).join("\n"));
+      const lv = m ? m[1].toLowerCase() : "unit";
+      if (!out.has(lv)) out.set(lv, []);
+      out.get(lv).push(b.id);
+    }
+  }
+  return new Map(["unit", "integration", "software"].filter((k) => out.has(k)).map((k) => [k, out.get(k)]));
+}
+
+// 수준별 결과를 기록에 남길 모양으로(파일·함수별 실행 여부와 구문·분기 — 검증 대상별 값을 화면이 계산한다)
+function compactLevel(m, tcs) {
+  if (!m || !m.measured) return { measured: false, reason: (m && m.reason) || "측정하지 못함", tcs };
+  return Object.assign({ measured: true, tcs, statement: m.statement, branch: m.branch, function: m.function }, m.mcdc ? { mcdc: m.mcdc } : {}, m.call ? { call: m.call } : { call_unmeasured: m.call_unmeasured || null }, {
+    functions: m.files.flatMap((f) => f.functions.map((fn) => Object.assign({ file: f.file, name: fn.name, executed: fn.executed, statement: fn.statement, branch: fn.branch }, fn.mcdc ? { mcdc: fn.mcdc } : {}))),
+  });
+}
+
+module.exports = { measure, clean, parseGcov, summarize, needsRedirect, redirect, collect, levelsOf, compactLevel };

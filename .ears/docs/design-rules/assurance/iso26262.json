@@ -1,0 +1,12 @@
+{
+  "schema": "design-rules/v1",
+  "layer": "assurance",
+  "id": "iso26262-2018",
+  "version": "1.0",
+  "applies": { "domains": ["automotive"], "standards": ["ISO 26262"] },
+  "note": "ISO 26262 등급(ASIL)별 추가 규칙 1차. 등급 미정이면 보류된다. 등급별 적용성은 표준 원문으로 확인 전 — 자체 정책.",
+  "rules": [
+    { "rule_id": "A26-01", "rule_version": "1.0", "name": "ASIL C·D 간섭 분석 근거", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "BLOCKING", "design_stage": "ARCHITECTURE", "check_method": "HUMAN_REVIEW", "deviation_allowed": true, "applicability": { "levels": ["C", "D"] }, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책(ISO 26262-6 의 독립성·간섭 관련 내용을 참고하려는 것 — 조항 미확인)" }, "required_evidence": ["간섭 분석 결과 또는 해당 없음 근거"], "text": "ASIL C·D 에서는 안전 관련 요소와 다른 요소 사이 간섭 분석의 근거를 승인 전에 남긴다." },
+    { "rule_id": "A26-02", "rule_version": "1.0", "name": "ASIL A 이상 안전 기능의 고장 대응 책임", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "REVIEW_REQUIRED", "design_stage": "ARCHITECTURE", "check_method": "AI_REVIEW", "deviation_allowed": true, "applicability": { "levels": ["A", "B", "C", "D"] }, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책" }, "text": "안전 기능의 고장 감지·안전 상태 전환 책임이 어느 유닛에 있는지 명확한가." }
+  ]
+}

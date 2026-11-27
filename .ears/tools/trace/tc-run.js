@@ -17,6 +17,7 @@ const coverage = require("../project/coverage.js");
 const compilers = require("../project/compilers.js");
 const toolchain = require("../project/toolchain.js");
 const gate = require("./run-gate.js");
+const buildDiagnostics = require("./build-diagnostics.js");
 const decisions = require("./decisions.js");
 
 const TC_RE = /^TC-[A-Za-z0-9_.-]{1,80}$/;
@@ -280,6 +281,29 @@ function historyEntry(r, at, fp) {
     files: c.measured ? (c.files || []).map((f) => ({ file: f.file, ran: (f.lines || []).filter((x) => x.count > 0).map((x) => x.line), dec: (f.decisions || []).map((d) => [d.line, d.t, d.f]) })) : [],
   };
 }
+// TC 출력과 프로세스 종료 상태가 일치해야 그 실행을 현재 검증 근거로 쓸 수 있다.
+function invalidResultReason(run, conflicts) {
+  if (conflicts.includes(run.id)) return "같은 TC의 결과 줄이 서로 다릅니다.";
+  if (run.timed_out) return "시험 명령이 제한 시간을 넘겨 끝까지 실행되지 않았습니다.";
+  if (run.exit_code === null) return "시험 명령이 정상적으로 끝나지 않아 종료 코드를 확인할 수 없습니다.";
+  if (run.exit_code !== undefined && run.exit_code !== 0 && run.result === "pass") return `통과 출력 뒤 시험 명령이 종료 코드 ${run.exit_code}로 실패했습니다.`;
+  return null;
+}
+
+function firstCommandError(run, output) {
+  if (run.result !== "none" || run.timed_out || !Number.isInteger(run.exit_code) || run.exit_code === 0) return null;
+  return buildDiagnostics(output)[0] || null;
+}
+
+function checkedSavedRun(run) {
+  if (run && run.result === "none" && !run.first_error) {
+    const first = firstCommandError(run, run.output);
+    if (first) return { ...run, first_error: first };
+  }
+  if (!run || run.result !== "pass") return run;
+  const reason = invalidResultReason(run, gate.parseTestOutput(typeof run.output === "string" ? run.output : "").conflicts);
+  return reason ? { ...run, result: "none", coverage: { measured: false, reason } } : run;
+}
 function loadRuns(root) {
   const f = path.join(root, ...RUNS_FILE.split("/"));
   let data = null;
@@ -287,7 +311,7 @@ function loadRuns(root) {
   if (!data || data.schema !== RUNS_SCHEMA) return { schema: RUNS_SCHEMA, runs: {}, combined: null, history: {}, batches: [], fp: null };
   // 보관 파일은 디버깅용 임시 자료다. 모양이 틀린 부분은 버리고 읽는다(깨졌다고 TC 화면 전체가 실패하지 않게).
   const isObj = (x) => Boolean(x) && typeof x === "object" && !Array.isArray(x);
-  data.runs = isObj(data.runs) ? Object.fromEntries(Object.entries(data.runs).filter(([, r]) => isObj(r))) : {};
+  data.runs = isObj(data.runs) ? Object.fromEntries(Object.entries(data.runs).filter(([, r]) => isObj(r)).map(([id, r]) => [id, checkedSavedRun(r)])) : {};
   data.combined = isObj(data.combined) ? data.combined : null;
   data.history = isObj(data.history) ? Object.fromEntries(Object.entries(data.history).map(([k, v]) => [k, Array.isArray(v) ? v.filter(isObj) : []])) : {};
   data.batches = Array.isArray(data.batches) ? data.batches.filter(isObj) : [];
@@ -349,7 +373,7 @@ function combineSaved(root, ids) {
   data.batches = data.batches || [];
   const sources = sourcesNow(root);
   const fp = fingerprint(sources);
-  const res = list.map((id) => data.runs[id]).filter((r) => r && r.fp === fp);
+  const res = list.map((id) => checkedSavedRun(data.runs[id])).filter((r) => r && r.fp === fp);
   const ok = res.filter((r) => r.isolated && r.coverage && r.coverage.measured);
   const combined = ok.length > 1 ? combine(root, ok) : null;
   const at = new Date().toISOString();
@@ -393,7 +417,9 @@ async function runTcs({ root, ids, timeoutSec, hooks }) {
   const config = loaded && !loaded.invalid ? loaded.config : null;
   const tools = (hooks && hooks.tools) || toolchain.detect();
   const env = tools.env ? tools.env(process.env) : Object.assign({}, process.env);
-  const testCmd = (hooks && hooks.testCmd) || (tools.make && tools.make !== "make" ? `${tools.make} -s test` : "make -s test");
+  const customCmd = hooks && hooks.testCmd;
+  const make = tools.make || "make";
+  const testCmd = customCmd || `${make} -B -s test`;
   const comp = config ? compilers.resolve(config, tools, env, { pinned: false, probe: hooks && hooks.compilerProbe }) : null;
   // 어디를 탔는지 보려면 계측 빌드가 필요하다: 최적화 없이(-O0, 소스 줄과 갈래가 그대로 남게) --coverage 로 빌드한다.
   const mcdc = Boolean(config && comp && comp.mcdc);
@@ -404,15 +430,19 @@ async function runTcs({ root, ids, timeoutSec, hooks }) {
   let copy = null;
   if (!native && !(hooks && hooks.noAutoWrap)) { try { copy = wrappedCopy(root); } catch (_) { copy = null; } }
   const run = (hooks && hooks.runShell) || gate.runShell;
+  const built = new Set();
   const once = async (dirRoot, id) => {
     try { coverage.clean(dirRoot); } catch (_) { /* 지울 것이 없음 */ }
     const runEnv = Object.assign({}, env, { EARS_TC: id });
     const dir = coverage.redirect(dirRoot, runEnv);
-    const proc = await run(testCmd, { cwd: dirRoot, env: runEnv, timeoutMs: Math.round((timeoutSec || 120) * 1000) });
+    // 프로젝트당 첫 TC는 현재 입력으로 다시 빌드한다. 같은 묶음의 다음 TC는 그 실행 파일을 쓴다.
+    const command = !customCmd && built.has(dirRoot) ? `${make} -s test` : testCmd;
+    const proc = await run(command, { cwd: dirRoot, env: runEnv, timeoutMs: Math.round((timeoutSec || 120) * 1000) });
     if (dir) { try { coverage.collect(dirRoot, dir); } catch (_) { /* 아래에서 측정하지 못함으로 */ } }
     const output = (proc.stdout || "") + (proc.stderr || "");
-    const parsed = gate.parseTestOutput(output).results;
-    return { proc, runEnv, output, mine: parsed.find((x) => x.tc_id === id) || null, others: parsed.filter((x) => x.tc_id !== id) };
+    const { results: parsed, conflicts } = gate.parseTestOutput(output);
+    if (parsed.length && !proc.error && !proc.timedOut) built.add(dirRoot);
+    return { proc, runEnv, output, conflicts, mine: parsed.find((x) => x.tc_id === id) || null, others: parsed.filter((x) => x.tc_id !== id) };
   };
   const results = [];
   let wrapFailed = false;
@@ -424,11 +454,15 @@ async function runTcs({ root, ids, timeoutSec, hooks }) {
       if (where === copy && !r.mine && !r.others.length && !r.proc.timedOut) { wrapFailed = true; where = root; r = await once(root, id); }
       const { proc, runEnv, output, mine, others } = r;
       const isolated = Boolean(mine) && !others.length;
+      const execution = { id, result: mine ? mine.result : "none", exit_code: proc.error ? null : proc.status, timed_out: Boolean(proc.timedOut) };
+      const reason = invalidResultReason(execution, r.conflicts);
       let cov;
-      if (!mine) cov = { measured: false, reason: proc.timedOut ? "제한 시간을 넘겨 멈췄습니다" : "이 TC 의 결과 줄(TC-ID pass/fail)이 출력에 없습니다 — 빌드 실패이거나 시험 코드에 없는 TC 입니다" };
+      if (reason) { execution.result = "none"; cov = { measured: false, reason }; }
+      else if (!mine) cov = { measured: false, reason: "이 TC 의 결과 줄(TC-ID pass/fail)이 출력에 없습니다 — 빌드 실패이거나 시험 코드에 없는 TC 입니다" };
       else if (!isolated) cov = { measured: false, reason: `이 시험 프로그램은 TC 하나만 실행하지 못해 다른 TC ${others.length}개도 함께 실행됐습니다${wrapFailed ? "(실행할 때 TC 마다 자동으로 감싸 보았지만 빌드되지 않았습니다)" : ""}. 그 TC 만의 실행 경로를 알 수 없어 보이지 않습니다 — 시험 에이전트로 시험을 다시 만들면 TC 하나씩 실행할 수 있습니다(tests/ears_tc.h).` };
       else { try { cov = coverage.measure(where, { env: runEnv, gcov, mcdc, detail: true, spawn: hooks && hooks.spawn }); addDecisions(root, cov); } catch (e) { cov = { measured: false, reason: e.message }; } }
-      results.push({ id, actual: actualOf(output, id), result: mine ? mine.result : "none", exit_code: proc.error ? null : proc.status, timed_out: Boolean(proc.timedOut), isolated, auto_wrapped: where === copy, other_tcs: others.map((x) => x.tc_id).slice(0, 50), output: tail(output, 6000), coverage: cov });
+      const firstError = firstCommandError(execution, output);
+      results.push({ ...execution, ...(firstError ? { first_error: firstError } : {}), actual: actualOf(output, id), isolated, auto_wrapped: where === copy, other_tcs: others.map((x) => x.tc_id).slice(0, 50), output: tail(output, 6000), coverage: cov });
     }
   } finally {
     if (copy) { try { fs.rmSync(copy, { recursive: true, force: true }); } catch (_) { /* 임시 폴더 */ } }

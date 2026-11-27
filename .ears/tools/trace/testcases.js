@@ -28,6 +28,9 @@ function parseBlock(lines) {
       if (r && !verifies.some((v) => v.id === r[1])) verifies.push({ id: r[1], version: r[2] ? Number(r[2]) : null });
     }
   }
+  // 검증 수준(@level unit|integration|software)과 대상(@target U-… | INT-… | SW) — TC 표가 수준별로 나눠 보인다
+  const lvm = /@level\s+(unit|integration|software)\b/.exec(text);
+  const tgm = /@target\s+([A-Za-z0-9_-]+)/.exec(text);
   const mm = /@method\s+([a-z-]+(?:\s*,\s*[a-z-]+)*)/.exec(text);
   const methods = mm ? mm[1].split(/\s*,\s*/) : [];
   const description = [];
@@ -43,7 +46,7 @@ function parseBlock(lines) {
       if (t && !t.startsWith("@")) description.push(t);
     } else if (line.trim()) check.push(line.trim());
   }
-  return { verifies, designs, methods, description: description.join(" ").slice(0, 500), check: check.slice(0, 4).join("\n").slice(0, 400) };
+  return Object.assign(lvm ? { level: lvm[1] } : {}, tgm ? { target: tgm[1] } : {}, { verifies, designs, methods, description: description.join(" ").slice(0, 500), check: check.slice(0, 4).join("\n").slice(0, 400) });
 }
 
 const changedSince = verlog.changedSince;
@@ -57,7 +60,8 @@ function table(root) {
     for (let i = runs.length - 1; i >= 0; i--) {
       const e = runs[i];
       let found = null;
-      for (const q of e.record.requirements || []) for (const t of q.tests || []) if (t.tc_id === tcId) found = t.result;
+      let level = null;
+      for (const q of e.record.requirements || []) for (const t of q.tests || []) if (t.tc_id === tcId) { found = t.result; level = t.level ? { level: t.level, target: t.target || null } : level; }
       if (!found) continue;
       if (!staleByRun.has(e.file)) staleByRun.set(e.file, verlog.staleness(e.record, current, currentCode));
       const f = (e.record.failures || []).find((x) => x.tc_id === tcId);
@@ -66,6 +70,9 @@ function table(root) {
         result: found, outdated: staleByRun.get(e.file) === null ? null : staleByRun.get(e.file) === "changed", ...(staleByRun.get(e.file) === "comments" ? { comments_changed: true } : {}),
         run: { file: e.file, started_at: e.record.started_at, source: e.record.source, pinned: Boolean(e.record.environment && e.record.environment.pinned), commit: e.record.commit || null, baseline_id: e.record.baseline_id || null },
         failure: f ? { cause: f.ai ? f.ai.cause : null, explanation: f.ai ? f.ai.explanation : "", output: (f.output || []).slice(0, 4) } : null,
+        // 그 실행의 단계별 실제 출력(시나리오 타임라인)과 검증 수준
+        ...(e.record.actuals && Array.isArray(e.record.actuals[tcId]) ? { actual: e.record.actuals[tcId] } : {}),
+        ...(level ? { level: level.level, target: level.target } : {}),
       };
     }
     return null;

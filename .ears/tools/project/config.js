@@ -22,6 +22,17 @@ const FILE = "project.json";
 const LEVELS = ["required", "recommended", "off"];
 const ASILS = ["QM", "A", "B", "C", "D"];
 const C_STANDARDS = ["c99", "c11", "c17"];
+// 작업 모드(D-009): 설계 승인과 게이트를 등급이 아니라 이것으로 정한다.
+//  prototype   설계 승인 선택, 코드는 초안만, 정식 검증·릴리스 불가
+//  engineering 승인된 설계 Baseline(DBL)이 있어야 정식 코드·시험 생성, 게이트 T13~T17 적용
+//  safety      engineering + 도메인 추가 조건(차후)
+//  legacy      예전 방식(T0~T12 만). design_policy 가 없는 기존 프로젝트만 이것으로 본다
+// 새로 만드는 프로젝트(defaultConfig)는 engineering. 저장할 때 값이 빠져 있으면 파일의 값을 지킨다(생략으로 낮아지지 않게).
+const DESIGN_POLICIES = ["prototype", "engineering", "safety", "legacy"];
+const DESIGN_POLICY_LABELS = { prototype: "프로토타입", engineering: "엔지니어링", safety: "안전", legacy: "레거시" };
+const NEW_PROJECT_POLICY = "engineering";
+const policyOf = (config) => (config && DESIGN_POLICIES.includes(config.design_policy) ? config.design_policy : "legacy");
+const designRequired = (policy) => policy === "engineering" || policy === "safety";
 // 코드 에이전트에 적용하는 C 코딩 스킬(docs/coding-rules/<이름>/SKILL.md). 도메인마다 고른다.
 // 항공우주와 산업·철도·의료 스킬은 자동차 스킬의 생성 제약(G01–G15)과 코드 계약 템플릿을 함께 쓰라고 하므로 둘을 같이 준다.
 // 도메인 설정이 없거나 '일반'이면 도메인 미지정 기본 프로파일(GEN-BASE).
@@ -163,11 +174,13 @@ function defaultConfig(level, domain) {
   const test = pick(PROFILE.test_design);
   if (preset === 0) { test.requirements_analysis = "required"; test.fault_injection = "off"; }
   return Object.assign(
-    { schema: SCHEMA, domain: dom, standard: d.standard, level: lv },
+    { schema: SCHEMA, domain: dom, standard: d.standard, level: lv, design_policy: NEW_PROJECT_POLICY },
     dom === "automotive" ? { asil: lv } : {}, // 자동차는 이전 형식의 asil 도 함께 둔다
     { basis: d.basis, build: { compiler: compilers.DEFAULT, c_standard: "c11", warnings_as_errors: true, optimization: "-O0", extra_flags: [] }, coding_rules: pick(PROFILE.coding_rules), test_design: test, coverage,
       // 정적 분석은 기본으로 '권장'(경고만)이다. 도구가 없는 환경(CI 등)에서 게이트가 막히지 않게 하고, 필요하면 '필수'로 올린다.
-      static_analysis: { level: "recommended", tool: "cppcheck", fail_on: "warning" }, timing: { call_period_ms: null } },
+      static_analysis: { level: "recommended", tool: "cppcheck", fail_on: "warning" }, timing: { call_period_ms: null },
+      // 설계 규칙 프로파일(D-012) 기본값: 도메인의 첫 세부 프로파일과 그 표준, Embedded C, 등급 지정됨
+      design_profile: (() => { const s = (require("./design-rules.js").SUBDOMAINS[dom] || [])[0]; return { subdomain: s ? s.id : "general-software", standards: s ? s.standards.slice() : [], environment: "embedded-c", level_status: "assigned" }; })() },
   );
 }
 
@@ -241,6 +254,42 @@ function validate(input) {
   const tm = src.timing && typeof src.timing === "object" ? src.timing : {};
   const per = tm.call_period_ms === undefined || tm.call_period_ms === null || tm.call_period_ms === "" || Number(tm.call_period_ms) === 0 ? null : Number(tm.call_period_ms);
   if (per !== null && !(per > 0 && per <= 600000)) errors.push("호출 주기는 0 보다 크고 600000 ms 이하인 수여야 합니다(비우면 정하지 않음).");
+  // 작업 모드: 값이 없으면 legacy(이 값이 생기기 전의 프로젝트). 새 프로젝트는 defaultConfig 가 engineering 을 넣는다.
+  const policy = src.design_policy === undefined || src.design_policy === null ? "legacy" : src.design_policy;
+  if (!DESIGN_POLICIES.includes(policy)) errors.push(`작업 모드(design_policy)는 ${DESIGN_POLICIES.join(", ")} 중 하나여야 합니다.`);
+  out.design_policy = DESIGN_POLICIES.includes(policy) ? policy : "legacy";
+  // 설계 규칙 프로파일(D-012): 세부 프로파일·적용 표준(복수)·개발 환경·안전등급 지정 여부·조건부 승인 허용. 없으면 도메인 기본값.
+  const dpIn = src.design_profile && typeof src.design_profile === "object" ? src.design_profile : {};
+  const rules = require("./design-rules.js");
+  const subs = rules.SUBDOMAINS[dom] || rules.SUBDOMAINS.general;
+  if (dpIn.subdomain !== undefined && !subs.some((x) => x.id === dpIn.subdomain)) errors.push(`세부 프로파일(design_profile.subdomain)은 ${subs.map((x) => x.id).join(", ")} 중 하나여야 합니다.`);
+  if (dpIn.environment !== undefined && !rules.ENVIRONMENTS.some((x) => x.id === dpIn.environment)) errors.push(`개발 환경(design_profile.environment)은 ${rules.ENVIRONMENTS.map((x) => x.id).join(", ")} 중 하나여야 합니다.`);
+  if (dpIn.standards !== undefined && (!Array.isArray(dpIn.standards) || dpIn.standards.length > 10 || dpIn.standards.some((x) => typeof x !== "string" || !x.trim() || x.length > 80))) errors.push("적용 표준(design_profile.standards)은 80자 이하 글 10개 이하의 목록이어야 합니다.");
+  if (dpIn.level_status !== undefined && !["assigned", "unassigned"].includes(dpIn.level_status)) errors.push("안전등급 지정 여부(design_profile.level_status)는 assigned 또는 unassigned 여야 합니다.");
+  const sub = subs.find((x) => x.id === dpIn.subdomain) || subs[0];
+  out.design_profile = {
+    subdomain: sub.id,
+    standards: Array.isArray(dpIn.standards) && dpIn.standards.length ? [...new Set(dpIn.standards.map((x) => String(x).trim()).filter(Boolean))].slice(0, 10) : sub.standards.slice(),
+    environment: rules.ENVIRONMENTS.some((x) => x.id === dpIn.environment) ? dpIn.environment : "embedded-c",
+    level_status: dpIn.level_status === "unassigned" ? "unassigned" : "assigned",
+  };
+  // 조건부 승인 허용: 정한 때만 남긴다. 정하지 않으면 쓰는 곳에서 작업 모드로 정한다(safety 는 불허, 그 밖은 허용).
+  if (dpIn.allow_conditional !== undefined) out.design_profile.allow_conditional = Boolean(dpIn.allow_conditional);
+  // 설계 선호 기준의 기본 가중치(종류마다 0~100). 후보 비교 전에 프로젝트에서 정한다 — 정한 때만 남긴다(없으면 PREFERENCE_DEFAULTS).
+  if (dpIn.preference_weights !== undefined) {
+    const pw = dpIn.preference_weights;
+    if (!pw || typeof pw !== "object" || Array.isArray(pw)) errors.push("설계 선호 기본 가중치(design_profile.preference_weights)는 {종류: 0~100} 이어야 합니다.");
+    else {
+      const ok = {};
+      for (const [k, v] of Object.entries(pw)) {
+        const n = Number(v);
+        if (!PREFERENCE_KINDS.includes(k)) errors.push(`설계 선호 종류 ${k} 는 ${PREFERENCE_KINDS.join(", ")} 중 하나여야 합니다.`);
+        else if (!Number.isFinite(n) || n < 0 || n > 100) errors.push(`설계 선호 ${k} 의 가중치는 0~100 이어야 합니다.`);
+        else ok[k] = Math.round(n);
+      }
+      out.design_profile.preference_weights = ok;
+    }
+  }
   out.timing = { call_period_ms: per !== null && per > 0 && per <= 600000 ? Math.round(per * 1000) / 1000 : null };
   return { ok: errors.length === 0, errors, config: out };
 }
@@ -256,7 +305,18 @@ function load(root) {
 }
 
 function save(root, input) {
-  const v = validate(input);
+  // 화면 등이 design_policy 를 빼고 보내면 파일에 있던 값을 지킨다(빠뜨린 것만으로 legacy 로 내려가 게이트를 우회하지 않게).
+  let src = input;
+  if (input && typeof input === "object" && input.design_policy === undefined) {
+    const before = load(root);
+    if (before && before.config && before.config.design_policy) src = Object.assign({}, input, { design_policy: before.config.design_policy });
+  }
+  // 설계 규칙 프로파일도 빠뜨리면 파일 값을 지킨다(등급 미정 표시 등이 생략으로 사라지지 않게).
+  if (src && typeof src === "object" && src.design_profile === undefined) {
+    const before = load(root);
+    if (before && before.config && before.config.design_profile) src = Object.assign({}, src, { design_profile: before.config.design_profile });
+  }
+  const v = validate(src);
   if (!v.ok) return v;
   fs.mkdirSync(root, { recursive: true });
   fs.writeFileSync(path.join(root, FILE), JSON.stringify(v.config, null, 2) + "\n");
@@ -342,8 +402,29 @@ function specPromptSection(config) {
 }
 
 // 화면에 보여 줄 항목 정의.
+// 설계 선호 기준(아키텍처 결정 요인 중 '선호')의 종류와 기본 가중치. 안전·기능은 보통 필수 제약이라 넣지 않는다.
+const PREFERENCE_KINDS = ["maintainability", "testability", "performance", "resource", "reusability", "modifiability", "scalability", "reliability", "security", "complexity", "other"];
+const PREFERENCE_LABELS = { maintainability: "유지보수", testability: "검증 용이성", performance: "성능", resource: "자원", reusability: "재사용", modifiability: "변경 용이성", scalability: "확장", reliability: "신뢰성", security: "보안", complexity: "복잡도(낮을수록 좋음)", other: "기타" };
+const PREFERENCE_DESCS = {
+  maintainability: "코드를 읽고 고치기 쉬운 구조 — 책임이 분명하고 크기가 알맞은 구성요소",
+  testability: "기능별로 독립적인 시험을 할 수 있는 구조 — 입력을 넣고 출력을 볼 수 있는 경계",
+  performance: "실행 시간·응답 시간에 여유가 있는 구조 — 불필요한 호출·복사 줄이기",
+  resource: "메모리·스택·CPU 를 적게 쓰는 구조",
+  reusability: "다른 프로젝트·제품에서 다시 쓸 수 있는 구성요소",
+  modifiability: "기능을 바꿀 때 다른 구성요소에 주는 영향이 작은 구조",
+  scalability: "기능·신호가 늘어나도 구조를 크게 바꾸지 않아도 되는 구조",
+  reliability: "고장·잘못된 입력에도 안전하게 동작을 이어 가는 구조",
+  security: "외부 입력·통신으로부터 보호하기 쉬운 구조",
+  complexity: "구성요소 수·연결 수가 적은 단순한 구조",
+  other: "위에 없는 선호 조건",
+};
+const PREFERENCE_DEFAULTS = { maintainability: 25, testability: 25, performance: 20, resource: 15, reusability: 15, modifiability: 10, scalability: 5, reliability: 20, security: 10, complexity: 10, other: 10 };
+// 이 프로젝트의 기본 가중치(설정에 적은 값이 우선, 없는 종류는 기본값)
+const preferenceWeightsOf = (config) => Object.assign({}, PREFERENCE_DEFAULTS, (config && config.design_profile && config.design_profile.preference_weights) || {});
+
 function catalog() {
   return {
+    preference_kinds: PREFERENCE_KINDS.map((id) => ({ id, label: PREFERENCE_LABELS[id], description: PREFERENCE_DESCS[id], default: PREFERENCE_DEFAULTS[id] })),
     asils: ASILS, levels: LEVELS, c_standards: C_STANDARDS, basis: BASIS,
     domains: Object.entries(DOMAINS).map(([id, d]) => ({ id, label: d.label, standard: d.standard, level_name: d.level_name, default_level: d.default_level, basis: d.basis, levels: d.levels.map(([lid, label]) => ({ id: lid, label })), notes: d.notes })),
     coding_rules: CODING_RULES.map(({ id, label, check, prompt }) => ({ id, label, check, prompt })),
@@ -355,4 +436,4 @@ function catalog() {
   };
 }
 
-module.exports = { SKILLS_DIR, SKILLS_BY_DOMAIN, skillsFor, DOMAINS, levelText, SCHEMA, FILE, LEVELS, ASILS, CODING_RULES, TEST_METHODS, COVERAGE_METRICS, defaultConfig, validate, load, save, hash, cflags, measured, promptSection, specPromptSection, catalog, on };
+module.exports = { PREFERENCE_KINDS, PREFERENCE_DEFAULTS, preferenceWeightsOf, DESIGN_POLICIES, DESIGN_POLICY_LABELS, NEW_PROJECT_POLICY, policyOf, designRequired, SKILLS_DIR, SKILLS_BY_DOMAIN, skillsFor, DOMAINS, levelText, SCHEMA, FILE, LEVELS, ASILS, CODING_RULES, TEST_METHODS, COVERAGE_METRICS, defaultConfig, validate, load, save, hash, cflags, measured, promptSection, specPromptSection, catalog, on };

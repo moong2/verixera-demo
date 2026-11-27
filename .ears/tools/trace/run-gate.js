@@ -17,6 +17,7 @@ const os = require("node:os");
 const path = require("node:path");
 const { execFileSync, execFile, spawn } = require("node:child_process");
 const trace = require("./trace-check.js");
+const buildDiagnostics = require("./build-diagnostics.js");
 const project = require("../project/config.js");
 const rulesCheck = require("../project/rules-check.js");
 const coverage = require("../project/coverage.js");
@@ -40,6 +41,19 @@ function parseTestOutput(text) {
     results.push(item);
   }
   return { results, conflicts };
+}
+
+// "EARS_ACTUAL <TC> <단계> <신호>=<값>" 줄을 TC 마다 모은다. TC 400개·TC 마다 500줄까지(기록이 지나치게 커지지 않게).
+function actualsOf(text) {
+  const out = {};
+  let tcs = 0;
+  for (const line of String(text || "").split(/\r?\n/)) {
+    const m = /^EARS_ACTUAL\s+(TC-[A-Za-z0-9_.-]{1,80})\s+(\d{1,6})\s+([A-Za-z_][\w.]{0,80})=(\S{1,64})\s*$/.exec(line.trim());
+    if (!m) continue;
+    if (!out[m[1]]) { if (tcs >= 400) continue; out[m[1]] = []; tcs++; }
+    if (out[m[1]].length < 500) out[m[1]].push({ step: Number(m[2]), name: m[3], value: m[4] });
+  }
+  return out;
 }
 
 function git(cwd, ...args) {
@@ -97,9 +111,18 @@ function toolsFingerprint() {
   for (const f of files.sort()) { h.update(path.relative(base, f).split(path.sep).join("/")); h.update("\0"); try { h.update(fs.readFileSync(f)); } catch (_) { /* 읽지 못함 */ } }
   return { files: files.length, sha256: "sha256:" + h.digest("hex") };
 }
+// 검증 기록은 저장소에 올라가 공개될 수 있다. 실행 파일 경로에 PC 사용자 이름(C:\Users\<이름>, /home/<이름>)이 남지 않게
+// 홈 폴더 부분을 ~ 로 바꾼다. 어떤 도구를 어디서 썼는지(패키지 폴더 이름 등)는 그대로 남는다.
+function maskHome(p) {
+  if (!p) return p;
+  let out = String(p);
+  const home = os.homedir();
+  if (home && out.toLowerCase().startsWith(home.toLowerCase())) out = "~" + out.slice(home.length);
+  return out.replace(/^[A-Za-z]:[\\/]Users[\\/][^\\/]+/i, "~").replace(/^\/(?:home|Users)\/[^/]+/, "~");
+}
 function toolInventory(cwd, env, t) {
   const e = env || process.env;
-  const one = (role, cmd, versionArgs, extra) => (cmd ? Object.assign({ role, command: cmd, path: whichCmd(cmd, e), version: toolVersion(cwd, cmd, versionArgs, e) }, extra || {}) : null);
+  const one = (role, cmd, versionArgs, extra) => (cmd ? Object.assign({ role, command: cmd, path: maskHome(whichCmd(cmd, e)), version: toolVersion(cwd, cmd, versionArgs, e) }, extra || {}) : null);
   let target = null;
   if (t.cc) { try { target = execFileSync(t.cc, ["-dumpmachine"], { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], timeout: 10000, env: e }).trim() || null; } catch (_) { target = null; } }
   const sa = t.static;
@@ -107,7 +130,7 @@ function toolInventory(cwd, env, t) {
     one("컴파일러", t.cc, ["--version"], { target, chosen: t.compiler || null, used: t.compilerUsed || null, flags: e.CFLAGS || null }),
     one("빌드 도구", t.make, ["--version"], { test_command: t.testCmd || null }),
     t.coverage ? one("커버리지 도구", t.gcov, ["--version"], { mcdc: Boolean(t.mcdc) }) : null,
-    sa ? (sa.ran ? { role: "정적 분석기", command: "cppcheck", path: sa.path || null, version: sa.version || null, options: sa.command || null, fail_on: sa.fail_on || null } : { role: "정적 분석기", command: "cppcheck", path: null, version: sa.version || null, note: sa.reason || "실행하지 못함" }) : null,
+    sa ? (sa.ran ? { role: "정적 분석기", command: "cppcheck", path: maskHome(sa.path) || null, version: sa.version || null, options: sa.command || null, fail_on: sa.fail_on || null } : { role: "정적 분석기", command: "cppcheck", path: null, version: sa.version || null, note: sa.reason || "실행하지 못함" }) : null,
     { role: "실행 환경", command: null, path: null, version: `${os.platform()} ${os.release()} ${os.arch()} · Node ${process.version}`, image: e.TRACE_ENV_IMAGE || null },
     Object.assign({ role: "검증 도구(tools/)", command: "node tools/trace/run-gate.js", path: null, version: null }, (() => { const f = toolsFingerprint(); return { sha256: f.sha256, files: f.files }; })()),
   ];
@@ -123,11 +146,13 @@ function resultFingerprint(run) {
     test_command: run.test_command,
     test_exit_code: run.test_exit_code,
     results: [...run.results].sort((a, b) => (a.tc_id < b.tc_id ? -1 : a.tc_id > b.tc_id ? 1 : 0)),
+    // 설계 승인본이 있는 프로젝트만 넣는다(없던 프로젝트의 지문은 예전과 같다).
+    ...(run.design_baseline ? { design_baseline_hash: run.design_baseline.hash } : {}),
   }));
 }
 
 function parseArgs(argv) {
-  const opts = { root: ".", testCmd: "make -s test", timeout: 300, commit: null, out: "trace-out", baseline: null, design: null, code: null, tests: null, help: false };
+  const opts = { root: ".", testCmd: null, timeout: 300, commit: null, out: "trace-out", baseline: null, design: null, code: null, tests: null, help: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     const value = () => { if (i + 1 >= argv.length) throw new trace.UsageError(`${a} 뒤에 값이 필요함`); return argv[++i]; };
@@ -151,7 +176,7 @@ const HELP = `추적성 게이트: 시험 실행 → 결과 파일 → 추적 �
 사용법: node tools/trace/run-gate.js --root <대상 프로젝트> [옵션]
 
   --root DIR        대상 프로젝트 폴더 (기본: 현재 폴더)
-  --test-cmd CMD    대상 폴더에서 실행할 시험 명령 (기본: "make -s test")
+  --test-cmd CMD    대상 폴더에서 실행할 시험 명령 (기본: "make -B -s test", 현재 소스로 다시 빌드)
   --timeout SEC     시험 명령의 제한 시간(초, 기본 300). 넘으면 중단하고 게이트 실패로 처리
                     출력에 시험마다 "TC-ID pass|fail|skip" 한 줄이 있어야 한다
   --commit SHA      시험한 커밋 (기본: git rev-parse HEAD)
@@ -161,9 +186,55 @@ const HELP = `추적성 게이트: 시험 실행 → 결과 파일 → 추적 �
 결과: <out>/results.json, <out>/test-output.log, <out>/trace-matrix.json, <out>/trace-matrix.md
 종료 코드: 0 통과, 1 시험 실패 또는 추적성 오류, 2 실행 조건 오류`;
 
+// ── 공개 시연 서버: 방문자 코드를 서버와 다른 사용자로 실행 ──
+// 시연 서버에서는 방문자가 C 코드·Makefile 을 저장하고 빌드·시험(make test)을 돌릴 수 있다. 이 명령이 서버와 같은 사용자로 돌면
+// 서버만 읽어야 하는 파일(GitHub 열쇠 파일 등)과 다른 방문자의 폴더를 읽을 수 있다. 그래서 EARS_BUILD_SOCKET 이 있으면
+// (시연 컨테이너의 entrypoint.sh 가 정한다) 그 소켓의 빌드 실행기(tools/demo/build-runner.js)에게 빌드를 부탁한다.
+// 실행기는 root 로 떠 있다가 빌드만 전용 사용자(vxbuilder)로 실행한다. sudo 는 쓰지 않는다(Render 는 no-new-privileges).
+// 실행기에 닿지 못하면 서버 사용자로 몰래 돌리지 않고 실패로 알린다.
+// 넘기는 환경변수는 빌드에 필요한 것만 고른다(비밀 값은 원래 환경에 없지만, 혹시 생겨도 넘어가지 않게).
+const BUILD_ENV_KEYS = /^(PATH|CC|CXX|CFLAGS|CPPFLAGS|LDFLAGS|MAKEFLAGS|LANG|LC_[A-Z]+|TZ|EARS_TC|GCOV_PREFIX|GCOV_PREFIX_STRIP|TRACE_[A-Z_]+)$/;
+function buildEnv(env) {
+  const src = env || process.env;
+  const out = {};
+  for (const k of Object.keys(src).sort()) if (BUILD_ENV_KEYS.test(k) && typeof src[k] === "string") out[k] = src[k];
+  return out;
+}
+function runViaRunner(socketPath, cmd, { cwd, env, timeoutMs }) {
+  return new Promise((resolve) => {
+    const net = require("node:net");
+    let buf = ""; let done = false;
+    const finish = (r) => { if (done) return; done = true; clearTimeout(guard); resolve(r); };
+    const fail = (why) => finish({ error: Object.assign(new Error(why), { code: "ERUNNER" }), status: null, stdout: "", stderr: `${why}\n`, timedOut: false });
+    const sock = net.createConnection(socketPath);
+    // 실행기가 끝내지 못한 경우에 대비한 마지막 안전장치(실행기도 제한 시간 + 15초에 끝낸다)
+    const guard = setTimeout(() => { sock.destroy(); finish({ error: Object.assign(new Error("시험 명령 제한 시간 초과"), { code: "ETIMEDOUT" }), status: null, stdout: "", stderr: "", timedOut: true }); }, (timeoutMs || 120000) + 60000);
+    sock.setEncoding("utf8");
+    sock.on("connect", () => sock.write(JSON.stringify({ cmd, cwd: path.resolve(cwd), env: buildEnv(env), timeoutMs }) + "\n"));
+    sock.on("data", (c) => { buf += c; });
+    sock.on("end", () => {
+      let r;
+      try { r = JSON.parse(buf); } catch (_) { fail("빌드 실행기의 답을 읽지 못했습니다"); return; }
+      if (r.error && r.status === null && !r.timedOut && !r.stdout && !r.stderr) { fail(`빌드 실행기: ${r.error}`); return; }
+      finish({
+        error: r.timedOut ? Object.assign(new Error("시험 명령 제한 시간 초과"), { code: "ETIMEDOUT" }) : r.error ? new Error(r.error) : null,
+        status: r.timedOut ? null : r.status, stdout: r.stdout || "", stderr: r.stderr || "", timedOut: Boolean(r.timedOut),
+      });
+    });
+    sock.on("error", (e) => fail(`빌드 실행기에 연결하지 못했습니다(${e.code || e.message}). 시연 서버를 다시 시작해야 할 수 있습니다.`));
+  });
+}
+
 // 시험 명령을 셸로 실행하고 끝날 때까지 기다린다. 제한 시간을 넘기면 그 명령이 띄운 프로세스까지 모두 끝낸다.
 // (셸만 끝내면 실제 시험 프로그램이 남아 계속 돌고, Windows 에서는 폴더를 잡고 있게 된다)
+// 공개 시연 서버(tools/demo/demo-server.js)는 EARS_BUILD_REQUIRE_RUNNER=1 을 둔다: 그때 실행기(EARS_BUILD_SOCKET)가 없으면
+// 서버 사용자로 직접 실행하지 않고 거절한다(실행기 설정이 빠진 채로 배포돼도 방문자 코드가 서버 권한으로 돌지 않게).
 function runShell(cmd, { cwd, env, timeoutMs }) {
+  const socketPath = process.env.EARS_BUILD_SOCKET;
+  if (socketPath) return runViaRunner(socketPath, cmd, { cwd, env, timeoutMs });
+  if (process.env.EARS_BUILD_REQUIRE_RUNNER === "1") {
+    return Promise.resolve({ error: new Error("빌드 실행기가 설정되어 있지 않습니다"), status: null, stdout: "", stderr: "공개 시연 서버에서는 빌드·시험을 별도 사용자로 돌리는 빌드 실행기로만 실행합니다. 실행기가 설정되어 있지 않아 실행하지 않았습니다(EARS_BUILD_SOCKET 없음). 시연 서버 운영자가 컨테이너 시작 설정을 확인해야 합니다.", timedOut: false });
+  }
   return new Promise((resolve) => {
     const win = process.platform === "win32";
     const LIMIT = 64 * 1024 * 1024;
@@ -205,7 +276,8 @@ async function run(argv, hooks) {
   // 빌드 도구를 찾는다. 이 PC 처럼 make·cc 라는 이름이 없으면 찾은 이름(mingw32-make, gcc)과 위치를 쓴다.
   const tools = toolchain.detect();
   const env = tools.env(process.env);
-  if (!opts.testCmdGiven && tools.make && tools.make !== "make") opts.testCmd = `${tools.make} -s test`;
+  // 헤더나 컴파일 옵션만 바뀌어도 이번 검증에는 그 입력으로 만든 실행 파일을 사용한다.
+  if (!opts.testCmdGiven) opts.testCmd = `${tools.make || "make"} -B -s test`;
   const cover = Boolean(config && project.measured(config));
   // 컴파일러: 설정(build.compiler)에서 고른 것. 고정 환경(CI)에서 없거나 버전이 다르면 게이트를 막고, 이 PC 에서는 있는 것으로 돌린다.
   const pinnedEnv = Boolean(process.env.TRACE_ENV_IMAGE && /@sha256:[0-9a-f]{64}$/.test(process.env.TRACE_ENV_IMAGE));
@@ -243,6 +315,12 @@ async function run(argv, hooks) {
     timed_out: timedOut,
     results,
   };
+  // 단계별 실제 출력(시험이 찍은 EARS_ACTUAL — verification-design.md V4): 시나리오 타임라인에 보인다. 판정에는 쓰지 않는다.
+  const actuals = actualsOf(output);
+  if (Object.keys(actuals).length) record.actuals = actuals;
+  // 이 실행의 설계 승인본(DBL). 게이트 T9 가 현재 승인본과 같은지 본다.
+  const designBaseline = require("./design-gate.js").currentDesignBaseline(root);
+  if (designBaseline) record.design_baseline = designBaseline;
   record.result_fingerprint = resultFingerprint(record);
   // 설정에 따른 판정: 코딩 규칙, 시험 도출 방법 표기, 커버리지.
   const configProblems = [];
@@ -261,6 +339,29 @@ async function run(argv, hooks) {
       try { m = proc.error ? { measured: false, reason: "시험 명령을 실행하지 못함" } : !comp.coverage ? { measured: false, reason: `${comp.chosen.label} 로 빌드한 계측 자료는 gcov 로 읽지 못함 — 커버리지는 gcc 계열 컴파일러를 골라야 잴 수 있음` } : coverage.measure(root, { env, gcov: (comp.used === "chosen" && comp.gcov) || tools.gcov || "gcov", mcdc }); } catch (e) { m = { measured: false, reason: e.message }; }
       // 사람이 정당화한 미달(test-spec/coverage-justifications.json)을 더한 유효 커버리지. 실측값은 그대로 둔다.
       if (m && m.measured) { try { m = justify.applyTo(root, m); } catch (_) { /* 정당화 기록을 읽지 못하면 실측만 쓴다 */ } }
+      // 수준별 커버리지(verification-design.md 3.4·3.6): 단위 밖 수준의 시험이 있으면 같은 빌드에서 수준마다 그 TC 만 실행해 따로 잰다.
+      // 전체 값은 위의 모든 TC 를 함께 실행한 결과(실행 항목의 합집합)이고, 수준별 값의 평균이 아니다. 정당화는 전체 값에만 더한다.
+      if (m && m.measured && !proc.error && !timedOut) {
+        const byLv = coverage.levelsOf(root);
+        if ([...byLv.keys()].some((k) => k !== "unit")) {
+          const gcovCmd = (comp.used === "chosen" && comp.gcov) || tools.gcov || "gcov";
+          m.by_level = {};
+          for (const [lv, ids] of byLv) {
+            try { coverage.clean(root); } catch (_) { /* */ }
+            const e2 = Object.assign({}, env, { EARS_TC: ids.join(",") });
+            const dir2 = coverage.redirect(root, e2);
+            const levelCmd = opts.testCmdGiven ? opts.testCmd : `${tools.make || "make"} -s test`;
+            const p2 = await runShell(levelCmd, { cwd: root, env: e2, timeoutMs: Math.round(opts.timeout * 1000) });
+            if (dir2) { try { coverage.collect(root, dir2); } catch (_) { /* */ } }
+            let r2;
+            try { r2 = p2.error || p2.timedOut ? { measured: false, reason: p2.timedOut ? "제한 시간 초과" : "시험 명령을 실행하지 못함" } : coverage.measure(root, { env: e2, gcov: gcovCmd, mcdc }); } catch (e) { r2 = { measured: false, reason: e.message }; }
+            m.by_level[lv] = coverage.compactLevel(r2, ids.length);
+          }
+          // 마지막 수준의 계측 자료가 남아 전체 결과로 오인되지 않게 지운다
+          try { coverage.clean(root); } catch (_) { /* */ }
+          m.by_level_note = "수준별 값은 그 수준의 TC 만 실행해 잰 것이고, 전체 값은 모든 TC 를 함께 실행한 결과(실행 항목의 합집합)다";
+        }
+      }
       record.coverage = m;
       for (const id of ["statement", "branch"]) {
         const want = config.coverage[id];
@@ -308,11 +409,12 @@ async function run(argv, hooks) {
   else if (proc.error) problems.push(`시험 명령을 실행하지 못함: ${proc.error.message}`);
   else if (exitCode !== 0) {
     const failed = results.filter((r) => r.result === "fail").map((r) => r.tc_id);
+    const firstDiagnostic = failed.length ? null : buildDiagnostics(output)[0];
     problems.push(failed.length
       ? `시험 명령이 실패로 끝남 (종료 코드 ${exitCode}) — 실패한 시험: ${failed.join(", ")}`
-      : `시험 명령이 실패로 끝났지만 실패한 시험 줄이 없음 (종료 코드 ${exitCode}) — 빌드 오류나 비정상 종료일 수 있음. ${path.relative(root, path.join(outDir, "test-output.log"))} 확인`);
+      : `시험 명령이 실패로 끝남 (종료 코드 ${exitCode}) — ${results.length ? "실패 판정 줄 없음" : "시험 결과 0건"}. ${firstDiagnostic || "빌드 오류나 비정상 종료일 수 있음"}. 전체 출력: ${path.relative(root, path.join(outDir, "test-output.log"))}`);
   } else if (results.some((r) => r.result === "fail")) problems.push("시험 명령은 성공으로 끝났지만 실패한 시험 줄이 있음 — 시험 실행기가 실패를 종료 코드로 알리지 않음");
-  if (!proc.error && results.length === 0) problems.push('시험 출력에 "TC-ID pass|fail|skip" 형식의 줄이 하나도 없음');
+  if (!proc.error && !timedOut && exitCode === 0 && results.length === 0) problems.push('시험 출력에 "TC-ID pass|fail|skip" 형식의 줄이 하나도 없음');
   for (const id of conflicts) problems.push(`${id}: 같은 시험의 결과가 서로 다르게 두 번 출력됨`);
   const settingProblems = configProblems;
 
@@ -343,7 +445,7 @@ async function run(argv, hooks) {
   return { code, text: lines.join("\n"), problems: [...problems, ...settingProblems], dirty, resultsFile, report: checked.report, record };
 }
 
-module.exports = { run, parseTestOutput, runShell, describeEnvironment, resultFingerprint, canonical };
+module.exports = { run, actualsOf, parseTestOutput, runShell, describeEnvironment, resultFingerprint, canonical, maskHome, buildEnv, runViaRunner };
 
 if (require.main === module) {
   run(process.argv.slice(2)).then(

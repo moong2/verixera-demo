@@ -1,0 +1,12 @@
+{
+  "schema": "design-rules/v1",
+  "layer": "environment",
+  "id": "embedded-c",
+  "version": "1.0",
+  "applies": { "environments": ["embedded-c"] },
+  "note": "Embedded C 환경 규칙 1차. 자체 정책.",
+  "rules": [
+    { "rule_id": "EC-01", "rule_version": "1.0", "name": "구성요소의 소스 묶음", "purpose": "DECOMPOSITION", "rule_type": "DESIGN_POLICY", "enforcement": "ADVISORY", "design_stage": "DETAILED", "check_method": "AI_REVIEW", "deviation_allowed": true, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책(권장, 강제 아님)" }, "text": "구성요소 하나는 보통 .c/.h 한 쌍으로 구현하는 것을 권장한다. 유닛 경계는 파일이 아니라 기능으로 정한다." },
+    { "rule_id": "EC-02", "rule_version": "1.0", "name": "상태 변수의 파일 범위", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "ADVISORY", "design_stage": "DETAILED", "check_method": "HUMAN_REVIEW", "deviation_allowed": true, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책. 실제 선언은 코드에서 확인(코딩 규칙 limit_globals)" }, "text": "유닛이 소유한 상태 변수는 그 유닛 파일 안의 static 으로 두고 다른 유닛은 인터페이스로만 접근한다." }
+  ]
+}

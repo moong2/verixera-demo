@@ -1,0 +1,15 @@
+{
+  "schema": "design-rules/v1",
+  "layer": "common",
+  "id": "common-review",
+  "version": "1.0",
+  "note": "설계 검사 규칙(공통). 자체 정책으로 시작한다 — 원문 대조와 의미·적용성 검토가 끝난 규칙만 표준 유형으로 바꾼다(D-012).",
+  "rules": [
+    { "rule_id": "COM-01", "rule_version": "1.0", "name": "요구사항 할당 완전성", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "BLOCKING", "design_stage": "ARCHITECTURE", "check_method": "FIXED", "fixed_check": "allocation-complete", "deviation_allowed": false, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책(EN 50716 §7.3.4 요구사항 할당은 사용자가 원문 확인 — 의미 검토 전)" }, "required_evidence": ["잎 요구사항마다 할당된 유닛"], "text": "모든 잎 요구사항이 하나 이상의 유닛에 할당되어야 한다." },
+    { "rule_id": "COM-02", "rule_version": "1.0", "name": "유닛 책임 정의", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "BLOCKING", "design_stage": "ARCHITECTURE", "check_method": "FIXED", "fixed_check": "responsibility-defined", "deviation_allowed": false, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책" }, "text": "모든 유닛에 책임(무엇을 하는지)이 적혀 있어야 한다." },
+    { "rule_id": "COM-03", "rule_version": "1.0", "name": "유닛 구현 함수 지정", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "REVIEW_REQUIRED", "design_stage": "DETAILED", "check_method": "FIXED", "fixed_check": "unit-has-function", "deviation_allowed": true, "required_for": ["code"], "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책" }, "text": "유닛마다 구현할 함수가 정해져 있어야 코드 에이전트가 유닛 경계를 지킨다." },
+    { "rule_id": "COM-04", "rule_version": "1.0", "name": "유닛 독립 시험 가능성(관측 가능한 출력)", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "REVIEW_REQUIRED", "design_stage": "INTERFACE", "check_method": "FIXED", "fixed_check": "unit-testable", "deviation_allowed": true, "required_for": ["test"], "interpretation_status": "PENDING", "source": { "standard": "ECSS-E-ST-40C Rev.1:2025", "clause": "§5.8.3.4", "url": "https://ecss.nl/standard/ecss-e-st-40c-rev-1-software-30-april-2025/", "review_status": "SOURCE_CHECKED", "checked_by": "사용자 조사(2026-11-26, 공개 텍스트)", "note": "시험 가능성 — 의미 검토 전이라 자체 정책" }, "text": "유닛마다 경계 출력(또는 입출력)이 있어 결과를 관측할 수 있어야 한다." },
+    { "rule_id": "COM-05", "rule_version": "1.0", "name": "응집도·결합도", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "ADVISORY", "design_stage": "ARCHITECTURE", "check_method": "AI_REVIEW", "deviation_allowed": true, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책" }, "text": "유닛 안의 동작은 한 책임으로 묶이고(응집), 유닛 사이 의존은 적어야 한다(결합)." },
+    { "rule_id": "COM-06", "rule_version": "1.0", "name": "복잡도 관리", "purpose": "REVIEW", "rule_type": "DESIGN_POLICY", "enforcement": "ADVISORY", "design_stage": "DETAILED", "check_method": "AI_REVIEW", "deviation_allowed": true, "interpretation_status": "PENDING", "source": { "review_status": "NOT_CHECKED", "note": "자체 정책. 실제 복잡도 수치는 코드 정적 분석에서 확인한다(설계 단계에서 완료로 보지 않음)" }, "text": "한 유닛에 조건·상태가 지나치게 많이 모이지 않았는지 본다." }
+  ]
+}
